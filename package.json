@@ -10,6 +10,5 @@
     "express": "3.4.8"
     ,"ejs": "*"
     ,"less-middleware": "*"
-    ,"express-partials": "*"
   }
 }

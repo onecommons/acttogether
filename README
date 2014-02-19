@@ -1,2 +1,3 @@
-skeleton buitling using `express --sessions --css less --ejs ocpool`
-run: `DEBUG=express:* node app.js`
+skeleton original built using `express --sessions --css less --ejs ocpool`
+run `npm install` after cloning repo (use `npm ls` to verify dependencies)
+run app: `DEBUG=express:* node app.js`
