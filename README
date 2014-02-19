@@ -1,0 +1,2 @@
+skeleton buitling using `express --sessions --css less --ejs ocpool`
+run: `DEBUG=express:* node app.js`

@@ -1,0 +1,48 @@
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+  padding-top: 50px;
+  padding-bottom: 20px;
+}
+
+.collective {
+  min-height: 30em;
+}
+
+.collective-heading {
+  border-bottom: 1px dotted #DD5511;
+  
+}
+
+.hero-item {
+  width: 960px;
+  height: 440px;
+}
+
+.countdown-container {
+    background-color:  #777777;
+    color: #eeeeee;
+    text-align: right;
+    padding-right: 2em;
+   
+}
+
+.countdown-container span {
+  vertical-align: middle;
+}
+  
+.countdown {
+  font-size: 2em;
+}
+.days,.hours,.minutes,.seconds {
+  
+}
+.counter-label {
+  vertical-align: center;
+  color: #a7abb1;
+  font-size: small;
+} 
+
+/* bootstrap overrides */
+.navbar-inverse {
+  background-color: white;
+}
