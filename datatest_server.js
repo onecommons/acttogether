@@ -45,7 +45,7 @@ var objectArray = [{ "id": "@1",
 app.get('/datatest', function(req,res){
     res.render('data_test.ejs', {
         title: "DataForm Tests", 
-        df : dataform,
+        df : dataform.dataform(),
         testdata : testdata,
         simpleArray : simpleArray,
         labeledArray : labeledArray,
