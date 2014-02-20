@@ -4,6 +4,10 @@ body {
   padding-bottom: 20px;
 }
 
+.tagline {
+ display:inline-block
+}
+
 .collective {
   min-height: 30em;
 }
