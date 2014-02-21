@@ -5,7 +5,6 @@
 
 var express = require('express');
 var routes = require('./routes');
-var dispatch = require('./routes/dispatch');
 var http = require('http');
 var path = require('path');
 //var partials = require('express-partials'); XXX?
