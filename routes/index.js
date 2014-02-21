@@ -3,6 +3,7 @@
  * GET home page.
  */
 
+var utils = require('utils');
 
 function getTimeLeft(target_date) {
   var difference = target_date - new Date();
@@ -28,12 +29,22 @@ function getTimeLeft(target_date) {
   return [days, hours, minutes, seconds];
 }
 
-exports.index = function(req, res){
+function getVars(more) {
+  more = more || {};
   var now = new Date();
   var nextMonth = new Date(2014, now.getMonth()+1, 1);
-  res.render('index', { debug: process.env.DEBUG,
+  return utils.merge({ debug: process.env.DEBUG,
     countdownfinish: nextMonth.toString(),
     timeLeft : getTimeLeft(nextMonth),
+  }, more)
+}
+
+exports.dispatch = function(req, res){
+  res.render(req.params.pagename, getVars());
+};
+
+exports.index = function(req, res){
+  res.render('index', getVars({
     categories: [ 
     {id: 1, title: "Environment",
     activity: [
@@ -67,5 +78,5 @@ exports.index = function(req, res){
     {title: "Education",activity: []},
     {title: "Internet Freedoms",activity: []},
     ]
-    });
+    }));
 };
