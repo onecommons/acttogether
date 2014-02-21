@@ -1,3 +1,5 @@
 skeleton original built using `express --sessions --css less --ejs ocpool`
 run `npm install` after cloning repo (use `npm ls` to verify dependencies)
 run app: `DEBUG=express:* node app.js`
+npm install supervisor -g
+supervisor -w . app.js
