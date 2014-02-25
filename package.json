@@ -7,8 +7,15 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "3.4.8"
-    ,"ejs": "*"
-    ,"less-middleware": "*"
+    "express": "3.4.8",
+    "ejs": "*",
+    "less-middleware": "*",
+    "mongodb": "*",
+    "promise": "*"
+  },
+  "devDependencies": {
+    "mocha": "~1.15.1",
+    "supertest": "~0.8.1",
+    "should": "~3.1.3"
   }
 }

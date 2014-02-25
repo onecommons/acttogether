@@ -1,5 +1,8 @@
-skeleton original built using `express --sessions --css less --ejs ocpool`
-run `npm install` after cloning repo (use `npm ls` to verify dependencies)
-run app: `DEBUG=express:* node app.js`
-npm install supervisor -g
-supervisor -w . app.js
+skeleton original built using `express --sessions --css less --ejs ocdemo`
+to install run `npm install` after cloning repo (use `npm ls` to verify dependencies)
+install mongodb: e.g. sudo brew install mongodb; sudo mkdir -p /data/db; sudo chown `id -u` /data/db
+to run app, in two consoles run:
+  sudo mongod 
+  DEBUG=express:* node app.js
+run unit tests:
+  NODE_ENV=test ./node_modules/.bin/mocha --reporter=nyan
