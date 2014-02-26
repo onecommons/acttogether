@@ -8,12 +8,12 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-1.10.2<%- debug?'':'.min' %>.js"></script>
-    <script src="/static/js/bootstrap<%- debug?'':'.min' %>.js"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.{% if debug %}min.{% endif %}js"></script>
+    <script src="/static/js/bootstrap.{% if debug %}min.{% endif %}js"></script>
 <script type="text/javascript" src="/static/js/jquery.downCount.js"></script> 
 <script type="text/javascript">
         $('.countdown').downCount({
-            date: '<%- countdownfinish %>',
+            date: '{{countdownfinish}}',
             offset: +10
         }, function () {
             console.log('WOOT WOOT, done!');

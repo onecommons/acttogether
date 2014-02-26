@@ -1,8 +1,8 @@
-<% include header %>
+{% include "./header.html" %}
       <div class="countdown-container">
         <span>Next funding round starts in </span>
         <span class='countdown'>
-          <span class="days"><%=timeLeft[0]%></span>&nbsp;<span class=counter-label>days</span> <span class="hours"><%=timeLeft[1]%></span>:<span class="minutes"><%=timeLeft[2]%></span>:<span class="seconds"><%=timeLeft[3]%></span>
+          <span class="days">{{timeLeft[0]}}</span>&nbsp;<span class=counter-label>days</span> <span class="hours">{{timeLeft[1]}}</span>:<span class="minutes">{{timeLeft[2]}}</span>:<span class="seconds">{{timeLeft[3]}}</span>
         </span><span> Endorse now!</span>
       </div>
     </div> <!-- navbar div in header -->
@@ -19,8 +19,12 @@
       </ol>
       <div class="carousel-inner">
         <div class="item active">
-          <div class='hero-item'>
-            <img width='960' src='/static/images/CommunityWaterSolutionsGhana.jpg'>
+          <div class='hero-item' style='background: url(/static/images/CommunityWaterSolutionsGhana.jpg) no-repeat center'>
+            {#
+            <div style='padding-top: 4em; padding-left: 2em;'>
+              <p>Overlay text here
+            </div>
+            #}
             <div class="carousel-caption">
             Small donations to make a big difference.
             Last Month 45,593 of you gave about $.50 each to enable to fund this well.
@@ -52,41 +56,39 @@
 
     <div class="container">
     <div class="row"> 
-     <% categories.forEach(function(category, i){ %>
+     {% for category in categories %}
         <div class="collective col-md-6">
-          <h2 class='collective-heading'> <%= category.title %></h2>
+          <h2 class='collective-heading'> {{ category.title }}</h2>
           <div class=row>
             <div class="col-sm-6">
-              <% if (category.activity.length) { %>
-              
+              {% if category.activity.length %}
               <table class="table table-striped">
-              <% category.activity.forEach(function(item, i){ %>
+              {% for item in category.activity %}
                 <tr><td>
                   <div class="media">
                     <a class="pull-left" href="#">
-                      <img class="media-object" src="<%=item.avatar%>" alt="...">
+                      <img class="media-object" src="{{item.avatar}}" alt="...">
                     </a>
-                    <div class="media-body"><%- item.contents %></div>
+                    <div class="media-body">{{item.contents}}</div>
                   </div>
               </td></tr>
-              <% }) %>
+              {% endfor %}
               </table>
-              <% } else { %>
+              {% else %}
                 <em>No activity</em>
-              <% } %>
+              {% endif %}
             </div>
             <div class="col-sm-6">
-              <% if (category.topProposal) { %>
+              {% if category.topProposal %}
               <h5>Top Proposal</h5>
-              <img src='<%=category.topProposal.heroimage %>'>
+              <img src='{{category.topProposal.heroimage}}'>
               <div>
-                <%=category.topProposal.endorsements%> Endorsements
+                {{category.topProposal.endorsements}} Endorsements
               </div>
-              <% } %>
+              {% endif %}
             </div>
           </div>
         </div>
-     <% }) %>
+     {% endfor %}      
      </div> <!-- row --> 
-
-<% include footer %>
+{% include "footer.html" %}
