@@ -1,12 +1,15 @@
-{% include "./header.html" %}
+{% extends 'layout.html' %}
+
+{% block navbar_extra %}
       <div class="countdown-container">
         <span>Next funding round starts in </span>
         <span class='countdown'>
           <span class="days">{{timeLeft[0]}}</span>&nbsp;<span class=counter-label>days</span> <span class="hours">{{timeLeft[1]}}</span>:<span class="minutes">{{timeLeft[2]}}</span>:<span class="seconds">{{timeLeft[3]}}</span>
         </span><span> Endorse now!</span>
       </div>
-    </div> <!-- navbar div in header -->
+{% endblock %}
 
+{% block content %}
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
       <div class="container">
@@ -91,4 +94,4 @@
         </div>
      {% endfor %}      
      </div> <!-- row --> 
-{% include "footer.html" %}
+{% endblock %}

@@ -45,3 +45,31 @@
           </ul>
         </div><!--/.navbar-collapse -->
       </div> <!-- container -->
+{% block navbar_extra %}{% endblock %}
+    </div> <!-- navbar div in header -->
+
+{% block content %}{% endblock %}
+
+      <hr>
+      <footer>
+        <p>&copy; Company 2014</p>
+      </footer>
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-1.10.2.{% if debug %}min.{% endif %}js"></script>
+    <script src="/static/js/bootstrap.{% if debug %}min.{% endif %}js"></script>
+<script type="text/javascript" src="/static/js/jquery.downCount.js"></script> 
+<script type="text/javascript">
+        $('.countdown').downCount({
+            date: '{{countdownfinish}}',
+            offset: +10
+        }, function () {
+            console.log('WOOT WOOT, done!');
+        });
+</script>     
+  </body>
+</html>
