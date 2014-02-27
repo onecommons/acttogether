@@ -39,9 +39,17 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-                <li><a href="/about/start-here"><span class="glyphicon glyphicon-hand-right"></span> Start Here</a></li>
+                <li><a href="/about/start-here"><span class="glyphicon glyphicon-hand-right"></span> Endorse Projects</a></li>
                 <li><a href="/about/how-it-works"><span class="glyphicon glyphicon-cog"></span> How it works</a></li>
-                <li><a href="#"><span class="glyphicon glyphicon-user"></span> Login</a></li>
+                <li><a href="/about/raise-money"><span class="glyphicon glyphicon-cog"></span> Raise Money</a></li>
+                <li class="dropdown"><a href="/about/community" class="dropdown-toggle disabled" data-toggle="dropdown" data-hover="dropdown" data-close-others="true"><span class="glyphicon glyphicon-cog"></span> Community Dropdown Menu</a>
+                  <ul class="dropdown-menu">
+                          <li><a href="">Discuss projects and groups</a></li>
+                          <li><a href="">OneCommons blog, etc</a></li>
+                          <li><a href="">Something we havent thought of</a></li>
+                  </ul>
+                </li>
+                <li><a href="/about/join-in"><span class="glyphicon glyphicon-user"></span>Join In / Login</a></li>
           </ul>
         </div><!--/.navbar-collapse -->
       </div> <!-- container -->
@@ -52,7 +60,26 @@
 
       <hr>
       <footer>
-        <p>&copy; Company 2014</p>
+        <div class="container">
+          <div class="row">
+            <div class="col-md-4">
+            Mission statement blurb
+            </div>
+            <div class="col-md-4">  
+              <ul> 
+                <header>Some Footer Links</header>
+                <li><a href="#" class="">About</a></li>
+                <li><a href="#" class=""></a></li>
+                <li><a href="#" class=""></a></li>
+                <li><a href="#" class=""></a></li>
+              </ul>
+            </div>
+            <div class="col-md-4">
+              <p>&copy; OneCommons 2014</p>
+              <p>3019 Mission Street</p>
+              <p>San Francisco, CA 94103</p>
+            </div>
+        </div>
       </footer>
     </div> <!-- /container -->
 
@@ -62,6 +89,10 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://code.jquery.com/jquery-1.10.2.{% if debug %}min.{% endif %}js"></script>
     <script src="/static/js/bootstrap.{% if debug %}min.{% endif %}js"></script>
+    <script src="/static/js/bootstrap-hover-dropdown.min.js"></script>
+
+    <!-- dev only. (place)holder.js does "images" -->
+    <script src="/static/js/holder.js"></script>    
 <script type="text/javascript" src="/static/js/jquery.downCount.js"></script> 
 <script type="text/javascript">
         $('.countdown').downCount({
