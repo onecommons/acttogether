@@ -1,3 +1,31 @@
+// Bootstrap mixins
+@import "mixins-bootstrap.less";
+@import "colors.less";
+.headerGradient {
+  #gradient > .vertical(darken(@secondaryGray,10%),@secondaryGray);   
+}
+.clearFx {
+  .box-shadow(0 0 0 rgba(0,0,0,0));
+  background:none;
+  border:none;
+}
+@import "sprites.less";
+@gridColumnWidth: 68px;
+@gridGutterWidth:         12px;
+@import "content.less";
+@itemHeight:	230px;
+@itemWidth:		252px;
+@itemPadding:	6px;
+.showAll {
+    height:auto!important;
+    overflow:visible;
+}
+.span9 {
+  width: 708px;
+}
+@import "section-list.less";
+
+
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
   padding-top: 120px;
