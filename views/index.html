@@ -71,7 +71,7 @@
                     <a class="pull-left" href="#">
                       <img class="media-object" src="{{item.avatar}}" alt="...">
                     </a>
-                    <div class="media-body">{{item.contents}}</div>
+                    <div class="media-body">{{item.contents|safe}}</div>
                   </div>
               </td></tr>
               {% endfor %}
