@@ -9,9 +9,15 @@
   background:none;
   border:none;
 }
-@import "sprites.less";
+
 @gridColumnWidth: 68px;
 @gridGutterWidth:         12px;
+.smallCaps(@fontSize: @baseFontSize) {
+  font-family:@baseFontFamily;
+  font-variant:small-caps;
+  font-size:@fontSize;
+}
+
 @import "content.less";
 @itemHeight:	230px;
 @itemWidth:		252px;
@@ -20,11 +26,8 @@
     height:auto!important;
     overflow:visible;
 }
-.span9 {
-  width: 708px;
-}
+@import "nav-bar.less"; 
 @import "section-list.less";
-
 
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
@@ -78,3 +81,49 @@ body {
 .navbar-inverse {
   background-color: white;
 }
+
+@import "sprites.less";
+
+/* from section-box */
+@itemHeight:	230px;
+@itemWidth:		252px;
+@itemPadding:	6px;
+.grid-view {
+	.row {
+		margin-bottom:0.3rem;
+	}
+	background-color:@offWhite;
+}	
+.section-box {
+	@contentHeight:		17rem;
+		
+	.section-body {
+	  	border-top:none;
+	  	border-bottom:none;
+	}
+}	
+
+@itemSmallHeight: 97px;
+
+/* from core */
+//VARIABLES
+
+// Typography
+@baseFontFamily: "PTSansRegular", Helvetica, Arial, sans-serif;
+@baseFontSize:          1rem;
+@baseLineHeight:        1.5rem;
+@textColor:             @grayDarker;
+
+@pageWidth: 960px;
+@pageFullWidth: @pageWidth + 40px; //1000px
+
+// grid (12*68=)816 + (12*12=)144 = 960px
+@gridColumns:             12;
+@gridColumnWidth:         68px; 
+@gridGutterWidth:         12px;
+@gridRowWidth:            (@gridColumns * @gridColumnWidth) + (@gridGutterWidth * (@gridColumns - 1));
+
+html {
+    font-size:100%;
+}
+
