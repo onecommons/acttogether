@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "express": "3.4.8",
-    "less-middleware": "*",
+    "less-middleware": "~0.1.15",
     "mongodb": "*",
     "promise": "*",
     "swig": "~1.3.2"
