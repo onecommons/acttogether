@@ -5,4 +5,4 @@ to run app, in two consoles run:
   sudo mongod 
   DEBUG=express:* node app.js
 run unit tests:
-  NODE_ENV=test ./node_modules/.bin/mocha --reporter=nyan
+  NODE_ENV=test ./node_modules/.bin/mocha --reporter=list
