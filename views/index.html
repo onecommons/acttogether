@@ -94,3 +94,15 @@
      {% endfor %}      
      </div> <!-- row --> 
 {% endblock %}
+
+{% block jsfooter %}
+<script type="text/javascript" src="/static/js/jquery.downCount.js"></script> 
+<script type="text/javascript">
+        $('.countdown').downCount({
+            date: '{{countdownfinish}}',
+            offset: +10
+        }, function () {
+            console.log('WOOT WOOT, done!');
+        });
+</script>
+{% endblock %}
