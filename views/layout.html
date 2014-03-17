@@ -91,16 +91,6 @@
     <script src="/static/js/bootstrap.{% if debug %}min.{% endif %}js"></script>
     <script src="/static/js/bootstrap-hover-dropdown.min.js"></script>
 
-    <!-- dev only. (place)holder.js does "images" -->
-    <script src="/static/js/holder.js"></script>    
-<script type="text/javascript" src="/static/js/jquery.downCount.js"></script> 
-<script type="text/javascript">
-        $('.countdown').downCount({
-            date: '{{countdownfinish}}',
-            offset: +10
-        }, function () {
-            console.log('WOOT WOOT, done!');
-        });
-</script>     
+{% block jsfooter %}{% endblock %}
   </body>
 </html>
