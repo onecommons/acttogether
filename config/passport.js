@@ -6,7 +6,15 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 
 // load up the user model & auth vars
 var User            = require('../models/user');
+try {
 var configAuth      = require('./auth');
+} catch (err) {
+  if (err.code == "MODULE_NOT_FOUND") {
+    console.log("WARNING: ./config/auth.js not found, Facebook auth is disabled");
+  } else {
+    throw err;
+  }
+}
 
 // expose this function to our app using module.exports
 module.exports = function(passport) {
@@ -120,16 +128,16 @@ module.exports = function(passport) {
     // =========================================================================
     // FACEBOOK ================================================================
     // =========================================================================
-    passport.use(new FacebookStrategy({
+    if (configAuth) {
+      passport.use(new FacebookStrategy({
         // pull in our app id and secret from our auth.js file
         clientID        : configAuth.facebookAuth.clientID,
         clientSecret    : configAuth.facebookAuth.clientSecret,
         callbackURL     : configAuth.facebookAuth.callbackURL
 
-    },
-
-    // facebook will send back the token and profile
-    function(token, refreshToken, profile, done) {
+      },
+      // facebook will send back the token and profile
+      function(token, refreshToken, profile, done) {
 
         // asynchronous
         process.nextTick(function() {
@@ -169,5 +177,5 @@ module.exports = function(passport) {
         });
 
     }));
-
+  }
 };

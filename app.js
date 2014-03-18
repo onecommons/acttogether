@@ -14,7 +14,19 @@ var flash = require('connect-flash');
 var app = express();
 
 // passport, mongodb configuration
-var configDB = require('./config/database.js');
+var configDB = null;
+try {
+  configDB = require('./config/database.js');
+} catch (err) {
+  if (err.code == "MODULE_NOT_FOUND") {
+    var defaultDbUrl = "mongodb://127.0.0.1:27017/ocdemo";
+    console.log("WARNING: ./config/database.js not found, using", defaultDbUrl);
+    configDB = {url: defaultDbUrl}
+  } else {
+    throw err;
+  }
+}
+
 mongoose.connect(configDB.url); // connect to our database
 require('./config/passport')(passport); // pass passport for configuration
 
@@ -31,7 +43,7 @@ app.use(express.logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
-app.use(express.cookieParser('your secret here'));
+app.use(express.cookieParser('your secret here')); //XXX
 app.use(express.session());
 
 app.use(passport.initialize());
