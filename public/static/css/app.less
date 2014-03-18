@@ -94,6 +94,7 @@ body {
 @import "sprites.less";
 
 /* from section-box */
+
 @itemHeight:	230px;
 @itemWidth:		252px;
 @itemPadding:	6px;
@@ -135,4 +136,30 @@ body {
 html {
     font-size:100%;
 }
+
+.show-hide-toggle {
+    position:absolute;
+    z-index:9;
+    top:0;
+    font-weight:bold;
+    cursor:pointer;
+    height:22px;
+    width:9px;
+    .opacity(.40);
+    &:after {
+     // #font > .sans-serif;
+      position:relative;
+      display:inline-block;
+      top:1px;
+      content: "\25B6";
+      font-size:11px;
+      line-height:25px;
+    }
+    &.hover:after {
+      content: "\25BC";
+      font-size:12px;
+      left:-2px;
+      top:0px;
+    }
+  }
 
