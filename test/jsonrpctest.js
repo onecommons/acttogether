@@ -4,7 +4,6 @@ var express = require('express')
 
 describe('jsonrpc', function(){
   describe('.router', function(){
-    it('should route a jsonrpc method', function(done){
       var app = express();
       app.use(express.bodyParser());
 
@@ -16,11 +15,29 @@ describe('jsonrpc', function(){
         });
       });
 
+    it('should route a jsonrpc method', function(done){
       request(app)
       .post('/')
-      //.set('Content-Type', 'application/json') //unnecessary since its the defuault
+      //.set('Content-Type', 'application/json') //unnecessary since its the default
       .send({"jsonrpc":"2.0","method":"get_data","id":8})
-      .expect('[{"jsonrpc":"2.0","id":8,"result":["hello",5]}]', done);
-    })
-  })
+      .expect('{"jsonrpc":"2.0","id":8,"result":["hello",5]}', done);
+    });
+
+    it('should handle batch requests', function(done){
+      request(app)
+      .post('/')
+      //.set('Content-Type', 'application/json') //unnecessary since its the default
+      .send([{"jsonrpc":"2.0","method":"get_data","id":9}, {"jsonrpc":"2.0","method":"get_data"}, {"jsonrpc":"2.0","method":"get_data","id":10}])
+      .expect('[{"jsonrpc":"2.0","id":9,"result":["hello",5]},{"jsonrpc":"2.0","id":10,"result":["hello",5]}]', done);
+    });
+
+    it('should send an empty response to a notification', function(done){
+      request(app)
+      .post('/')
+      //.set('Content-Type', 'application/json') //unnecessary since its the default
+      .send({"jsonrpc":"2.0","method":"get_data"})
+      .expect('', done);
+    });
+
+  });
 })
