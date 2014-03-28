@@ -4,3 +4,4 @@ node_modules
 !node_modules/dataForm.js
 !node_modules/datastore.js
 !node_modules/jsonrpc.js
+!node_modules/utils.js
