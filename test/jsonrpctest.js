@@ -43,6 +43,14 @@ describe('jsonrpc', function(){
       .expect( '{"jsonrpc":"2.0","id":8,"error":{"code":-32603,"message":"Internal error"}}', done);
     });
 
+    it('should handle no such method errors correctly', function(done){
+      request(app)
+      .post('/')
+      //.set('Content-Type', 'application/json') //unnecessary since its the default
+      .send({"jsonrpc":"2.0","method":"doesntexist","id":8})
+      .expect( '{"jsonrpc":"2.0","id":8,"error":{"code":-32601,"message":"Method not found"}}', done);
+    });
+
     it('should handle batch requests', function(done){
       request(app)
       .post('/')
@@ -60,6 +68,15 @@ describe('jsonrpc', function(){
       .send({"jsonrpc":"2.0","method":"get_data"})
       .expect('', done);
     });
+
+    it('should send an empty response to an error generating notification', function(done){
+      request(app)
+      .post('/')
+      //.set('Content-Type', 'application/json') //unnecessary since its the default
+      .send({"jsonrpc":"2.0","method":"doesntexist"})
+      .expect('', done);
+    });
+
   });
 
 })
