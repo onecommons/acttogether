@@ -44,7 +44,7 @@ describe('datastore', function(){
     var Test1 = mongoose.model('Test1', 
       new mongoose.Schema({type: String, _id: String,
         prop1: []
-        },{strict: false})
+        },{strict: false}) //'throw'
     );
     
     it('should connect',  function(done){
@@ -118,6 +118,66 @@ describe('datastore', function(){
         });
       });
     });
+
+    it('removes properties and values', function(done){
+      assert(ds);
+      //console.log('lastid', lastid);
+      var obj = {"_id": lastid,
+        "prop-new": null, 
+        "prop1": "added1"
+      };
+      //console.log(obj); //{"_id": "@@5334d39164dd7bdb9e03cc7c","prop-new": "another value"}
+      ds.remove(obj, function(err, doc) {
+        assert(!err, JSON.stringify(err));
+        obj['__v'] = 2;
+        obj['type'] = 'Test1';
+        delete obj['prop-new'];
+        obj['prop1'] = ["added2"];
+        assert.deepEqual(doc.toObject(), obj);
+        Test1.findOne({ _id: lastid}, function (err, doc) {
+          assert.deepEqual(doc.toObject(), obj);
+          done();
+        });
+      });
+    });
+
+    it('updates properties and values', function(done){
+      assert(ds);
+      //console.log('lastid', lastid);
+      var obj = {"_id": lastid,
+        "prop-new2": "a new property", 
+        "prop1": 1 //replaced value
+      };
+      //console.log(obj); //{"_id": "@@5334d39164dd7bdb9e03cc7c","prop-new": "another value"}
+      ds.update(obj, function(err, doc) {
+        assert(!err, JSON.stringify(err));
+        obj['__v'] = 3;
+        obj['type'] = 'Test1';
+        obj['prop-new2'] =  "a new property";
+        obj['prop1'] = [1];
+        assert.deepEqual(doc.toObject(), obj);
+        Test1.findOne({ _id: lastid}, function (err, doc) {
+          assert.deepEqual(doc.toObject(), obj);
+          done();
+        });
+      });
+    });
+
+    it('deletes objects', function(done){
+      assert(ds);
+      //console.log('lastid', lastid);
+      var obj = {"_id": lastid};
+      //console.log(obj); //{"_id": "@@5334d39164dd7bdb9e03cc7c","prop-new": "another value"}
+      ds.destroy(obj, function(err, doc) {
+        assert(!err, JSON.stringify(err));
+        Test1.findOne({ _id: lastid}, function (err, doc) {
+          assert(!err, JSON.stringify(err));
+          assert(doc === null); //not found
+          done();
+        });
+      });
+    });
+
     
     describe('.jsonrpc', function(){
       var express = require('express')
