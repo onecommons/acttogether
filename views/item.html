@@ -2,7 +2,10 @@
 
 {% block content %}
 	<div class="container page-content list-view">
-   <section class="section-list span9 items-only"><!-- item -->
+	<div class="row">
+	<div class="col-md-3">
+	</div>
+   <section class="section-list col-md-9 items-only"><!-- item -->
       <header class="section-header">
           <i class="icon-info" title="Section info"></i>
           <a href="#" title="View full item">Viewed Item</a>
@@ -287,9 +290,11 @@
         </div><!-- end comment -->
       </div><!-- end comments -->
     </section>
+    </div><!-- end row -->
   </div> <!-- container -->
 {% endblock %}
 
 {% block jsfooter %}
-<script type="text/javascript" src="/static/js/frontend.js"></script> 
+<!-- <script type="text/javascript" src="/static/js/frontend.js"></script> -->
+<script type="text/javascript" src="/static/js/comments-ui.js"></script>
 {% endblock %}

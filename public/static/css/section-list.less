@@ -1,5 +1,6 @@
 .list-view {
-	@listWidth: (@gridColumnWidth * 8) + (@gridGutterWidth * 9);
+	//@listWidth: (@gridColumnWidth * 8) + (@gridGutterWidth * 9);
+	@listWidth: 90%;
 	@replyTop: 	2.6rem;
 	@replyPad: 	0.8rem;
 	@commentMargin: 50px;
@@ -251,7 +252,7 @@
 					content:"";
 					position:absolute;
 					height:26px;
-					width:@listWidth + 34px;
+					width:@listWidth + 44px;
 					right:0px;
 					top:0px;
 					border:@sectionBorder;
@@ -281,7 +282,7 @@
 					.showAll();
 				}
 				.item {
-					margin-top:0.5rem;
+					margin-top:1.5rem;
 				}
 				& > .reply {
 					.interaction {
@@ -389,7 +390,8 @@
 
 		.comment-entry-field {
 			padding:0;
-			width:@listWidth + 10px;
+			//width:@listWidth + 10px;
+			width:@listWidth + 1px;
 			height:3rem;
 			background-color:@white;
 			margin:0.5rem 1rem 0 1.7rem;
