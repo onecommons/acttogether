@@ -52,6 +52,9 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 
 app.use(app.router);
 app.use(require('less-middleware')({ src: path.join(__dirname, 'public') }));
+app.use(require('sass-middleware')({
+  src: path.join(__dirname, 'public')
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // development only

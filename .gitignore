@@ -1,5 +1,7 @@
 *.bak
 .DS_Store
+public/static/css/app.css
+public/static/css/theme.css
 node_modules
 !node_modules/dataForm.js
 !node_modules/datastore.js
