@@ -1,108 +1,760 @@
-{% extends 'layout.html' %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />	
+	<title>One Commons</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-{% block navbar_extra %}
-      <div class="countdown-container">
-        <span>Next funding round starts in </span>
-        <span class='countdown'>
-          <span class="days">{{timeLeft[0]}}</span>&nbsp;<span class=counter-label>days</span> <span class="hours">{{timeLeft[1]}}</span>:<span class="minutes">{{timeLeft[2]}}</span>:<span class="seconds">{{timeLeft[3]}}</span>
-        </span><span> Endorse now!</span>
-      </div>
-{% endblock %}
+	<!-- stylesheets -->
+	<link rel="stylesheet" type="text/css" href="/static/css/compiled/theme.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/vendor/animate.css">
+	<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/vendor/flipclock.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/vendor/brankic.css">
 
-{% block content %}
-    <!-- Main jumbotron for a primary marketing message or call to action -->
-    <div class="jumbotron">
-      <div class="container">
-<div>
-    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-      <ol class="carousel-indicators">
-        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-        <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-        <li data-target="#carousel-example-generic" data-slide-to="2"></li>
-      </ol>
-      <div class="carousel-inner">
-        <div class="item active">
-          <div class='hero-item' style='background: url(/static/images/CommunityWaterSolutionsGhana.jpg) no-repeat center'>
-            {#
-            <div style='padding-top: 4em; padding-left: 2em;'>
-              <p>Overlay text here
-            </div>
-            #}
-            <div class="carousel-caption">
-            Small donations to make a big difference.
-            Last Month 45,593 of you gave about $.50 each to enable to fund this well.
-            </div>
-          </div>
-        </div>
-        <div class="item">
-          <div class='hero-item'>
-            <div class="jumbotron">
-              <h2>Top Endorsers</h2>
-              <p class="lead">The OneCommons community gives to </p>
-              <p>Grow your influence and your endorsements will carry weight in deciding which projects receive community funding.</p>
-              <p><a class="btn btn-lg btn-success" href="#" role="button">Particpate!</a></p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
-        <span class="glyphicon glyphicon-chevron-left"></span>
-      </a>
-      <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
-        <span class="glyphicon glyphicon-chevron-right"></span>
-      </a>
-    </div>
-  </div>
-      </div>
-    </div>
+	<!-- javascript -->
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="/static/js/bootstrap.min.js"></script>
+	<script src="/static/js/vendor/flipclock/libs/base.js"></script>
+    <script src="/static/js/vendor/flipclock/flipclock.js"></script>
+    <script src="/static/js/vendor/flipclock/faces/dailycounter.js"></script>
+	<script src="/static/js/theme.js"></script>
 
-    <div class="container">
-    <div class="row"> 
-     {% for category in categories %}
-        <div class="collective col-md-6">
-          <h2 class='collective-heading'> {{ category.title }}</h2>
-          <div class=row>
-            <div class="col-sm-6">
-              {% if category.activity.length %}
-              <table class="table table-striped">
-              {% for item in category.activity %}
-                <tr><td>
-                  <div class="media">
-                    <a class="pull-left" href="#">
-                      <img class="media-object" src="{{item.avatar}}" alt="...">
-                    </a>
-                    <div class="media-body">{{item.contents|safe}}</div>
-                  </div>
-              </td></tr>
-              {% endfor %}
-              </table>
-              {% else %}
-                <em>No activity</em>
-              {% endif %}
-            </div>
-            <div class="col-sm-6">
-              {% if category.topProposal %}
-              <h5>Top Proposal</h5>
-              <img src='{{category.topProposal.heroimage}}'>
-              <div>
-                {{category.topProposal.endorsements}} Endorsements
-              </div>
-              {% endif %}
-            </div>
-          </div>
-        </div>
-     {% endfor %}      
-     </div> <!-- row --> 
-{% endblock %}
+	<!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+<body id="home2">
+	<header class="navbar navbar-inverse white" role="banner">
+  		<div class="container">
+    		<div class="navbar-header">
+		      	<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+			        <span class="icon-bar"></span>
+			        <span class="icon-bar"></span>
+			        <span class="icon-bar"></span>
+		      	</button>
+      			<a href="index2.html" class="navbar-brand"><img style="width:57%;" src="/static/images/logo.png" /></a>
+    		</div>
+    		<nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+      			<ul class="nav navbar-nav navbar-right">
+      				<li>
+          				<a href="signup.html" class=" visible-md visible-lg">Sign Up</a>
+        			</li>
+        			<li>
+          				<a href="features1.html" class=" visible-md visible-lg">How it Works</a>
+        			</li>       			
+        			<li>
+          				<a href="#" class=" visible-md visible-lg">Endorse Causes</a>
+        			</li>
+      			</ul>
+    		</nav>
+  		</div>
+	</header>
 
-{% block jsfooter %}
-<script type="text/javascript" src="/static/js/jquery.downCount.js"></script> 
-<script type="text/javascript">
-        $('.countdown').downCount({
-            date: '{{countdownfinish}}',
-            offset: +10
-        }, function () {
-            console.log('WOOT WOOT, done!');
+	<div id="hero">
+		<a class="slide-nav prev" href="#">Prev</a>
+		<a class="slide-nav next" href="#">Next</a>
+		<nav>
+			<a class="active" href="#"></a>
+			<a href="#"></a>
+			<a href="#"></a>
+		</nav>
+		<div class="slides">
+			<div class="slide first active">
+				<div class="bg"></div>
+				<div class="container">
+					<div class="row">
+						<div class="col-sm-9 info">
+							<h1 class="hero-text" style="margin-top:60px;">
+								<span class="highlight">One Commons is a collaborative</span><br />
+								<span class="highlight">funding platform for social causes.</span>
+							</h1>
+							<p class="sub-text">
+						<span class="highlight-sm">The SPCA raised <span class="highlight">$2406</span> last month from 1467 new supporters.</span><br />		
+							</p>
+							<div class="cta">
+								<a href="features1.html" class="button-outline">
+									SEE HOW
+									<i class="fa fa-chevron-right"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="slide second">
+				<div class="bg"></div>
+				<div class="container">
+					<h1 class="hero-text" style="margin-top:60px;">
+						<span class="highlight">Make your pennies powerful.</span>
+						
+					</h1>
+					<p class="sub-text">
+						<span class="highlight-sm">Last month <span class="highlight">4362 people</span> gave an average of 50 cents each to build this well in Kenya.</span><br />
+										
+					</p>
+					<br />
+					<div class="cta">
+						<a href="signup.html" class="button-outline">
+							FUND THIS PROJECT
+							<i class="fa fa-chevron-right"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="slide third">
+				<div class="bg"></div>
+				<div class="container">
+					<h1 class="hero-text" style="margin-top:60px;">
+								<span class="highlight">Promote and support the causes you believe in.</span><br />
+					</h1>
+							<p class="sub-text">
+						<span class="highlight-sm">Today <span class="highlight">674 people</span> discussed disaster relief causes.</span><br />
+						
+					</p>
+					<div class="cta">
+						<a href="signup.html" class="button-outline">
+							JOIN THE CONVERSATION
+							<i class="fa fa-chevron-right"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+		
+	<!-- End HERO UNIT -->
+	
+	<div id="home3">	
+	<div id="grid-first">
+					<div class="container">
+						<div class="row header">
+							<h3>How does One Commons work?</h3>
+						</div>
+						<div class="row sections">
+							<div class="col-md-4">
+								<div class="section">
+									<div class="pic">
+										<img src="/static/images/icon1.png" class="img-responsive" alt="services1" />
+									</div>
+									<div class="info">
+										<strong>Give as little or as much as you like.</strong>
+										<p>
+											The easiest way to make a difference in the world, no matter who you are.
+										</p>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="section">
+									<div class="pic">
+										<img src="/static/images/icon2.png" class="img-responsive" alt="services2" />
+									</div>
+									<div class="info">
+										<strong>Pick the causes you want to support.</strong>
+										<p>
+											People ask questions, add information and advice, and endorse projects they believe in.
+										</p>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="section">
+									<div class="pic">
+										<img src="/static/images/icon3.png" class="img-responsive" alt="services3" />
+									</div>
+									<div class="info">
+										<strong>Help the community pick what gets funded.</strong>
+										<p>
+											We pool the donations of all our members, increasing our impact by working together.
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+	</div>
+	<!--START 3 Buckets -->
+	
+<div id="pricing">
+		<div class="container">
+			<div class="row header">
+				<h3>Get involved, next funding round starts in:</h3>
+			</div>
+			<br />
+	        <div class="row">
+	            <div class="col-md-12">
+	                <div id="countdown">
+	                    <div id="clock" style="margin-left:27%;"></div>
+	                </div>
+	                
+	            </div><br />
+				<div id="cta" class="grey-btn">
+					<a href="projects.html">See More Projects</a>
+				</div>
+	        </div>						
+		</div>
+	</div>	
+<!-- PROJECTS -->	
+<div id="features">
+	<div class="container">
+			<div class="row header">
+				<div class="col-md-12">
+					<h2>Help us decide which projects to fund this month.</h2>					
+				</div>
+			</div>
+	</div>		
+	<div id="second-option index3">
+		<div class="container">		
+			<div class="row">			
+				<div class="col-md-4 feature">				
+					 <!-- Thumbnail -->
+                        <div class="thumbnail widget-thumbnail">
+                            <span class="badge funding">$10,710</span>     
+                            <img src="/static/images/fracky.png" />
+                            <div class="caption">
+                                <h3>Stop Fracking in Wyoming</h3>
+								<span class="label label-info">Environmental</span>
+                                <p>Cras justo odio, dapibus ac facidivsis in, egestas
+                                    eget quam. Donec id edivt non mi porta gravida
+                                    at eget metus. Nullam id dolor id nibh ultricies
+                                    vehicula ut id edivt.</p>
+                                <div class="ratings">
+	                                <span class="brankic-heart"></span>
+	                                <span class="brankic-heart"></span>
+	                                <span class="brankic-heart"></span>
+	                                <span class="brankic-heart"></span>
+	                                <span class="separator"> | </span>
+	                                <span class="brankic-comments"></span> (97 comments)
+                                </div>                                                                        
+                                <a href="#" class="btn button-outline2">Endorse</a>
+                                
+                            </div>
+                        </div>
+                        <!-- // Thumbnail END -->
+				</div>
+				<div class="col-md-4 feature">				
+					 <!-- Thumbnail -->
+                        <div class="thumbnail widget-thumbnail">
+                            <span class="badge funding">$6,200</span>
+                            <img src="/static/images/straffick.png" />
+                            <div class="caption">
+                                <h3>Tell the stories of sex trafficking survivors</h3>
+                                <span class="label label-danger">Women's Health</span>
+                                <p>Cras justo odio, dapibus ac facidivsis in, egestas
+                                    eget quam. Donec id edivt non mi porta gravida
+                                    at eget metus. Nullam id dolor id nibh ultricies
+                                    vehicula ut id edivt.</p>
+								<div class="ratings">
+	                                <span class="brankic-heart"></span>
+	                                <span class="brankic-heart"></span>
+	                                <span class="brankic-heart"></span>
+	                                <span class="brankic-heart"></span>
+	                                <span class="separator"> | </span>
+	                                <span class="brankic-comments"></span> (80 comments)
+                                </div>     
+                                <a href="#" class="btn button-outline2">Endorse</a>                                
+                            </div>
+                        </div>
+                        <!-- // Thumbnail END -->
+				</div>
+				<div class="col-md-4 feature">				
+					 <!-- Thumbnail -->
+                        <div class="thumbnail widget-thumbnail">
+                            <span class="badge funding">$9,450</span>
+                            <img src="/static/images/kenyawell.png" />
+                            <div class="caption">
+                                <h3>Build a well in Garissa, Kenya</h3>
+                                <span class="label label-success">Creative Projects</span>
+                                <p>Cras justo odio, dapibus ac facidivsis in, egestas
+                                    eget quam. Donec id edivt non mi porta gravida
+                                    at eget metus. Nullam id dolor id nibh ultricies
+                                    vehicula ut id edivt.</p>
+                                <div class="ratings">
+	                                <span class="brankic-heart"></span>
+	                                <span class="brankic-heart"></span>
+	                                <span class="brankic-heart"></span>
+	                                <span class="brankic-heart"></span>
+	                                <span class="separator"> | </span>
+	                                <span class="brankic-comments"></span> (130 comments)
+                                </div>       
+                                
+                                <a href="#" class="btn button-outline2">Endorse</a>                             
+                            </div>
+                        </div><!-- // Thumbnail END -->
+				</div>
+				<div id="cta">
+					<a href="projects.html">See More Projects</a>
+				</div>
+			</div>	
+			<hr style="margin-top: 80px;">		
+		</div>
+	</div>
+</div>
+<!--End PROJECTS -->
+<!-- Endorse button 
+<div id="features">
+	<div class="container">
+			<div class="row header">
+				<div class="col-md-12">
+					<h2>Endorse initiatives you come across on partner sites.</h2>	
+				</div>
+			</div>
+	</div>
+	<br />
+	<div id="second-option index3" class="environment">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12">
+					<img src="/static/images/endorse.jpg" />
+				</div>                    				
+			</div>
+		   <hr style="border-color:#eee;">		
+		</div>	
+	</div>
+</div> -->
+<!-- END OF Endorse button -->
+<!-- Discussions around topics -->
+<div id="features">
+	<div class="container">
+			<div class="row header">
+				<div class="col-md-12">
+					<h2>Follow and participate in discussions around topics you care about.</h2>			
+				</div>
+			</div>
+	</div>
+	<!-- enviro -->
+	<div id="second-option index3" class="environment">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-4 feature">				
+					 <!-- Thumbnail -->
+                        <div class="thumbnail widget-thumbnail">
+                            <img src="/static/images/env.png" />
+                            <div class="caption">
+                                <h3>The Environment <span class="label label-success">3,270</span></h3>                                
+                                <p>Organizations, projects, and news related to the environment.</p>                                
+                                <a href="#" class="btn button-outline2">Support</a>
+                            </div>
+                            <hr>
+                            <div class="row footer-deets">
+				               <div class="col-md-4"><b>15</b><br/><small>ORGS</small></div>
+				               <div class="col-md-4"><b>43</b><br/><small>PROJECTS</small></div>
+				               <div class="col-md-4"><b>389</b><br/><small>POSTS</small></div>
+ 			                </div>
+                        </div>
+                        <!-- // Thumbnail END -->
+				</div>
+				<div class="col-md-8 feature">
+		            <div class="panel panel-info">
+		                <div class="panel-heading">
+		                    Topic Discussion
+		                </div>
+		                <div class="panel-body">
+		                    <ul class="chat">
+		                        <li class="left clearfix">
+		                        	<span class="chat-img pull-left">
+		                            <img src="/static/images/testimonials/testimonial2.jpg" alt="User Avatar" class="img-circle" />
+									</span>
+		                            <div class="chat-body clearfix">
+		                                <div class="">
+		                                    <strong class="primary-font">Richard Doe</strong> <small class="pull-right text-muted">
+		                                        <span class="brankic-time2"></span> 12 mins ago</small>
+		                                </div>
+		                                <p>
+		                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+		                                    dolor, quis ullamcorper ligula sodales.
+		                                </p>
+		                            </div>
+		                        </li>
+		                        <li class="left clearfix">
+		                        	<span class="chat-img pull-left">
+		                            <img src="/static/images/testimonials/testimonial4.jpg" alt="User Avatar" class="img-circle" />
+									</span>
+		                            <div class="chat-body clearfix">
+		                                <div class="">
+		                                    <strong class="primary-font">Jane Doe</strong> <small class="pull-right text-muted">
+		                                        <span class="brankic-time2"></span> 15 mins ago</small>
+		                                </div>
+		                                <p>
+		                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+		                                    dolor, quis ullamcorper ligula sodales.
+		                                </p>
+		                            </div>
+		                        </li>
+		                        <li class="left clearfix">
+		                        	<span class="chat-img pull-left">
+		                            <img src="/static/images/testimonials/testimonial7.jpg" alt="User Avatar" class="img-circle" />
+									</span>
+		                            <div class="chat-body clearfix">
+		                                <div class="">
+		                                    <strong class="primary-font">Melissa Smith</strong> <small class="pull-right text-muted">
+		                                        <span class="brankic-time2"></span> 30 mins ago</small>
+		                                </div>
+		                                <p>
+		                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+		                                    dolor, quis ullamcorper ligula sodales.
+		                                </p>
+		                            </div>
+		                        </li>
+		                        <li class="left clearfix">
+		                        	<span class="chat-img pull-left">
+		                            <img src="/static/images/testimonials/testimonial5.jpg" alt="User Avatar" class="img-circle" />
+									</span>
+		                            <div class="chat-body clearfix">
+		                                <div class="">
+		                                    <strong class="primary-font">Jane Doe</strong> <small class="pull-right text-muted">
+		                                        <span class="brankic-time2"></span> 1 hr 10 minutes ago</small>
+		                                </div>
+		                                <p>
+		                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+		                                    dolor, quis ullamcorper ligula sodales.
+		                                </p>
+		                            </div>
+		                        </li>
+		                        <li class="left clearfix">
+		                        	<span class="chat-img pull-left">
+		                            <img src="/static/images/testimonials/testimonial2.jpg" alt="User Avatar" class="img-circle" />
+									</span>
+		                            <div class="chat-body clearfix">
+		                                <div class="">
+		                                    <strong class="primary-font">Johnathon Doe</strong> <small class="pull-right text-muted">
+		                                        <span class="brankic-time2"></span> Yesterday</small>
+		                                </div>
+		                                <p>
+		                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+		                                    dolor, quis ullamcorper ligula sodales.
+		                                </p>
+		                            </div>
+		                        </li>		                        		                        		                        		                        
+		                    </ul>
+		                </div>
+		            </div>
+
+
+			    </div>                     				
+			</div>
+		</div>
+	</div><!-- end enviro -->
+	   
+</div>
+<!-- END OF Discussions around topics -->
+<!-- Choose topics -->
+<div id="services">	
+	<div id="grid-second">
+		<div class="container">
+			<div class="row header">
+				<div class="col-md-12">
+					<h2>Choose from a range of topics and get involved as deeply as you like.</h2>
+					<p class="text-center">
+						You can support an entire topic, endorse an organization that works in that area, or directly fund a project.
+					</p>
+				</div>
+			</div>
+			<div class="row features">
+				<div class="col-md-6 feature">
+				<span class="icon icomoon-office"></span>
+					<img src="/static/images/circle-icons/full-color/globe.png" alt="globe" />
+					
+					<div class="info">
+						<strong>Environment</strong>
+						<p>You can focus on a particular project like, or support a whole range of organizations working on a particular topic that matters to you.</p>
+					</div>
+				</div>
+				<div class="col-md-6 feature">
+					<img src="/static/images/circle-icons/full-color/heart.png" alt="location" />
+					<div class="info">
+						<strong>Women's Health</strong>
+						<p>With some customization you can make this product apply to your branding guidelines and amaze your customers at the same time.</p>
+					</div>
+				</div>
+			</div>
+			<div class="row features">
+				<div class="col-md-6 feature">
+					<img src="/static/images/circle-icons/full-color/flag.png" alt="Local" />
+					<div class="info">
+						<strong>Local Causes</strong>
+						<p>We don't impose any design restrictions, you are free to customize it as you see fit and it's easy to use.</p>
+					</div>
+				</div>
+				<div class="col-md-6 feature">
+					<img src="/static/images/circle-icons/full-color/genius.png" alt="Science" />
+					<div class="info">
+						<strong>Medecine & Science</strong>
+						<p>We'll be adding some new stuff to make it even more awesome, if you have any idea please let us know.</p>
+					</div>
+				</div>
+			</div>
+			<div class="row features">
+				<div class="col-md-6 feature">
+					<img src="/static/images/circle-icons/full-color/check.png" alt="globe" />
+					<div class="info">
+						<strong>Politics</strong>
+						<p>You can work with international customers right out of the box while staying in your country.</p>
+					</div>
+				</div>
+				<div class="col-md-6 feature">
+					<img src="/static/images/circle-icons/full-color/dev.png" alt="location" />
+					<div class="info">
+						<strong>Open Source</strong>
+						<p>With some customization you can make this product apply to your branding guidelines and amaze your customers at the same time.</p>
+					</div>
+				</div>
+			</div>
+			<div class="row features">
+				<div class="col-md-6 feature">
+					<img src="/static/images/circle-icons/full-color/image.png" alt="smartphone" />
+					<div class="info">
+						<strong>Creative Projects</strong>
+						<p>We don't impose any design restrictions, you are free to customize it as you see fit and it's easy to use.</p>
+					</div>
+				</div>
+				<div class="col-md-6 feature">
+					<img src="/static/images/circle-icons/full-color/compose.png" alt="support" />
+					<div class="info">
+						<strong>Education</strong>
+						<p>We'll be adding some new stuff to make it even more awesome, if you have any idea please let us know.</p>
+					</div>
+				</div>
+			</div>
+			<hr style="margin-top: 80px;">	
+		</div>
+	</div>
+</div>
+<!-- END OF Choose topics -->	
+	<div id="cta" style="margin-bottom: 60px;">
+		<p>Get started making an impact today!	</p>
+		<a href="signup.html">
+			Sign up now
+		</a>
+	</div>
+<!-- example organizations with logos	
+	<div id="clients">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<h3>Organizations fundraising with One Commons:</h3>
+					<p>
+						
+					</p>
+					<div class="logos">
+						<img src="/static/images/logos/redcross.svg">
+						<img src="/static/images/logos/The_Salvation_Army.svg">
+						<img src="/static/images/logos/Unicef.svg">
+						<img src="/static/images/logos/plannedparenthood.svg">
+						<img src="/static/images/logos/WWF.svg">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+ -->
+	<div id="footer-white">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-3 menu">
+					<h3>Overview</h3>
+					<ul>
+	      				<li>
+	          				<a href="features.html">Features</a>
+	        			</li>
+	        			<li>
+	          				<a href="support.html">Support</a>
+	        			</li>
+	        			<li>
+	          				<a href="blog.html">Blog</a>
+	        			</li>
+	        			<li>
+	          				<a href="blog.html">Coming soon</a>
+	        			</li>
+	      			</ul>
+				</div>
+				<div class="col-sm-3 menu">
+					<h3>Menu</h3>
+					<ul>
+	      				<li>
+	          				<a href="features.html">About us</a>
+	        			</li>
+	        			<li>
+	        				<a href="services.html">Contact us</a>
+	        			</li>
+	        			<li>
+	          				<a href="aboutus.html">Jobs</a>
+	          				<a href="aboutus.html" class="hiring">
+	          					We're hiring!
+	          				</a>
+	        			</li>
+	        			<li>
+	          				<a href="blog.html">Status</a>
+	        			</li>
+	      			</ul>
+				</div>
+				<div class="col-sm-2 menu">
+					<h3>Social</h3>
+					<ul>
+	      				<li>
+	          				<a href="features.html">Youtube</a>
+	        			</li>
+	        			<li>
+	        				<a href="services.html">Facebook</a>
+	        			</li>
+	        			<li>
+	          				<a href="pricing.html">Twitter</a>
+	        			</li>
+	      			</ul>
+				</div>
+				<div class="col-sm-4 newsletter">
+					<div class="signup clearfix">
+						<p>
+							Sign up for the newsletter and we'll inform you of updates, offers and more.
+						</p>
+						<form>
+							<input type="text" name="email" class="form-control" placeholder="Your email address" />
+							<input type="submit" value="Sign up" />
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="row credits">
+				<div class="col-md-12">
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(function () {
+			var $navDots = $("#hero nav a")
+			var $next = $(".slide-nav.next");
+			var $prev = $(".slide-nav.prev");
+			var $slides = $("#hero .slides .slide");
+			var actualIndex = 0;
+			var swiping = false;
+			var interval;
+
+			$navDots.click(function (e) {
+				e.preventDefault();
+				if (swiping) { return; }
+				swiping = true;
+
+				actualIndex = $navDots.index(this);
+				updateSlides(actualIndex);
+			});
+
+			$next.click(function (e) {
+				e.preventDefault();
+				if (swiping) { return; }
+				swiping = true;
+
+				clearInterval(interval);
+				interval = null;
+
+				actualIndex++;
+				if (actualIndex >= $slides.length) {
+					actualIndex = 0;
+				}
+
+				updateSlides(actualIndex);
+			});
+
+			$prev.click(function (e) {
+				e.preventDefault();
+				if (swiping) { return; }
+				swiping = true;
+
+				clearInterval(interval);
+				interval = null;
+
+				actualIndex--;
+				if (actualIndex < 0) {
+					actualIndex = $slides.length - 1;
+				}
+
+				updateSlides(actualIndex);
+			});
+
+			function updateSlides(index) {
+				// update nav dots
+				$navDots.removeClass("active");
+				$navDots.eq(index).addClass("active");
+
+				// update slides
+				var $activeSlide = $("#hero .slide.active");
+				var $nextSlide = $slides.eq(index);
+
+				$activeSlide.fadeOut();
+				$nextSlide.addClass("next").fadeIn();
+				
+				setTimeout(function () {
+					$slides.removeClass("next").removeClass("active");
+					$nextSlide.addClass("active");
+					$activeSlide.removeAttr('style');
+					swiping = false;
+				}, 3000);
+			}
+
+
+			interval = setInterval(function () {
+				if (swiping) { return; }
+				swiping = true;
+
+				actualIndex++;
+				if (actualIndex >= $slides.length) {
+					actualIndex = 0;
+				}
+
+				updateSlides(actualIndex);
+			}, 10000);
+
+			// demo player
+			var $videoModal = $(".video-modal");
+			$("#demo-player").click(function () {
+				$videoModal.toggleClass("active");
+				clearInterval(interval);
+				interval = null;
+			});
+			$videoModal.click(function () {
+				$videoModal.removeClass("active");
+				setTimeout(function () {
+					$videoModal.find(".wrap").html('<iframe src="http://player.vimeo.com/video/22439234" width="620" height="350" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>');
+				}, 1000);
+			})
+			$videoModal.find(".wrap").click(function (e) {
+				e.stopPropagation();
+			});
+		});
+	</script>
+	<script type="text/javascript">
+        $(function () {
+                
+            var clock;
+
+            // Grab the current date
+            var currentDate = new Date();
+
+            // Set some date in the future. In this case, it's always Jan 1
+            var futureDate  = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), currentDate.getHours() + 20);
+
+            // Calculate the difference in seconds between the future and current date
+            var diff = futureDate.getTime() / 1000 - currentDate.getTime() / 1000;
+
+            // Instantiate a coutdown FlipClock
+            clock = $('#clock').FlipClock(diff, {
+                countdown: true,
+                clockFace: 'DailyCounter',
+              	showSeconds: false
+            });
+/*
+			clock = $('.clock').FlipClock(3600 * 24 * 3, {
+			clockFace: 'DailyCounter',
+			countdown: true,
+*/
+
         });
-</script>
-{% endblock %}
+    </script>
+</body>
+</html>
