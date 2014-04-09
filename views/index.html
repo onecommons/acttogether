@@ -7,7 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 	<!-- stylesheets -->
-	<link rel="stylesheet" type="text/css" href="/static/css/compiled/theme.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/theme.css">
 	<link rel="stylesheet" type="text/css" href="/static/css/vendor/animate.css">
 	<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
 	<link rel="stylesheet" type="text/css" href="/static/css/vendor/flipclock.css">
@@ -188,7 +188,7 @@
 	        <div class="row">
 	            <div class="col-md-12">
 	                <div id="countdown">
-	                    <div id="clock" style="margin-left:27%;"></div>
+	                    <div id="clock" style="margin-left:20%;"></div>
 	                </div>
 	                
 	            </div><br />
@@ -365,9 +365,9 @@
 		                                        <span class="brankic-time2"></span> 12 mins ago</small>
 		                                </div>
 		                                <p>
-		                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
-		                                    dolor, quis ullamcorper ligula sodales.
-		                                </p>
+<a class="embedly-card" data-card-description="0" href="http://www.cjr.org/behind_the_news/two_hops_reporters.php">Planned NSA reforms still leave journalists reason to worry</a>
+<script>(function(a){var b="embedly-platform",c="script";if(!a.getElementById(b)){var d=a.createElement(c);d.id=b;d.async=true;d.src=("https:"===document.location.protocol?"https":"http")+"://cdn.embedly.com/widgets/platform.js";var e=document.getElementsByTagName(c)[0];e.parentNode.insertBefore(d,e)}})(document);</script>		                                </p>
+<div class='activity-footer'>Learn about <a href='#'>3 organizations</a> doing something about this.</div>
 		                            </div>
 		                        </li>
 		                        <li class="left clearfix">
@@ -737,7 +737,7 @@
             var currentDate = new Date();
 
             // Set some date in the future. In this case, it's always Jan 1
-            var futureDate  = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), currentDate.getHours() + 20);
+            var futureDate  = new Date(currentDate.getFullYear(), currentDate.getMonth()+1, 1, 0);
 
             // Calculate the difference in seconds between the future and current date
             var diff = futureDate.getTime() / 1000 - currentDate.getTime() / 1000;
@@ -746,7 +746,7 @@
             clock = $('#clock').FlipClock(diff, {
                 countdown: true,
                 clockFace: 'DailyCounter',
-              	showSeconds: false
+              	showSeconds: true
             });
 /*
 			clock = $('.clock').FlipClock(3600 * 24 * 3, {
