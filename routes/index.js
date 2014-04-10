@@ -3,6 +3,7 @@
  */
 
 var utils = require('utils');
+var Item  = require('../models/item');
 
 function getTimeLeft(target_date) {
   var difference = target_date - new Date();
@@ -153,4 +154,44 @@ module.exports = function(app, passport) {
       failureRedirect: '/'
   }));
 
+
+  // 
+  // post detail
+  //
+  app.get('/post/:id', function(req,res){
+        
+      // get the post and comments.
+      var postItem = {}
+        , commentItems = [];
+        
+
+      Item.find({ parent: "item_" + req.params.id}, function(err, Items){
+          for(var i=0, n=Items.length; i < n; i++){
+             if(Items[i].type === 'post'){ 
+                  postItem = Items[i];
+                  console.log(postItem);
+                  console.log("postItem.type", postItem.type);
+              } else {
+                  commentItems.push(Items[i]);
+              }
+           }
+           var testItem = new Item();
+           console.log(testItem);
+           // console.log(postItem["contents"]);
+           res.render('post.html', {
+               post: postItem,
+               comments: commentItems
+           });
+
+      });
+      
+    /*
+      res.render('post.html', {
+        post: {contents: "lskdjflskdjf"}, // postItem.contents, // postItem,
+        comments: commentItems
+      }); 
+     */
+     
+  });
+  
 } // end routes function
