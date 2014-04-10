@@ -1,0 +1,108 @@
+{% extends 'layout.html' %}
+
+{% block navbar_extra %}
+      <div class="countdown-container">
+        <span>Next funding round starts in </span>
+        <span class='countdown'>
+          <span class="days">{{timeLeft[0]}}</span>&nbsp;<span class=counter-label>days</span> <span class="hours">{{timeLeft[1]}}</span>:<span class="minutes">{{timeLeft[2]}}</span>:<span class="seconds">{{timeLeft[3]}}</span>
+        </span><span> Endorse now!</span>
+      </div>
+{% endblock %}
+
+{% block content %}
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <div class="container">
+<div>
+    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+      <ol class="carousel-indicators">
+        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+        <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+        <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+      </ol>
+      <div class="carousel-inner">
+        <div class="item active">
+          <div class='hero-item' style='background: url(/static/images/CommunityWaterSolutionsGhana.jpg) no-repeat center'>
+            {#
+            <div style='padding-top: 4em; padding-left: 2em;'>
+              <p>Overlay text here
+            </div>
+            #}
+            <div class="carousel-caption">
+            Small donations to make a big difference.
+            Last Month 45,593 of you gave about $.50 each to enable to fund this well.
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class='hero-item'>
+            <div class="jumbotron">
+              <h2>Top Endorsers</h2>
+              <p class="lead">The OneCommons community gives to </p>
+              <p>Grow your influence and your endorsements will carry weight in deciding which projects receive community funding.</p>
+              <p><a class="btn btn-lg btn-success" href="#" role="button">Particpate!</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left"></span>
+      </a>
+      <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right"></span>
+      </a>
+    </div>
+  </div>
+      </div>
+    </div>
+
+    <div class="container">
+    <div class="row"> 
+     {% for category in categories %}
+        <div class="collective col-md-6">
+          <h2 class='collective-heading'> {{ category.title }}</h2>
+          <div class=row>
+            <div class="col-sm-6">
+              {% if category.activity.length %}
+              <table class="table table-striped">
+              {% for item in category.activity %}
+                <tr><td>
+                  <div class="media">
+                    <a class="pull-left" href="#">
+                      <img class="media-object" src="{{item.avatar}}" alt="...">
+                    </a>
+                    <div class="media-body">{{item.contents|safe}}</div>
+                  </div>
+              </td></tr>
+              {% endfor %}
+              </table>
+              {% else %}
+                <em>No activity</em>
+              {% endif %}
+            </div>
+            <div class="col-sm-6">
+              {% if category.topProposal %}
+              <h5>Top Proposal</h5>
+              <img src='{{category.topProposal.heroimage}}'>
+              <div>
+                {{category.topProposal.endorsements}} Endorsements
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+     {% endfor %}      
+     </div> <!-- row --> 
+{% endblock %}
+
+{% block jsfooter %}
+<script type="text/javascript" src="/static/js/jquery.downCount.js"></script> 
+<script type="text/javascript">
+        $('.countdown').downCount({
+            date: '{{countdownfinish}}',
+            offset: +10
+        }, function () {
+            console.log('WOOT WOOT, done!');
+        });
+</script>
+{% endblock %}
