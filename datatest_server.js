@@ -7,18 +7,19 @@ var path = require('path');
 var express = require("express");
 var app = express();
 app.use(express.static(path.join(__dirname, 'test/public')));
+app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'test/views'));
 //jsonrpc = require('node-express-JSON-RPC2');
 datastore = require('datastore');
 app.use(express.bodyParser({reviver: datastore.pJSON.reviver}));
-
+app.use(express.logger('dev'));
 app.set('view options', { layout: false });
 
 app.use(express.errorHandler());
 app.use(express.methodOverride());
 
 var testdata = { 
-  "id" : "testdata1",
+  "_id" : "testdata1",
   'a string' : 'v',
   'foo\\' : { 'ba.r' : 'v' },
   'has[1]' : 'v',
@@ -38,11 +39,11 @@ var simpleArray = ['one', 'two'];
 var labeledArray = [{ 'value' : 1, 'label': 'once'}, { 'value' : 2, 'label': 'twice'},
    { 'value' : 3, 'label': 'three times'} ];
 
-var objectArray = [{ "id": "@1", 
+var objectArray = [{ "_id": "@1", 
      "name":"option 1",
      "notes" : ["first"]
    },
-   { "id": "@2", 
+   { "_id": "@2", 
         "name":"option 2",
         "notes" : []
    }
@@ -51,9 +52,16 @@ var objectArray = [{ "id": "@1",
 var mongodb = require('mongodb');
 var MongoClient = mongodb.MongoClient
     , format = require('util').format, DBRef = mongodb.DBRef, ObjectID = mongodb.ObjectID;
+var mongoose = require('mongoose');
+
+var Test1 = mongoose.model('Test1', 
+  new mongoose.Schema({_id: String,
+    prop1: []
+    },{strict: false}) //'throw'
+);
 
 app.get('/mongotest', function(req,res){
-MongoClient.connect('mongodb://127.0.0.1:27017/ocdemo', function(err, db) {
+MongoClient.connect('mongodb://127.0.0.1:27017/testdb', function(err, db) {
   if(err) throw err;
 
   var collection = db.collection('test_insert');
@@ -109,13 +117,28 @@ app.post('/api', function (req, res, next) {
 });
 
 app.post('/datastoretest', function(req,res, next){
-  MongoClient.connect('mongodb://127.0.0.1:27017/ocdemo', function(err, db) {
+  MongoClient.connect('mongodb://127.0.0.1:27017/testdb', function(err, db) {
     if(err) throw err;
     var collection = db.collection('test_insert');
     jsonrpc.router(req, res, next, new datastore.RequestHandler(collection), datastore.pJSON.stringify);
   });
 })
 
+mongoose.connect('mongodb://127.0.0.1:27017/testdataserver');  
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  //note!: model Test1 => namespace test1
+  console.log('opened connection')
+  db.db.dropCollection('test1', function() {
+    //don't add this route till db is ready
+    app.post('/datarequest', function (req, res, next) {  
+          var ds = new datastore.MongooseDatastore();
+          jsonrpc.router(req, res, next, new datastore.RequestHandler(ds),
+            datastore.pJSON.stringify);
+    });
+  });
+});
 
 var port = 3001;
 app.listen(port);
