@@ -163,6 +163,9 @@ module.exports = function(passport) {
                     newUser.facebook.name  = profile.name.givenName + ' ' + profile.name.familyName; // look at the passport user profile to see how names are returned
                     newUser.facebook.email = profile.emails[0].value; // facebook can return multiple emails so we'll take the first
 
+                    //XXX what if the user already exists -- associate with facebook
+                    //XXX facebook.id field should be unique
+
                     // save our user to the database
                     newUser.save(function(err) {
                         if (err)
