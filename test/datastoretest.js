@@ -42,7 +42,9 @@ describe('datastore', function(){
 
  describe('.mongoose', function(){
     var Test1 = mongoose.model('Test1', 
-      new mongoose.Schema({type: String, _id: String,
+      new mongoose.Schema({
+        __t: String,
+         _id: String,
         prop1: []
         },{strict: false}) //'throw'
     );
@@ -67,7 +69,7 @@ describe('datastore', function(){
       ds = new datastore.MongooseDatastore();
       ds.create({
          prop1 : [], //XXX if property isn't defined in the schema this won't be saved
-         type: "Test1"
+         __t: "Test1"
       }, function(err, doc) {
         assert(!err, JSON.stringify(err));
         assert(doc._id, JSON.stringify(doc));
@@ -110,7 +112,7 @@ describe('datastore', function(){
       ds.add(obj, function(err, doc) {
         assert(!err, JSON.stringify(err));
         obj['__v'] = 1;
-        obj['type'] = 'Test1';
+        obj['__t'] = 'Test1';
         assert.deepEqual(doc.toObject(), obj);
         Test1.findOne({ _id: lastid}, function (err, doc) {
           assert.deepEqual(doc.toObject(), obj);
@@ -130,7 +132,7 @@ describe('datastore', function(){
       ds.remove(obj, function(err, doc) {
         assert(!err, JSON.stringify(err));
         obj['__v'] = 2;
-        obj['type'] = 'Test1';
+        obj['__t'] = 'Test1';
         delete obj['prop-new'];
         obj['prop1'] = ["added2"];
         assert.deepEqual(doc.toObject(), obj);
@@ -152,7 +154,7 @@ describe('datastore', function(){
       ds.update(obj, function(err, doc) {
         assert(!err, JSON.stringify(err));
         obj['__v'] = 3;
-        obj['type'] = 'Test1';
+        obj['__t'] = 'Test1';
         obj['prop-new2'] =  "a new property";
         obj['prop1'] = [1];
         assert.deepEqual(doc.toObject(), obj);
@@ -178,7 +180,6 @@ describe('datastore', function(){
       });
     });
 
-    
     describe('.jsonrpc', function(){
       var express = require('express')
        , request = require('supertest')
