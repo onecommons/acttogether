@@ -1,0 +1,326 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<style>
+
+/* "dev" */
+body {padding-top:20px;}
+.navbar {display:none}
+
+
+
+/* real */
+
+#security-code-button {
+	font-size: 20px;
+	padding-top: 6px;
+}
+
+#security-code-explanation {
+	display: none;
+}
+
+</style>
+
+<div class="container">
+	<h2>This is a tentative donation processing flow</h2>
+	<p>Hello, please give us money.</p>
+	<ul>
+		<li><a href="#payment">Payment Processing</a></li>
+		<li><a href="#history">Donation History</a></li>
+	</ul>
+</div>
+
+
+<div class="container">
+    <div class="row">
+    	<h2><a name="Payment">Payment Processing</a></h2>    
+		<button type="button" id="populate" class="btn btn-default" style="margin-bottom: 20px;">Populate Test Data</button>	
+
+		<form class="form-horizontal">
+		<fieldset>
+			<legend>Donor Information</legend>
+    	
+			<!-- Text input-->
+			<div class="form-group">
+			  <label class="col-md-4 control-label" for="cc.name">Name</label>  
+			  <div class="col-md-5">
+			  <input id="cc-name" name="cc-name" type="text" placeholder="Name on Credit Card" class="form-control input-md" required="">
+			  </div>
+			</div>
+
+			<!-- Credit Card Number -->
+			<div class="form-group">
+			  <label class="col-md-4 control-label" for="cc-number">Credit Card Number</label>
+			  <div class="col-md-5">
+			    <div class="input-group">
+			      <input id="cc-number" name="cc-number" class="form-control" type="text" placeholder="" required="">
+				        <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+			    </div>
+			    
+			  </div>
+			</div>
+
+			<!-- Expiry -->
+			<div class="form-group">
+			  <label class="col-md-4 control-label" for="cc-ex-month">Expires</label>
+			  <div class="col-md-2">
+			    <select id="cc-ex-month" name="cc-ex-month" class="form-control" required="">
+			      <option selected="selected" disabled="disabled">Month</option>
+			      <option value="1">1 - January</option>
+			      <option value="2">2 - February</option>
+			      <option value="3">3 - March</option>
+			      <option value="4">4 - April</option>
+			      <option value="5">5 - May</option>
+			      <option value="6">6 - June</option>
+			      <option value="7">7 - July</option>
+			      <option value="8">8 - August</option>
+			      <option value="9">9 - September</option>
+			      <option value="10">10 - October</option>
+			      <option value="11">11 - November</option>
+			      <option value="12">12 - December</option>
+			    </select>
+			  </div>
+			  <div class="col-md-2">
+			    <select id="cc-ex-year" name="cc-ex-year" class="form-control" required="">
+			      <option selected="selected" disabled="disabled">Year</option>
+			      <option value="2014">2014</option>
+			      <option value="2015">2015</option>
+			      <option value="2016">2016</option>
+			      <option value="2017">2017</option>
+			      <option value="2018">2018</option>
+			      <option value="2019">2019</option>
+			      <option value="2020">2020</option>
+			      <option value="2021">2021</option>
+			      <option value="2022">2022</option>
+			      <option value="2023">2023</option>
+			      <option value="2024">2024</option>
+			      <option value="2025">2025</option>
+			      <!-- should dynamically add +15ish years -->
+			    </select>
+			  </div>
+			</div>
+
+			<!-- Security Code -->
+			<div class="form-group">
+			  <label class="col-md-4 control-label" for="cc-csc">Security Code</label>  
+			  <div class="col-md-1">
+				  <input id="cc-csc" name="cc-csc" type="text" placeholder="" class="form-control input-md" required="" maxlength="4">
+			  </div>
+			  <span id="security-code-button" class="glyphicon glyphicon-question-sign" title="3 or 4 digit.... https://secure.societyhq.com/spa/security-code-cvv.jpg"></span>
+			</div>
+
+
+
+			<!-- Button -->
+			<div class="form-group">
+			  <label class="col-md-4 control-label" for="donate"></label>
+			  <div class="col-md-4">
+			    <button id="cc-donate" name="donate" class="btn btn-success">Donate Now!</button>
+			  </div>
+			</div>
+
+		</fieldset>
+		</form>
+
+    </div>
+</div>
+
+
+
+<br><br><br><br><br><br>
+
+<!--transaction history-->
+<div class="container">
+    <div class="row">
+    	<h2><a name="history">Transaction History</a></h2>
+
+    	<table class="table table-striped">
+	    	<thead>
+		        <tr>
+		          <th>#</th>
+		          <th>Date</th>
+		          <th>Donated Amount</th>
+		          <th>Funding Source</th>
+		          <th>Receipt</th>
+		        </tr>
+	      	</thead>
+	      	<tbody>
+		        <tr>
+		          <td>1</td>
+		          <td>January 1, 2014</td>
+		          <td>$10</td>
+		          <td>Credit Card: 5555</td>
+		          <td>Receipt Link</td>
+		        </tr>
+		        <tr>
+		          <td>2</td>
+		          <td>February 1, 2014</td>
+		          <td>$10</td>
+		          <td>Paypal: zacksinclair@gmail.com</td>
+		          <td>Receipt Link</td>
+		        </tr>
+		        <tr>
+		          <td>3</td>
+		          <td>March 1, 2014</td>
+		          <td>$10</td>
+		          <td>Credit Card: 2555</td>
+		          <td>Receipt Link</td>
+		        </tr>
+		      </tbody>
+
+
+    	</table>
+
+    </div>
+</div>
+
+<!--payment processing-->
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="https://js.balancedpayments.com/1.1/balanced.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function () {
+    // Callback for handling responses from Balanced
+    function handleResponse(response) {
+        // Successful tokenization
+        if (response.status_code === 201) {
+            var fundingInstrument = response.cards != null ? response.cards[0] : response.bank_accounts[0];
+
+            alert("yes");
+            // Call your backend
+            /* but not yet
+            jQuery.post("/path/to/your/backend", {
+                uri: fundingInstrument.href
+            }, function(r) {
+                // Check your backend response
+                if (r.status === 201) {
+                    // Your successful logic here from backend ruby
+                } else {
+                    // Your failure logic here from backend ruby
+                }
+            });
+*/
+        } else {
+        	alert("no");
+            // Failed to tokenize, your error logic here
+        }
+        
+        // Debuging, just displays the tokenization result in a pretty div
+        $('#response .panel-body pre').html(JSON.stringify(response, false, 4));
+        $('#response').slideDown(300);
+    }
+
+    // Click event for tokenize credit card
+    $('#cc-donate').click(function (e) {
+        e.preventDefault();
+
+        $('#response').hide();
+
+        var payload = {
+            name: $('#cc-name').val(),
+            number: $('#cc-number').val(),
+            expiration_month: $('#cc-ex-month').val(),
+            expiration_year: $('#cc-ex-year').val(),
+            security_code: $('#cc-csc').val()
+        };
+
+        // Tokenize credit card
+        balanced.card.create(payload, handleResponse);
+    });
+
+
+    // populates valid test cc info
+    $('#populate').click(function () {
+        $(this).attr("disabled", true);
+
+        $('#cc-name').val('John Doe');
+
+
+        $('#cc-number').val('4111111111111111');
+        $('#cc-ex-month').val('12');
+        $('#cc-ex-year').val('2020');
+        $('#cc-csc').val('123');
+
+    });
+});
+
+// limit cc input field to numbers
+$("#cc-number").keydown(function(e){
+    var keyPressed;
+    if (!e) var e = window.event;
+    if (e.keyCode) keyPressed = e.keyCode;
+    else if (e.which) keyPressed = e.which;
+
+    if ( keyPressed == 46 || //delete
+    	 keyPressed == 8 || //backspace
+    	 keyPressed == 9 ||  //tab
+    	 keyPressed == 27 ||  //escape
+    	 keyPressed == 13 ||  //enter
+         (keyPressed == 65 && e.ctrlKey === true) || // Allow: Ctrl+A    
+         (keyPressed >= 35 && keyPressed <= 39)  // Allow: home, end, left, right
+        ) 
+        { 
+         // let it happen, don't do anything
+         return;
+        }
+    else {
+         // Ensure that it is a number and stop the keypress. 48 to 57 are number row, 96 to 105 are numpad
+            if (e.shiftKey || (keyPressed < 48 || keyPressed > 57) && (keyPressed < 96 || keyPressed > 105 )) {
+                e.preventDefault();
+            }
+        }
+
+  });
+
+</script>
+
+
+
+User
+	Transaction
+		Timestamp
+		Campaign 
+		Type of Transaction (Recurring, One Time)
+			Recurring
+				Frequency (monthly or yearly)
+				Next Charge Date
+			One Time
+		Fee Info
+			Transaction Type (cc, ach, paypal, dogecoin)
+			Processor (Balanced, Paypal)
+			Gross Amount
+			% processing fee
+			Flat processing fee
+			Our Portion via % Fee
+			Our Portion via "added donation to us" 
+		Destination
+			Group Pool
+			Specific Cause
+
+
+
+
+
+{
+  "array": [
+    1,
+    2,
+    3
+  ],
+  "boolean": true,
+  "null": null,
+  "number": 123,
+  "object": {
+    "a": "b",
+    "c": "d",
+    "e": "f"
+  },
+  "string": "Hello World"
+}
+
+
+
+{% endblock %}
