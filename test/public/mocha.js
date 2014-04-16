@@ -3064,7 +3064,7 @@ function JSONReporter(runner) {
       , passes: passes.map(clean)
     };
 
-    console.log(JSON.stringify(obj, null, 2));
+    console.log(JSON.stringify(obj, null, 2)); // trp modified 4.15.14
   });
 }
 
