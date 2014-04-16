@@ -194,4 +194,18 @@ module.exports = function(app, passport) {
      
   });
   
+app.post('/process_charge', function(req,res){
+        var jsonobj = req.body;
+        jsonobj['server_response'] = 'OK';
+        var rpcResponse = JSON.stringify(jsonobj);
+        var contentLength = Buffer.byteLength(rpcResponse);
+        res.writeHead(contentLength ? 200 : 204, {
+          'Content-Length': String(contentLength),
+          'Content-Type': req.contentType
+        });
+        res.end(rpcResponse);
+});
+
 } // end routes function
+
+

@@ -12,13 +12,11 @@
 
     <!-- Bootstrap core CSS -->
     <link href="/static/css/bootstrap.{% if debug %}min.{% endif %}css" rel="stylesheet">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
-
 
     <!-- Custom styles for this template -->
     <link href="/static/css/app.css" rel="stylesheet">
     
-    <!-- Style from Font-Awesome for icons -->
+    <!-- Style from Font-Awesome for icons (social icons) -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
 
@@ -27,6 +25,9 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    {% block head %}{% endblock %}
+
   </head>
 
   <body>
