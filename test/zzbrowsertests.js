@@ -1,27 +1,27 @@
 
-var go = process.env.BROWSER_TESTS;
+var go = process.env.BROWSER_TEST;
 
-if(typeof(go !== 'undefined') && go === 'true'){
-    
+if(go){
+
     var phantomTimeout = 10000;
-    
+
     var exec = require('child_process').exec
     var fs   = require('fs');
     var path = require('path');
     var child = null;
     var assert = require('chai').assert;
     describe('---', function() {
-        
+
         before(function() {
             console.log('\n\n----- in phantomjs ----------------------------');
-            console.log("be sure ocdemo app is running with BROWSER_TESTS = true");
+            console.log("be sure ocdemo app is running with BROWSER_TEST=1");
         });
-        
+
         after(function() {
             console.log('----------------------------------\n\n');
         })
-        
-        
+
+
         fs.readdirSync('./test/public/tests').filter(function(file){
             // Only keep the .js files
             return file.substr(-3) === '.js';
@@ -38,7 +38,7 @@ if(typeof(go !== 'undefined') && go === 'true'){
                      var data = JSON.parse(stdout);
                      var stats = data.stats;
                      //console.dir(stats);
-                     console.log("tests: " + stats.tests + " passes: " + stats.passes + 
+                     console.log(file + " tests: " + stats.tests + " passes: " + stats.passes +
                                 " failures: " + stats.failures);
                      if(stats.failures > 0){
                          for(var i=0; i < data.failures.length; i++){
@@ -47,15 +47,15 @@ if(typeof(go !== 'undefined') && go === 'true'){
                      }
                      msg += stats.failures + " browser test(s) in " + file + " failed";
                      assert(stats.failures === 0, msg);
-                    
+
                     done();
                 });
-                
+
             })
 
         });
-        
-             
+
+
     }); // describe ...
 
 

@@ -16,7 +16,7 @@ var app = express();
 
 
 // passport, mongodb configuration
-if(process.env.BROWSER_TEST === 'true'){
+if(process.env.BROWSER_TEST){
     console.log('env = ', app.get('env'));
     var defaultDbUrl = "mongodb://127.0.0.1:27017/test";
     console.log("WARNING: test mode,using db ", defaultDbUrl);
@@ -64,7 +64,7 @@ app.use(require('less-middleware')({ src: path.join(__dirname, 'public') }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // test only.
-if( process.env.BROWSER_TEST === 'true'){
+if( process.env.BROWSER_TEST){
     console.log("Browser-based test routes added")
     app.use(express.static(__dirname + '/test/public'));
 }
