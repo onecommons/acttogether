@@ -5,7 +5,7 @@ To install
 2. install mongodb: e.g. sudo brew install mongodb; sudo mkdir -p /data/db; sudo chown `id -u` /data/db
 
 To run app, in two consoles run:
-  sudo mongod
+  ulimit -n 1024 & sudo mongod 
   DEBUG=express:* node app.js
 
 Run unit tests:

@@ -20,6 +20,7 @@ app.use(express.methodOverride());
 
 var testdata = { 
   "_id" : "testdata1",
+  '__t' : 'test'
   'a string' : 'v',
   'foo\\' : { 'ba.r' : 'v' },
   'has[1]' : 'v',

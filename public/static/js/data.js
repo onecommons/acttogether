@@ -826,7 +826,12 @@ Binder.FormBinder.prototype = {
       }
     } else {      
         value = this._parse( element.name, element.value, element );
-        accessor.set( element.name, value );      
+        if( accessor.isIndexed(element.name) ) {
+          var current = accessor.get( element.name ) ||  [];
+          current.push(value);
+          value = current;
+        }
+        accessor.set( element.name, value );
     }
     return accessor.target;
   },
