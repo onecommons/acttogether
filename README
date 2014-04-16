@@ -9,11 +9,12 @@ To run app, in two consoles run:
   DEBUG=express:* node app.js
 
 Run unit tests:
-  NODE_ENV=test mocha --reporter=list
+  NODE_ENV=test ./node_modules/.bin/mocha
 
-To run client side unit tests in phantomjs at same time, also set BROWSER_TEST=true
+To run client side unit tests in phantomjs at same time,
+also set BROWSER_TEST:
 
-BROWSER_TEST=1 NODE_ENV=test mocha --reporter=list
+BROWSER_TEST=1 NODE_ENV=test ./node_modules/.bin/mocha --reporter=list
 
 
 
