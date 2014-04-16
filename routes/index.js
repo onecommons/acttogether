@@ -4,6 +4,7 @@
 
 var utils = require('utils');
 var Item  = require('../models/item');
+var util = require('util');
 
 function getTimeLeft(target_date) {
   var difference = target_date - new Date();
@@ -43,7 +44,7 @@ function getVars(more) {
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
 
-  // if user is authenticated in the session, carry on 
+  // if user is authenticated in the session, carry on
   if (req.isAuthenticated())
     return next();
 
@@ -52,6 +53,18 @@ function isLoggedIn(req, res, next) {
 }
 
 module.exports = function(app, passport) {
+
+    // add route for browser-side testing, specifying a unitname.
+    // testname may be specified in URL with a ?testname=basetestname param;
+    // if none present, testname is assumed to be unitname-test
+    //
+    if( process.env.BROWSER_TEST){
+        app.get('/browsertest/:testname', function(req, res) {
+            res.render('browsertest.html', getVars({ // trp test will be browsertestframe.html
+                testName: req.params.testname}));
+            });
+    }
+
 
   // Home Page
   app.get('/', function(req, res) {
@@ -106,7 +119,7 @@ module.exports = function(app, passport) {
   //
   app.get('/login', function(req, res) {
     // render the page and pass in any flash data if it exists
-    res.render('login.html', { message: req.flash('loginMessage') }); 
+    res.render('login.html', { message: req.flash('loginMessage') });
   });
 
   app.post('/login', passport.authenticate('local-login', {
@@ -155,19 +168,19 @@ module.exports = function(app, passport) {
   }));
 
 
-  // 
+  //
   // post detail
   //
   app.get('/post/:id', function(req,res){
-        
+
       // get the post and comments.
       var postItem = {}
         , commentItems = [];
-        
+
 
       Item.find({ parent: "item_" + req.params.id}, function(err, Items){
           for(var i=0, n=Items.length; i < n; i++){
-             if(Items[i].type === 'post'){ 
+             if(Items[i].type === 'post'){
                   postItem = Items[i];
                   console.log(postItem);
                   console.log("postItem.type", postItem.type);
@@ -184,16 +197,16 @@ module.exports = function(app, passport) {
            });
 
       });
-      
+
     /*
       res.render('post.html', {
         post: {contents: "lskdjflskdjf"}, // postItem.contents, // postItem,
         comments: commentItems
-      }); 
+      });
      */
-     
+
   });
-  
+
 app.post('/process_charge', function(req,res){
         var jsonobj = req.body;
         jsonobj['server_response'] = 'OK';

@@ -246,6 +246,13 @@ derived from http://code.google.com/p/js-binding/source/browse/trunk/test/binder
           binder.deserialize();
           assertJsonEqual({}, obj);
         },
+
+        testSerializeFormsArrayNames : function() {
+          var obj = {};
+          var binder = new Binder.FormBinder( document.getElementById( "testForm3" ), obj );
+          binder.serialize();
+          assertJsonEqual({"array":[1,2,3]}, obj);
+        },
         
         testSerializeFields: function() {
             var obj = {
@@ -400,6 +407,12 @@ derived from http://code.google.com/p/js-binding/source/browse/trunk/test/binder
         <input id="fShopping" type="checkbox" name="interests[]" value="shopping"/>Shopping<br/>
         <input id="fFood" type="checkbox" name="interests[]" value="food"/>Food<br/>
         <input id="fFinance" type="checkbox" name="interests[]" value="finance"/>Finance<br/>
+  </form>
+
+  <form  id="testForm3">
+    <button name='array[]' class="type[number]" value='1'>1</button>
+    <button itemprop='selected' name='array[]' class="type[number]" value='2'>2</button>
+    <button name='array[]' class="type[number]" value='3'>3</button>
   </form>
         
 <div class='save' id='microdata1'>

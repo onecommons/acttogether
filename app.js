@@ -10,21 +10,30 @@ var swig = require('swig');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash = require('connect-flash');
+var util = require('util');
 
 var app = express();
 
+
 // passport, mongodb configuration
-var configDB = null;
-try {
-  configDB = require('./config/database.js');
-} catch (err) {
-  if (err.code == "MODULE_NOT_FOUND") {
-    var defaultDbUrl = "mongodb://127.0.0.1:27017/ocdemo";
-    console.log("WARNING: ./config/database.js not found, using", defaultDbUrl);
+if(process.env.BROWSER_TEST){
+    console.log('env = ', app.get('env'));
+    var defaultDbUrl = "mongodb://127.0.0.1:27017/test";
+    console.log("WARNING: test mode,using db ", defaultDbUrl);
     configDB = {url: defaultDbUrl}
-  } else {
-    throw err;
-  }
+} else {
+    var configDB = null;
+    try {
+      configDB = require('./config/database.js');
+    } catch (err) {
+      if (err.code == "MODULE_NOT_FOUND") {
+        var defaultDbUrl = "mongodb://127.0.0.1:27017/ocdemo";
+        console.log("WARNING: ./config/database.js not found, using", defaultDbUrl);
+        configDB = {url: defaultDbUrl}
+      } else {
+        throw err;
+      }
+    }
 }
 
 mongoose.connect(configDB.url); // connect to our database
@@ -54,7 +63,14 @@ app.use(app.router);
 app.use(require('less-middleware')({ src: path.join(__dirname, 'public') }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// development only
+// test only.
+if( process.env.BROWSER_TEST){
+    console.log("Browser-based test routes added")
+    app.use(express.static(__dirname + '/test/public'));
+}
+
+
+// development only g
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
