@@ -4,6 +4,7 @@
 
 var utils = require('utils');
 var Item  = require('../models/item');
+var util = require('util'); 
 
 function getTimeLeft(target_date) {
   var difference = target_date - new Date();
@@ -52,6 +53,18 @@ function isLoggedIn(req, res, next) {
 }
 
 module.exports = function(app, passport) {
+    
+    // add route for browser-side testing, specifying a unitname.
+    // testname may be specified in URL with a ?testname=basetestname param;
+    // if none present, testname is assumed to be unitname-test
+    //
+    if( process.env.BROWSER_TEST === 'true'){
+        app.get('/browsertest/:testname', function(req, res) {
+            res.render('browsertest.html', getVars({ // trp test will be browsertestframe.html
+                testName: req.params.testname}));
+            });
+    }
+    
 
   // Home Page
   app.get('/', function(req, res) {
