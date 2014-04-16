@@ -13,7 +13,7 @@ Run unit tests:
 
 To run client side unit tests in phantomjs at same time, also set BROWSER_TEST=true
 
-BROWSER_TEST=true NODE_ENV=test mocha --reporter=list
+BROWSER_TEST=1 NODE_ENV=test mocha --reporter=list
 
 
 
