@@ -11,6 +11,7 @@
 
   <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
   <script src="http://chaijs.com/chai.js"></script>
+  <script src="http://www.promisejs.org/implementations/promise/promise-3.2.0.js"></script>
   <script src="/mocha.js"></script>
 
   <script>
@@ -24,17 +25,30 @@
     loadUnit: function(path){
       var script = document.createElement('script');
       script.src = path;
-      document.write(script.outerHTML);
+      $('.loaded_unit').append(script); 
     },
   }
 
+// utility for tests, propagate errors for better reporting by putting yr assertions in here.
+function check( done, f ) {
+  try {
+    f()
+    done()
+  } catch( e ) {
+    done( e )
+  }
+}
+
   </script>
+
+ <div class= "loaded_unit"></div>
 
   <!-- this path /tests/ is equiv of  test/public/tests -->
   <script src="/tests/{{testName}}"></script>
 
   <script>
-    mocha.checkLeaks();
+  $(document).ready(function() {
+    // mocha.checkLeaks();
     mocha.globals(['jQuery']);
     if (window.mochaPhantomJS) {
       // using OUR mocha.js which has a json reporter that writes to console.
@@ -42,7 +56,10 @@
       mochaPhantomJS.run();
     } else {
       // standard browser invocation.
-      mocha.reporter('html').run(); }
+      mocha.reporter('html').run(); 
+    }
+
+  });
   </script>
 
 
