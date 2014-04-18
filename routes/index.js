@@ -68,7 +68,12 @@ module.exports = function(app, passport) {
 
   // Home Page
   app.get('/', function(req, res) {
-    res.render('index', getVars({
+    res.render('index', getVars());
+  });
+
+  // Render 'about' static pages
+  app.get('/about/:pagename', function(req, res) {
+    res.render(req.params.pagename, getVars({
       categories: [{
         id: 1,
         title: "Environment",
@@ -107,11 +112,6 @@ module.exports = function(app, passport) {
         activity: []
       }, ]
     }));
-  });
-
-  // Render 'about' static pages
-  app.get('/about/:pagename', function(req, res) {
-    res.render(req.params.pagename, getVars());
   });
 
   //
