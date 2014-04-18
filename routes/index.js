@@ -2,9 +2,12 @@
  * GET home page.
  */
 
-var utils = require('utils');
-var Item  = require('../models/item');
-var util = require('util');
+var utils     = require('utils');
+var Item      = require('../models/item');
+var util      = require('util');
+var datastore = require('datastore');
+var jsonrpc   = require('jsonrpc');
+
 
 function getTimeLeft(target_date) {
   var difference = target_date - new Date();
@@ -206,5 +209,15 @@ module.exports = function(app, passport) {
      */
 
   });
+
+  // 
+  // data request endpoints
+  //
+  app.post('/datarequest', function (req, res, next) {  
+      var ds = new datastore.MongooseDatastore();
+      jsonrpc.router(req, res, next, new datastore.RequestHandler(ds),
+        datastore.pJSON.stringify);
+    });
+
 
 } // end routes function

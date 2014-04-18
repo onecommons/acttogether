@@ -17,10 +17,22 @@ var app = express();
 
 // passport, mongodb configuration
 if(process.env.BROWSER_TEST){
+
+    // doing browser tests: set up db, make a few models we will need.
     console.log('env = ', app.get('env'));
     var defaultDbUrl = "mongodb://127.0.0.1:27017/test";
     console.log("WARNING: test mode,using db ", defaultDbUrl);
     configDB = {url: defaultDbUrl}
+
+    // create some  models we will need for testing.
+    mongoose.model('DbTest1', 
+      new mongoose.Schema({
+        __t: String,
+         _id: String,
+        prop1: []
+        },{strict: false}) //'throw'
+    );
+    
 } else {
     var configDB = null;
     try {

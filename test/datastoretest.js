@@ -6,6 +6,17 @@ var should = require('should')
 var DBRef = mongodb.DBRef, ObjectID = mongodb.ObjectID;
 
 describe('datastore', function(){
+
+  after(function(done){
+    var db = mongoose.connection;
+     db.db.dropCollection('test1', function(err, result) { 
+        //may or may not exits, if it doesn't err will be set
+        //console.log("dropCollection", err, result);
+        done();
+      });
+
+  });
+
   describe('.pJSON', function(){
     
   it('should escape strings that look like objectids',  function(){
