@@ -74,6 +74,33 @@ describe('createModel', function(){
         });
 
    });
-   
+
+ it('should make a model and instance based on a schema and a derivative from it', function(done) {
+        var s2 = new mongoose.Schema({
+             //__t: String,
+             // _id: String,
+             prop1: []
+             }, {strict: 'throw'});
+
+        var Test2 = createModel("Test2", s2);
+        var TestDeriv = createModel("TestDeriv", {parent: String}, Test2);
+        var td = new TestDeriv();
+        td.parent = 'test';
+        var t = new Test2();
+        t.save(function(err, doc) {
+            assert(!err);
+            assert(doc instanceof Test2);
+            td.save(function(err, doc) {
+              Test2.findOne(function(err,doc) {
+                  assert.instanceOf(doc, Test2);
+                  TestDeriv.findOne(function(err,doc){
+                      assert.instanceOf(doc,TestDeriv);
+                      done();
+                  });
+               });
+           });
+        });        
+    });
+       
  }); // describe...
 
