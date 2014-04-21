@@ -1,0 +1,297 @@
+/* modules */
+@import "modules/mixins";
+@import "modules/elements";
+
+/* vendor */
+@import "bootstrap.min.css";
+@import "bootstrap-overrides";
+
+/* config variables */
+@import "partials/config";
+
+/* layout */
+@import "partials/layout";
+
+/* pages */
+@import "partials/pages/index";
+@import "partials/pages/index2";
+@import "partials/pages/services";
+
+.activity-footer {
+background-color: $orange;
+}
+
+/* customizing -AD */
+
+h2, h3 {
+	font-family: $lato;
+	letter-spacing: -0.5px;
+}
+
+.navbar.white .navbar-header .navbar-brand {
+	padding-top: 0px;
+}
+
+#home2 #pricing, #home2 #clients {
+	background: $brown-bg;
+}
+
+#home2 #pricing .header h3 {
+	letter-spacing: 1px;
+}
+
+#footer-white {
+	background: #e8e5d6;
+}
+
+#home2 #features #aboutus .header h2, 
+#home2 #features .header h2,
+#services #grid-second .header h2 {
+	font-family: $lato;
+	font-weight: 400; 
+	letter-spacing: 0px;
+	line-height: 1.3em;
+	font-size: 36px;
+	color: $brown;
+	text-align: center;
+}
+
+#home3 #grid-first .header h3 {
+	font-size: 36px;
+	color: $brown;
+}
+
+.titling {
+	font-family: "Convergence", sans-serif, Arial;
+	font-size: 16px;
+	color: pink;
+}
+
+#home3 #grid-first .sections .section .info strong {
+	color: $brown;	
+}
+
+#home2 #features-hover .features .feature.active strong, #home2 #features-hover .features .feature:hover strong {
+	color: $brown;
+}
+
+#home2 #features .feature .info h4 {
+	color: $brown;
+}
+
+#home2 #features .feature .info p {
+	color: #766e62;
+}
+
+#home2 #features-hover .features .feature.active p, #home2 #features-hover .features .feature:hover p {
+	color: #766e62;	
+}
+
+#home3 #grid-first .sections .section .info {
+	& p {
+	color: #766e62;	
+	}
+	& strong {
+		color: darken( $purple, 10% );
+
+	}
+}
+
+#footer-white .menu ul li a {
+	color: $brown;
+}
+
+#footer-white .menu ul li .hiring {
+	background: $orange;	
+}
+
+.hero-text {
+font-size: 1.8em;
+}
+
+.highlight {
+padding: 12px 18px;
+line-height: 2em;
+white-space: nowrap;
+color: #fff;
+background-color: $orange;
+text-shadow: none;
+}
+
+.highlight-sm {
+padding: 6px 9px;
+line-height: 1em;
+white-space: nowrap;
+color: #fff;
+background-color: #555;
+text-shadow: none;
+}
+
+#home2 .button-outline {
+	@extend .button-outline;
+}
+
+#home2 #cta a {
+	font-weight: 300;
+}
+
+
+/** Add services styles **/
+
+#services .info strong {
+	font-family: $helvetica;
+	font-size: 1.4em !important;
+}
+
+.widget-thumbnail {
+	background: #e7e6e6;
+	padding: 14px;
+		h3 {
+			margin-top: 3px;
+			margin-bottom: 5px;
+		}
+		p {
+			margin-top: 6px;
+			margin-bottom: 14px;
+		}
+		.caption a {
+			width: 100%;
+			color: #fff;
+			font-weight: bold;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+		}
+		.ratings {
+			margin-top: 5px;
+			margin-bottom: 15px;
+		}
+	}
+	
+.funding {
+	font-size: 1.6em;
+	position: absolute;
+	top: -11px;
+	left: 2px;
+	padding: 6px 14px;
+	background-color: $green;
+}
+
+.label-info {
+	background-color: #77b3d4;
+}
+.label-success {
+	background-color: #76c2af;
+}
+.label-danger {
+	background-color: #c75c5c;
+}
+
+
+
+.button-outline2 {
+	
+	color: $brown;
+	background-color: #eeaa34;
+		
+}
+
+.button-outline3 {
+	
+	color: $brown;
+	background-color: white;
+	
+	
+}
+
+#services #grid-second .features .feature img {
+max-width: 60px;
+position: relative;
+top: 10px;
+}
+
+.conversations {
+	
+	p {
+
+	}
+	img {
+	
+	max-width: 200px
+		
+	}
+}
+
+/* Chat window styles */
+
+.chat
+{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.chat li
+{
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px dotted #B3A9A9;
+}
+
+.chat li.left .chat-body
+{
+    margin-left: 60px;
+}
+
+.chat li.right .chat-body
+{
+    margin-right: 60px;
+}
+
+
+.chat li .chat-body p
+{
+    margin: 0;
+    color: #777777;
+}
+
+.panel .slidedown .glyphicon, .chat .glyphicon
+{
+    margin-right: 5px;
+}
+
+.chat-img img.img-circle {
+	width: 54%;
+}
+
+/* end of chat styles */
+
+.environment {
+		.widget-thumbnail {
+			background: #eaf4f8;
+			h3 {
+				margin-top: 13px;
+			}
+			p {
+				margin-bottom: 25px;
+			}
+			.button-outline2 {
+				width: 100%;
+				color: #fff;
+				font-weight: bold;
+				text-transform: uppercase;
+				letter-spacing: 1px;
+			}
+		}
+		
+		.label {
+			font-size: 50%;
+			vertical-align: super;
+		}
+		hr {
+			border-top: 1px solid #ccc;
+		}
+		.footer-deets {
+			margin: 10px 0px 10px;
+		}
+}
+
