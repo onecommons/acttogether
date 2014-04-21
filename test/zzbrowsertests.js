@@ -1,9 +1,13 @@
 
+// zzbrowsertests.js: this is a "test" that invokes one by one the full suite of browser-side tests in test/public/tests using phantomjs.
+
 var go = process.env.BROWSER_TEST;
 
 if(go){
 
     var phantomTimeout = 10000;
+
+    var mongoose = require('mongoose');
 
     var exec = require('child_process').exec
     var fs   = require('fs');
@@ -28,16 +32,25 @@ if(go){
 
         }).forEach(function(file){
             it(file, function(done) {
+
+                var db;
+
+                mongoose.disconnect(function() {
+                    db = mongoose.connect('mongodb://localhost/test');
+                });
+
                 this.timeout(phantomTimeout);
-                var theLine = "mocha-phantomjs -R json http://localhost:3000/browsertest/" + file;
-                // console.log(theLine);
-                child = exec(theLine,
+                var execLine = "mocha-phantomjs -R json http://localhost:3000/browsertest/" + file;
+                // console.log(execLine);
+                child = exec(execLine,
                   function (error, stdout, stderr) {
-                      var msg = '';
+
+                     // report on results.
+                     var msg = '';
                      // console.log("[error]", error, '[stdout]',stdout, '[stderr]',stderr);
                      var data = JSON.parse(stdout);
                      var stats = data.stats;
-                     //console.dir(stats);
+                     // console.dir(stats);
                      console.log(file + " tests: " + stats.tests + " passes: " + stats.passes +
                                 " failures: " + stats.failures);
                      if(stats.failures > 0){
@@ -48,7 +61,14 @@ if(go){
                      msg += stats.failures + " browser test(s) in " + file + " failed";
                      assert(stats.failures === 0, msg);
 
-                    done();
+                     done();
+                    /*
+                    db.connection.db.dropDatabase(function(){
+                      db.connection.close(function(){
+                         done();
+                      });
+                    });
+                    */
                 });
 
             })

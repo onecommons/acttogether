@@ -106,7 +106,7 @@ Txn.prototype = {
         function ajaxCallback(data, textStatus) {
             //responses should be a list of successful responses
             //if any request failed it should be an http-level error
-            konsole.log("datarequest", data, textStatus, 'dbdata.'+txnId, comment);
+           // konsole.log("datarequest", data, textStatus, 'dbdata.'+txnId, comment);
             if (textStatus == 'success') {
                 $(elem).trigger('dbdata.'+txnId, [data, request, comment]);
                 $(elem).trigger('dbdata-*', [data, request, comment]);

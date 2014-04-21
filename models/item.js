@@ -2,8 +2,9 @@
 
 var mongoose = require('mongoose');
 var bcrypt   = require('bcrypt-nodejs');
+var createModel = require('../lib/createmodel');
 
-// define the schema for our user model
+// define the schema for our item model
 var itemSchema = mongoose.Schema({
     type: String,  // post, comment, 
     _id: String,
@@ -14,4 +15,4 @@ var itemSchema = mongoose.Schema({
 });
 
 // create the model for users and expose it to our app
-module.exports = mongoose.model('Item', itemSchema);
+module.exports = createModel('Item', itemSchema);
