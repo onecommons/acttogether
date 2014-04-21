@@ -193,10 +193,8 @@ module.exports = function(app, passport) {
                     commentItems.push(Items[i]);
                 }
           }
-          // console.log(postItem, commentItems);
-          var datestr = moment(postItem.modDate).format( "MMMM DD YYYY");
-          console.dir(datestr);
-         res.render('blogpost.html', {
+           var datestr = moment(postItem.modDate).format( "MMMM DD YYYY");
+           res.render('blogpost.html', {
              post: postItem,
              post_last_edit: datestr,
              comments: commentItems
