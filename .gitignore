@@ -1,6 +1,9 @@
 *.bak
 .DS_Store
+public/static/css/app.css
+public/static/css/theme.css
 node_modules
+.sass-cache
 !node_modules/dataForm.js
 !node_modules/datastore.js
 !node_modules/jsonrpc.js
