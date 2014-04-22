@@ -7,11 +7,13 @@ var createModel = require('../lib/createmodel');
 // define the schema for our user model
 var userSchema = mongoose.Schema({
 
+    displayName       : String,
+    avatarUrl         : String,
+
     local            : {
         email        : String,
         password     : String,
-        name         : String
-    },
+     },
     facebook         : {
         id           : String,
         token        : String,

@@ -13,6 +13,7 @@ var express = require('express');
 var routes = require('./routes');
 var http = require('http');
 var path = require('path');
+var consolidate = require('consolidate');
 var swig = require('swig');
 var mongoose = require('mongoose');
 var passport = require('passport');
@@ -63,7 +64,7 @@ require('./config/passport')(passport); // pass passport for configuration
 app.set('port', process.env.PORT || 3000);
 
 app.set('views', path.join(__dirname, 'views'));
-app.engine('html', swig.renderFile);
+app.engine('html', consolidate.swig);
 swig.setDefaults({ cache: false });
 app.set('view engine', 'html');
 
@@ -80,6 +81,7 @@ app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
 app.use(app.router);
+
 app.use(require('less-middleware')({ src: path.join(__dirname, 'public') }));
 app.use(require('sass-middleware')({
   src: path.join(__dirname, 'public')
@@ -98,11 +100,24 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+
 //
 // routes
 //
 routes(app, passport);
 
+// app.use(require('express-domain-middleware')); // to better handle errors without crashing node
+// error handler
+// app.use(function(err,req,res,next){
+//   console.error("An error occurred:", err.message);
+//   console.error("err.stack: ", err.stack);
+//   res.send(500);
+// });
+
 http.createServer(app).listen(app.get('port'), 'localhost', function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+
+ 
+
+

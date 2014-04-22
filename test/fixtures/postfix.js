@@ -7,11 +7,11 @@
 
 
 // add a few users.
-db.users.insert({ _id: '@user@100', local: { name: 'Guy 100'}});
-db.users.insert({ _id: '@user@101', local: { name: 'Guy 101'}});
-db.users.insert({ _id: '@user@102', local: { name: 'Guy 102'}});
-db.users.insert({ _id: '@user@103', local: { name: 'Guy 103'}});
-db.users.insert({ _id: '@user@104', local: { name: 'Guy 104'}});
+db.users.insert({ _id: '@user@100', displayName: 'Guy 100'});
+db.users.insert({ _id: '@user@101', displayName: 'Guy 101'});
+db.users.insert({ _id: '@user@102', displayName: 'Guy 102'});
+db.users.insert({ _id: '@user@103', displayName: 'Guy 103'});
+db.users.insert({ _id: '@user@104', displayName: 'Guy 104'});
 
 
 // add blog posts and comments.
