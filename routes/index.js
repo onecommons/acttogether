@@ -8,6 +8,10 @@ var util      = require('util');
 var datastore = require('datastore');
 var jsonrpc   = require('jsonrpc');
 var moment    = require('moment');
+var cons      = require('consolidate');
+var swig      = require('swig');
+var fs        = require('fs');
+var path      = require('path');
 
 
 function getTimeLeft(target_date) {
@@ -176,28 +180,30 @@ module.exports = function(app, passport) {
   // post detail
   //
   app.get('/blogpost/:id', function(req,res){
-
       // get the post and comments.
       var postItem = {}
-        , commentItems = [];
+        , commentItems = []
+        , theUser = { _id: '@user@100'}; // vile hack TRP
 
       Item
         .find({ parent: '@post@'+req.params.id})
         .populate('creator')
         .exec(function(err,Items) {
-          if(err) { console.log(err);}
+          if(err) { console.log("MONGOOSE EXEC ERROR", err);}
           for(var i=0, n=Items.length; i < n; i++){
-               if(Items[i].__t === 'post'){
+               if(Items[i].__t === 'Post'){
                     postItem = Items[i];
                 } else {
                     commentItems.push(Items[i]);
                 }
           }
+           console.log(postItem, commentItems);
            var datestr = moment(postItem.modDate).format( "MMMM DD YYYY");
            res.render('blogpost.html', {
              post: postItem,
              post_last_edit: datestr,
-             comments: commentItems
+             comments: commentItems,
+             user: theUser  // vile hack TRP to keep going.
          });
 
       });
@@ -213,5 +219,36 @@ module.exports = function(app, passport) {
         datastore.pJSON.stringify);
     });
 
+
+ // compiled partial template endpoint
+ app.get('/jswig/:tmpl', function(req,res,next){
+    // look for a <tmpl>.html file, compile it into js and return it.
+    var thePath = __dirname + '/../views/partials/' + req.params.tmpl + '.html';
+    var tpl;
+
+    fs.exists(thePath, function(exists){
+      if(!exists) {
+        res.send('404', "File not found: " + path.basename(thePath));
+        return;
+      } else {
+        fs.readFile(thePath, function (err, data) {
+          if (err) {
+            throw err; return;
+          }
+          try 
+          {
+           tpl = swig.precompile(data.toString()).tpl.toString().replace('anonymous', '');
+          } catch(err) {
+            console.log("swig error: ", err);
+            res.send('500', "Swig " + err);
+            return;
+          }
+          console.log(tpl); 
+          res.type('application/javascript');
+          res.send(tpl);
+        });
+      }
+    });
+ }); // app.get('/jswig/:tmpl'...)
 
 } // end routes function

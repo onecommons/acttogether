@@ -1,5 +1,6 @@
 
 // zzbrowsertests.js: this is a "test" that invokes one by one the full suite of browser-side tests in test/public/tests using phantomjs.
+// Why 'zz'?  To make it run last!
 
 var go = process.env.BROWSER_TEST;
 

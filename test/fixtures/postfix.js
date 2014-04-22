@@ -18,7 +18,7 @@ db.users.insert({ _id: '@user@104', displayName: 'Guy 104'});
 for(var j =1; j < 5; j++){
 
 	db.items.insert({
-		__t: 'post', 
+		__t: 'Post', 
 		_id:'@post@'+ j, 
 		title:'title post'+j, 
 		content: 'content post '+j, 
@@ -31,7 +31,7 @@ for(var j =1; j < 5; j++){
 	for(var i=0; i< 3; i++){
 		var id = j*100 + i;
 		db.items.insert({
-			__t: 'comment',
+			__t: 'Comment',
 			_id:'@comment@'+ id,
 		    title:'title comment'+i+' on post '+j, 
 			content: 'content comment'+i+' on post '+j,

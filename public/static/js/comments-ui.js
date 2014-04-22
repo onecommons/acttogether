@@ -62,10 +62,9 @@ $(document).ready(function() {
 	});
 
 	$('#add-comment').click(function(){
-		alert('dbCreate');
-		$('#create-commment').dbCreate(function(data){
-			console.log("data back: ", data);
-		});
+		// alert('dbCreate');
+		$('#create-comment').dbCreate(function(data){console.log("databack", data)});
+		location.reload();  // temporary solution.
 
 	});
 

@@ -33,9 +33,10 @@
           <i class="icon-comments item-comments" title="19 Comments">19</i>
           <span class="profile-thumb">
             <a href="#" title="View profile of user">
-              <i class="icon-profile"></i><!--replace with profile img-->{{post.creator.local.name}}
+              <i class="icon-profile"></i><!--replace with profile img-->
             </a>
           </span>
+          <span class="item-creator">{{post.creator.displayName}}</span>
           <span class="item-stats">last edit <span class="item-date">{{post_last_edit}}</span></span>
         </div>
       </div><!-- end item section-body -->        
@@ -43,6 +44,7 @@
       <div class="section-body comment-entry">
           <div class="header">Add comment</div>
           <form id="create-comment">
+            <input type="hidden" name="creator" value="{{user._id}}" />
             <input type="hidden" name="parent" value="{{post._id}}" />
             <input type="hidden" name= "__t" value= "Comment" /></input>
            <textarea class="comment-entry-field" name= "content" id="new-comment-text"></textarea>
@@ -70,11 +72,12 @@
           <div class="item-info">
             <span class="profile-thumb">
               <a href="#" title="View profile of user">
-                <i class="icon-profile"></i><!--replace with profile img-->{{comment.creator.local.name}}
+                <i class="icon-profile"></i><!--replace with profile img-->
               </a>
             </span>
-            <span class="item-time">32 minutes ago</span>
+            <span class="item-creator">{{comment.creator.displayName}}</span>
             <span class="item-stats">last edit <span class="item-date">Feb 23 2012</span></span>
+            <span class="item-time">32 minutes ago</span>
           </div>
           <div class="interaction">                
               <i class="icon-up" title="Vote up"></i>
