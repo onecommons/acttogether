@@ -105,9 +105,9 @@ describe('datastore', function(){
  
      it('create with user-defined ids',  function(done){
       assert(ds);
-      ds.create('{"_id": "Test1@1","prop": "test"}', function(err, doc) {
+      ds.create('{"_id": "@Test1@1","prop": "test"}', function(err, doc) {
         assert(!err, JSON.stringify(err));
-        assert.deepEqual(doc.toObject(), {"__v":0,"_id":"Test1@1","prop":"test","prop1":[]});
+        assert.deepEqual(doc.toObject(), {"__v":0,"_id":"@Test1@1","prop":"test","prop1":[]});
         done();
       });
     });
@@ -210,7 +210,7 @@ describe('datastore', function(){
         .post('/')
         //.set('Content-Type', 'application/json') //unnecessary since its the default
         .send(
-          [{"jsonrpc":"2.0","method":"create","params":{"_id":"Test1@2","prop1":"adds a value to prop1"},"id":05968226976111071},{"jsonrpc":"2.0","method":"transaction_info","params":{"comment":"created $new05968226976111071"},"id": 49884485029342773}]
+          [{"jsonrpc":"2.0","method":"create","params":{"_id":"@Test1@2","prop1":"adds a value to prop1"},"id":05968226976111071},{"jsonrpc":"2.0","method":"transaction_info","params":{"comment":"created $new05968226976111071"},"id": 49884485029342773}]
           )
         .expect('[{"jsonrpc":"2.0","id":5968226976111071,"result":{"__v":0,"_id":"@Test1@2","prop1":["adds a value to prop1"]}},{"jsonrpc":"2.0","id":49884485029342776,"result":{}}]', done);
       });
@@ -280,7 +280,7 @@ describe('datastore', function(){
       assert(ds);
       ds.create('{"_id": "@1","prop": "test"}', function(err, doc) {
         assert(!err, JSON.stringify(err));
-        assert.deepEqual(doc, [{"_id":"1","prop":"test"}]);
+        assert.deepEqual(doc, [{"_id":"@1","prop":"test"}]);
         done();
       });
     });
@@ -318,7 +318,7 @@ describe('datastore', function(){
         .post('/')
         //.set('Content-Type', 'application/json') //unnecessary since its the default
         .send(
-          [{"jsonrpc":"2.0","method":"create","params":{"_id":"2","prop1":"adds a value to prop1"},"id":05968226976111071},{"jsonrpc":"2.0","method":"transaction_info","params":{"comment":"created $new05968226976111071"},"id": 49884485029342773}]
+          [{"jsonrpc":"2.0","method":"create","params":{"_id":"@2","prop1":"adds a value to prop1"},"id":05968226976111071},{"jsonrpc":"2.0","method":"transaction_info","params":{"comment":"created $new05968226976111071"},"id": 49884485029342773}]
           )
         .expect('[{"jsonrpc":"2.0","id":5968226976111071,"result":[{"_id":"@2","prop1":"adds a value to prop1"}]},{"jsonrpc":"2.0","id":49884485029342776,"result":{}}]', done);
       });
