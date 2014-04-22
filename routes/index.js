@@ -7,6 +7,7 @@ var Item      = require('../models/item');
 var util      = require('util');
 var datastore = require('datastore');
 var jsonrpc   = require('jsonrpc');
+var moment    = require('moment');
 
 
 function getTimeLeft(target_date) {
@@ -174,41 +175,34 @@ module.exports = function(app, passport) {
   //
   // post detail
   //
-  app.get('/post/:id', function(req,res){
+  app.get('/blogpost/:id', function(req,res){
 
       // get the post and comments.
       var postItem = {}
         , commentItems = [];
 
-
-      Item.find({ parent: "item_" + req.params.id}, function(err, Items){
+      Item
+        .find({ parent: '@post@'+req.params.id})
+        .populate('creator')
+        .exec(function(err,Items) {
+          if(err) { console.log(err);}
           for(var i=0, n=Items.length; i < n; i++){
-             if(Items[i].type === 'post'){
-                  postItem = Items[i];
-                  console.log(postItem);
-                  console.log("postItem.type", postItem.type);
-              } else {
-                  commentItems.push(Items[i]);
-              }
-           }
-           var testItem = new Item();
-           console.log(testItem);
-           // console.log(postItem["contents"]);
-           res.render('post.html', {
-               post: postItem,
-               comments: commentItems
-           });
+               if(Items[i].__t === 'post'){
+                    postItem = Items[i];
+                } else {
+                    commentItems.push(Items[i]);
+                }
+          }
+           var datestr = moment(postItem.modDate).format( "MMMM DD YYYY");
+           res.render('blogpost.html', {
+             post: postItem,
+             post_last_edit: datestr,
+             comments: commentItems
+         });
 
       });
-
-    /*
-      res.render('post.html', {
-        post: {contents: "lskdjflskdjf"}, // postItem.contents, // postItem,
-        comments: commentItems
-      });
-     */
-
-  });
+      
+   });
 
   // 
   // data request endpoints

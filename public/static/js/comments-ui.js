@@ -37,6 +37,16 @@ function initDisplay() {
 
 }
 
+function showComments(){
+		$('show-hide-toggle').addClass('hover');
+		$('div.comments').addClass('show-all');
+}
+
+function hideComments() {
+		$('show-hide-toggle').removeClass('hover');
+		$('div.comments').removeClass('show-all');
+}
+
 $(document).ready(function() {
 
   	initDisplay();
@@ -48,6 +58,14 @@ $(document).ready(function() {
 		} else {
 			$(this).removeClass('hover').closest('div').removeClass('show-all');
 		}
+
+	});
+
+	$('#add-comment').click(function(){
+		alert('dbCreate');
+		$('#create-commment').dbCreate(function(data){
+			console.log("data back: ", data);
+		});
 
 	});
 

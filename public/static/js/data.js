@@ -37,7 +37,7 @@ Txn.prototype = {
 
     idcounter : 0,
 
-    url : 'datarequest',
+    url : '/datarequest',
 
     execute : function(action, data, callback, elem) {
         var elem = elem || document;

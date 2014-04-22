@@ -2,6 +2,13 @@
  * Module dependencies.
  */
 
+// DON'T DO THIS HERE.. hacky time. 
+
+var Item = require('./models/item');
+var Post = require('./models/post');
+var Comment = require('./models/comment');
+
+
 var express = require('express');
 var routes = require('./routes');
 var http = require('http');
@@ -13,6 +20,7 @@ var flash = require('connect-flash');
 var util = require('util');
 
 var app = express();
+
 
 
 // passport, mongodb configuration
