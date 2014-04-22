@@ -1,7 +1,8 @@
 
 // load the unit we are testing, or more js as needed.
-BrowserTestFrame.loadUnit('/static/js/foo.js');
+// BrowserTestFrame.loadUnit('/static/js/foo.js');
 
+var foof = function(){ return 12; }
 
 // the tests. 
 describe('foo', function() {
