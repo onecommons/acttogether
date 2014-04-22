@@ -106,8 +106,8 @@ describe('createModel', function(){
              }, {strict: 'throw'});
 
         var Test2 = createModel("Test2", s2);
-        var TestDeriv = createModel("TestDeriv", {parent: String}, Test2);
-        var td = new TestDeriv();
+        var Test2Deriv = createModel("Test2Deriv", {parent: String}, Test2);
+        var td = new Test2Deriv();
         td.parent = 'test';
         var t = new Test2();
         t.save(function(err, doc) {
@@ -116,8 +116,8 @@ describe('createModel', function(){
             td.save(function(err, doc) {
               Test2.findOne(function(err,doc) {
                   assert.instanceOf(doc, Test2);
-                  TestDeriv.findOne(function(err,doc){
-                      assert.instanceOf(doc,TestDeriv);
+                  Test2Deriv.findOne(function(err,doc){
+                      assert.instanceOf(doc,Test2Deriv);
                       done();
                   });
                });
