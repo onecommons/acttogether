@@ -354,8 +354,14 @@ $(document).ready(function () {
 			 "balancedError":"name"
 			,"ccjsError":"NAME" 
 			,"fieldClass":"ccjs-name"
-			,"message":"The name on your card did not match. "
+			,"message":"Please enter the name on your credit card."
 		}	
+		,{ 
+			 "balancedError":""
+			,"ccjsError":"EXPIRATION" 
+			,"fieldClass":"ccjs-expiration"
+			,"message":"The expiration date is invalid."
+		}			
 		,{ 
 			 "balancedError":"csc"
 			,"ccjsError":"SECURITY_CODE" 
@@ -374,7 +380,8 @@ $(document).ready(function () {
 		}
 
 		$('#list-of-errors').append("<li class=" + errorclass + ">" + message + "</li>");
-		$(inputfield).addClass('ccjs-error');
+		$('.' + inputfield).addClass('ccjs-error');
+		
 	}
 
 	// XXX function removeError(){}
@@ -435,7 +442,8 @@ $(document).ready(function () {
 			_.each(invalidsArray, function(invalid) {
 				_.each(errorMessages, function(error) {
 					if (invalid == error.ccjsError) {
-						addError(error.message);
+						addError(error.message, "", error.fieldClass);
+						console.log(error.fieldClass);
 					}
 				});			
 			});
