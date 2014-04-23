@@ -11,7 +11,7 @@
     <title>OneCommons: Harnessing the power of collective action</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="/static/css/bootstrap.{% if debug %}min.{% endif %}css" rel="stylesheet">
+    <link href="/static/css/bootstrap.{% if !debug %}min.{% endif %}css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="/static/css/app.css" rel="stylesheet">
@@ -93,9 +93,9 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-1.10.2.{% if debug %}min.{% endif %}js"></script>
-    <script src="/static/js/bootstrap.{% if debug %}min.{% endif %}js"></script>
-    <script src="/static/js/bootstrap-hover-dropdown.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.{% if !debug %}min.{% endif %}js"></script>
+    <script src="/static/js/bootstrap.{% if !debug %}min.{% endif %}js"></script>
+    <script src="/static/js/bootstrap-hover-dropdown.{% if !debug %}min.{% endif %}js"></script>
 
 {% block jsfooter %}{% endblock %}
   </body>
