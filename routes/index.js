@@ -226,29 +226,34 @@ module.exports = function(app, passport) {
     var thePath = __dirname + '/../views/partials/' + req.params.tmpl + '.html';
     var tpl;
 
+
     fs.exists(thePath, function(exists){
       if(!exists) {
-        res.send('404', "File not found: " + path.basename(thePath));
+        res.send(404);
         return;
       } else {
         fs.readFile(thePath, function (err, data) {
           if (err) {
-            throw err; return;
+            next(err); 
+            return;
           }
           try 
           {
            tpl = swig.precompile(data.toString()).tpl.toString().replace('anonymous', '');
           } catch(err) {
-            console.log("swig error: ", err);
-            res.send('500', "Swig " + err);
+            next(err);
+            // console.log("swig error: ", err);
+            // res.send('500', "Swig " + err);
             return;
           }
-          console.log(tpl); 
+          // console.log(tpl); 
           res.type('application/javascript');
           res.send(tpl);
         });
       }
-    });
+    }); // fs.exists...
+
+
  }); // app.get('/jswig/:tmpl'...)
 
 } // end routes function

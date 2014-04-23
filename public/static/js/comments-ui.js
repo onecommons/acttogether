@@ -51,6 +51,12 @@ $(document).ready(function() {
 
   	initDisplay();
  
+	function addComment(){
+		// alert('adding comment');
+		$('#create-comment').dbCreate(function(data){console.log("databack", data)});
+		// location.reload();  // temporary solution.
+	}
+
 	// on Click event for toggle comments 'views' 
 	$('.show-hide-toggle').click(function(){
 		if (!$(this).hasClass('hover')) {
@@ -61,11 +67,26 @@ $(document).ready(function() {
 
 	});
 
-	$('#add-comment').click(function(){
-		// alert('dbCreate');
-		$('#create-comment').dbCreate(function(data){console.log("databack", data)});
-		location.reload();  // temporary solution.
+  $('.comment-entry-field').keyup(function() {
 
-	});
+        var empty = false;
+         if ($(this).val() == '') {
+                empty = true;
+         }
+
+        if (empty) {
+            $('#add-comment').addClass('disabled')
+         } else {
+            $('#add-comment').removeClass('disabled')
+         }
+    });
+
+	$('#add-comment').bind('click', addComment); // disable by default until there is some data in form textarea.
+
+	$('#add-comment').click(function(e){
+		if($('#add-comment').hasClass('disabled')){
+			e.preventDefault();
+		}
+	})
 
 });
