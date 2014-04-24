@@ -297,7 +297,7 @@ body {padding-top:20px;}
 <script type="text/javascript" src="/static/js/creditcardjs-v0.10.9.min.js"></script>
 <script type="text/javascript" src="/static/js/autoNumeric.js"></script>
 
-<script type="text/javascript" src="http://underscorejs.org/underscore.js"></script>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore.js"></script>
 
 <script type="text/javascript">
 
@@ -341,13 +341,13 @@ $(document).ready(function () {
 		,{
 			 "balancedError":"expiration_month"
 			,"ccjsError":"" 
-			,"fieldClass":"ccjs-month"
+			,"fieldClass":"ccjs-expiration"
 			,"message":"Your expiration month is incorrect."
 		}
 		,{
 			 "balancedError":"expiration_year"
 			,"ccjsError":"" 
-			,"fieldClass":"ccjs-year"
+			,"fieldClass":"ccjs-expiration"
 			,"message":"Your expiration year is incorrect."
 		}					
 		,{ 
@@ -383,6 +383,14 @@ $(document).ready(function () {
 		$('.' + inputfield).addClass('ccjs-error');
 		
 	}
+	// remove error highlighting on re-attempt
+	// XXX could make it so the error text is removed by 
+	//$('ccjs-name').removeClass('ccjs-error');
+	$('.ccjs-name, .ccjs-csc').on("focus", function (e) {
+	    $(this).removeClass('ccjs-error');
+	});	
+
+
 
 	// XXX function removeError(){}
 
@@ -425,7 +433,7 @@ $(document).ready(function () {
             security_code: $('#cc-csc').val()
         };
 
-		if (donationFormValid() && creditcardjs.isValid()) {
+		if (donationFormValid() && ccjs.isValid()) {
 		    /* allow form submission */
 		    {% if debug %}
 		    console.log("valid cc form");
@@ -443,7 +451,6 @@ $(document).ready(function () {
 				_.each(errorMessages, function(error) {
 					if (invalid == error.ccjsError) {
 						addError(error.message, "", error.fieldClass);
-						console.log(error.fieldClass);
 					}
 				});			
 			});
@@ -518,7 +525,7 @@ $(document).ready(function () {
 						seenError[thisErrorInfo.balancedError] = true;
 
 						//if the error returned by balanced matches one of the errors we know about, add them to the list of things the user needs to fix				
-						addError(thisErrorInfo.message, "cc-error","." + thisErrorInfo.fieldClass);
+						addError(thisErrorInfo.message, "cc-error", thisErrorInfo.fieldClass);
 					} 
 				}
 				
