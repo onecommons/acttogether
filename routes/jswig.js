@@ -9,10 +9,9 @@ module.exports = function(app){
    // compiled partial template endpoint
    app.get('/jswig/:tmpl', function(req,res,next){
       // look for a <tmpl>.html file, compile it into js and return it.
-      var thePath = __dirname + '/../views/partials/' + req.params.tmpl + '.html';
       var tpl;
-
-
+      var thePath = app.settings.views + '/partials/' + req.params.tmpl + '.html';
+ 
       fs.exists(thePath, function(exists){
         if(!exists) {
           res.send(404);

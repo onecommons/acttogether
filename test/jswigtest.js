@@ -3,6 +3,7 @@
 var express			= require('express');
 var request 		= require('supertest');
 var assert			= require('chai').assert;
+var path				= require('path');
 // var request 		= request('http://localhost:3000');
 
 describe('jswig endpoint', function(){
@@ -11,6 +12,7 @@ describe('jswig endpoint', function(){
 	var app = express();
 
 	app.use(express.bodyParser());
+	app.set('views', path.join(__dirname, '/views')); // that is, test/views.
 
 	require('../routes/jswig')(app); // add jswig routes to app.
 
