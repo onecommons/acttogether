@@ -314,6 +314,7 @@ $('body').on('click', '.donation-buttons', function (e) {
 });
 
 $(document).ready(function () {
+
 	/* HOW THIS WORKS:
 
 	The user clicks the donate button. This triggers validation of the donation form (dollar amount and frequency) and the credit card via CCJS library's Luhn check. Errors are displayed if something is wrong.
@@ -330,7 +331,6 @@ $(document).ready(function () {
 
 	// errors we know about
 	var errorMessages = [
-	// XXX add ccjsError values for exp year and month when Jack updates the library
 
 		{
 			 "balancedError":"number"
@@ -383,16 +383,13 @@ $(document).ready(function () {
 		$('.' + inputfield).addClass('ccjs-error');
 		
 	}
-	// remove error highlighting on re-attempt
-	// XXX could make it so the error text is removed by 
-	//$('ccjs-name').removeClass('ccjs-error');
+	// remove error highlighting on re-attempt for elements not handled by ccjs
+	// XXX function removeError(){} could also remove the error text from the list
+
 	$('.ccjs-name, .ccjs-csc').on("focus", function (e) {
 	    $(this).removeClass('ccjs-error');
 	});	
 
-
-
-	// XXX function removeError(){}
 
 	// returns true if it looks like the form has been filled out correctly
     function donationFormValid(){
@@ -440,6 +437,7 @@ $(document).ready(function () {
 		    {% endif %}
 
 		    balanced.card.create(payload, handleResponse);
+
 		} else {
 		    /* prevent form submission, show errors */
 		    {% if debug %}
@@ -496,8 +494,10 @@ $(document).ready(function () {
 
             //remove any previous errors
             $('#alert-cc-decline').addClass('hide');
+            $('#list-of-errors').empty();
+            
             /*
-
+			
 			XXX need to display success
 
             */
