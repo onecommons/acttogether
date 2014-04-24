@@ -2,7 +2,7 @@
 
 var swig      = require('swig');
 var fs        = require('fs');
-var getVars   = require('utils').getVars;
+var getVars   = require('../lib/utils').getVars;
 
 module.exports = function(app){
 

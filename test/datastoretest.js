@@ -1,7 +1,7 @@
 var should = require('should')
   , assert = require('assert')
   , mongodb = require('mongodb')
-  , datastore = require('datastore')
+  , datastore = require('../lib/datastore')
   , mongoose = require('mongoose');
 var DBRef = mongodb.DBRef, ObjectID = mongodb.ObjectID;
 
@@ -194,7 +194,7 @@ describe('datastore', function(){
     describe('.jsonrpc', function(){
       var express = require('express')
        , request = require('supertest')
-       , jsonrpc = require('jsonrpc');
+       , jsonrpc = require('../lib/jsonrpc');
 
       var app = express();
       app.use(express.bodyParser({reviver: datastore.pJSON.reviver}));
@@ -302,7 +302,7 @@ describe('datastore', function(){
     describe('.jsonrpc', function(){
       var express = require('express')
        , request = require('supertest')
-       , jsonrpc = require('jsonrpc');
+       , jsonrpc = require('../lib/jsonrpc');
 
       var app = express();
       app.use(express.bodyParser({reviver: datastore.pJSON.reviver}));

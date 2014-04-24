@@ -1,7 +1,7 @@
 // datarequest.js  route
 
-var datastore = require('datastore');
-var jsonrpc   = require('jsonrpc');
+var datastore = require('../lib/datastore');
+var jsonrpc   = require('../lib/jsonrpc');
 
 
 module.exports = function(app){

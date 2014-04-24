@@ -2,7 +2,7 @@
  * GET home page.
  */
 
-var utils     = require('utils');
+var utils     = require('../lib/utils');
 
 module.exports = function(app, passport) {
 
@@ -12,7 +12,7 @@ module.exports = function(app, passport) {
     require('./blogpost')(app);
     require('./browsertest')(app);
     require('./datarequest')(app);
-    require('./login')(app);
+    require('./login')(app);            // login, logout, signup, profile and auth routes.
     require('./about')(app);
 
 

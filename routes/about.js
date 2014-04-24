@@ -1,6 +1,6 @@
 // about.js  route
 
-var getVars = require('utils').getVars;
+var getVars = require('../lib/utils').getVars;
 
 module.exports = function(app){
 
