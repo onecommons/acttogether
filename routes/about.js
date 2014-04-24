@@ -1,9 +1,12 @@
 // about.js  route
 
+var getVars = require('utils').getVars;
+
 module.exports = function(app){
 
     // Render 'about' static pages
     app.get('/about/:pagename', function(req, res) {
+      console.log("handling about pagename= ", req.params.pagename);
       res.render(req.params.pagename, getVars({
         categories: [{
           id: 1,

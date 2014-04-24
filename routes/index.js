@@ -13,6 +13,7 @@ module.exports = function(app, passport) {
     require('./browsertest')(app);
     require('./datarequest')(app);
     require('./login')(app);
+    require('./about')(app);
 
 
     // Home Page
