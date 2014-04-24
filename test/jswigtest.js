@@ -1,17 +1,22 @@
 // jswigtest.js – test the jswig endpoint
 
+var express			= require('express');
 var request 		= require('supertest');
 var assert			= require('chai').assert;
-var request 		= request('http://localhost:3000');
+// var request 		= request('http://localhost:3000');
 
 describe('jswig endpoint', function(){
 
 
-	console.log('be sure app is running on localhost:3000');
+	var app = express();
+
+	app.use(express.bodyParser());
+
+	require('../routes/jswig')(app); // add jswig routes to app.
 
 	it('should get our jswigtest-pass.html correctly', function(done){
 
-		request
+		request(app)
 			.get('/jswig/jswigtest-pass')
 			.end(function(err, res){
 				if(err){
@@ -25,7 +30,7 @@ describe('jswig endpoint', function(){
 
 	it('should give 500 error on malformed swig template', function(done){
 
-		request
+		request(app)
 			.get('/jswig/jswigtest-fail')
 			.end(function(err, res){
 				// if(err){
@@ -40,7 +45,7 @@ describe('jswig endpoint', function(){
 
 	it('should give 404 error if template isnt found', function(done){
 
-		request
+		request(app)
 			.get('/jswig/some-jenky-file-that-doesnt-exist')
 			.end(function(err, res){
 				// if(err){
