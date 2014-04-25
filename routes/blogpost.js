@@ -3,6 +3,7 @@
 var moment       = require('moment');
 var fs           = require('fs');
 var Item         = require('../models/item');
+var moment       = require('moment');
 
 
 module.exports = function(app){
@@ -18,27 +19,37 @@ module.exports = function(app){
 
         Item
           .find({ parent: '@post@'+req.params.id})
+          .sort({modDate: 'desc'})
           .populate('creator')
           .exec(function(err,Items) {
             if(err) { console.log("MONGOOSE EXEC ERROR", err);}
             for(var i=0, n=Items.length; i < n; i++){
-                 if(Items[i].__t === 'Post'){
-                      postItem = Items[i];
-                  } else {
-                      commentItems.push(Items[i]);
-                  }
+
+                switch(Items[i].__t) {
+                  case 'Post':
+                    postItem = Items[i];
+                    break;
+
+                  case 'Comment':
+                    commentItems.push(Items[i]);
+                    Items[i].ago = moment(Items[i].modDate).fromNow();
+                    break;
+
+                  /* other item types? NIY */
+                }
             }
              // console.log(postItem, commentItems);
              var datestr = moment(postItem.modDate).format( "MMMM DD YYYY");
              res.render('blogpost.html', {
+               messages: req.flash('info'),
                post: postItem,
                post_last_edit: datestr,
                comments: commentItems,
                user: theUser  // vile hack TRP to keep going.
            });
 
-        });
+        }); // exec()
         
-     });
+     }); 
 
 }

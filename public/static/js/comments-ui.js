@@ -54,7 +54,7 @@ $(document).ready(function() {
 	function addComment(){
 		// alert('adding comment');
 		$('#create-comment').dbCreate(function(data){console.log("databack", data)});
-		// location.reload();  // temporary solution.
+		location.reload(true);  // temporary solution; should add comment to db and re-render comment list.
 	}
 
 	// on Click event for toggle comments 'views' 

@@ -48,7 +48,7 @@ if(go){
 
                      // report on results.
                      var msg = '';
-                     // console.log("[error]", error, '[stdout]',stdout, '[stderr]',stderr);
+                     //console.log("[error]", error, '[stdout]',stdout, '[stderr]',stderr);
                      var data = JSON.parse(stdout);
                      var stats = data.stats;
                      // console.dir(stats);

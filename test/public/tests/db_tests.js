@@ -64,7 +64,7 @@ describe('db_tests', function() {
    });
 
 	it('should delete an object', function(done) {
-	    $(document).dbCreate(pjson1, function(resp) {
+	   $(document).dbCreate(pjson1, function(resp) {
 	    	// console.log("resp",resp);
 	   		$(document).dbDestroy([resp._id], function(resp2) {
 	   			// console.log("resp2",resp2);

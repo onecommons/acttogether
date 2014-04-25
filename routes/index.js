@@ -12,7 +12,7 @@ module.exports = function(app, passport) {
     require('./blogpost')(app);
     require('./browsertest')(app);
     require('./datarequest')(app);
-    require('./login')(app);            // login, logout, signup, profile and auth routes.
+    require('./login')(app,passport);            // login, logout, signup, profile and auth routes.
     require('./about')(app);
 
 

@@ -61,7 +61,7 @@ var Test1 = mongoose.model('Test1',
     },{strict: false}) //'throw'
 );
 
-app.get('/mongotest', function(req,res){
+app.get('/mongotest', function(req,res)
 MongoClient.connect('mongodb://127.0.0.1:27017/testdb', function(err, db) {
   if(err) throw err;
 
