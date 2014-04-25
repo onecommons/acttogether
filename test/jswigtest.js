@@ -12,7 +12,7 @@ describe('jswig endpoint', function(){
 
 	app.use(express.bodyParser());
 
-	require('../routes/jswig')(app); // add jswig routes to app.
+  	app.get('/jswig/:tmpl', require('../routes/jswig')); // add jswig routes to app.
 
 	it('should get our jswigtest-pass.html correctly', function(done){
 
