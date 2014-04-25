@@ -76,17 +76,13 @@ $(document).ready(function() {
 
         if (empty) {
             $('#add-comment').addClass('disabled')
+            $('#add-comment').unbind('click');
          } else {
-            $('#add-comment').removeClass('disabled')
+            $('#add-comment').removeClass('disabled');
+            $('#add-comment').unbind('click');
+            $('#add-comment').bind('click', addComment);
          }
     });
 
-	$('#add-comment').bind('click', addComment); // disable by default until there is some data in form textarea.
-
-	$('#add-comment').click(function(e){
-		if($('#add-comment').hasClass('disabled')){
-			e.preventDefault();
-		}
-	})
 
 });
