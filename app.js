@@ -2,7 +2,7 @@
  * Module dependencies.
  */
 
-// DON'T DO THIS HERE.. hacky time. 
+
 
 var Item = require('./models/item');
 var Post = require('./models/post');
@@ -23,7 +23,7 @@ var util = require('util');
 
 var app = express();
 
-// passport, mongodb configuration
+// DON'T DO THIS HERE.. hacky time.
 if(process.env.BROWSER_TEST){
 
     // doing browser tests: set up db, make a few models we will need.

@@ -1,6 +1,6 @@
 var express = require('express')
   , request = require('supertest')
-  , jsonrpc = require('jsonrpc');
+  , jsonrpc = require('../lib/jsonrpc');
 
 describe('jsonrpc', function(){
   var app = express();

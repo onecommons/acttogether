@@ -12,12 +12,20 @@ To run app, in two consoles run:
 Run unit tests:
   NODE_ENV=test ./node_modules/.bin/mocha
 
+-----------
+
 To run client side unit tests in phantomjs at same time,
 also set BROWSER_TEST:
 
 BROWSER_TEST=1 NODE_ENV=test ./node_modules/.bin/mocha --reporter=list
 
+and have the app running with:
 
+BROWSER_TEST=1 node app
+
+
+(you need mocha-phantomjs to do the browser tests: 
+npm install -g mocha-phantomjs phantomjs )
 
 To debug:
  npm install -g node-inspector

@@ -3,10 +3,13 @@
 var express			= require('express');
 var request 		= require('supertest');
 var assert			= require('chai').assert;
+var path				= require('path');
 // var request 		= request('http://localhost:3000');
 var app = express();
 app.use(express.bodyParser());
-require('../routes/jswig')(app); // add jswig routes to app.
+require('../routes/jswig'); // add jswig routes to app.
+app.get('/jswig/*', require('../routes/jswig')(app)); // add jswig routes to app.
+app.set('views', __dirname + '/views');
 
 describe('clientinclude', function() {
   var consolidate = require('consolidate');
@@ -17,8 +20,6 @@ describe('clientinclude', function() {
   //app.set('views', path.join(__dirname, '/test/views'));
   app.engine('html', consolidate.swig);
   app.set('view engine', 'html');
-  app.set('views', __dirname + '/views');
-  console.log('get views', app.get('views'))
   app.get('/test-clientinclude.html', function (req, res) {
     res.render('test-clientinclude.html', { foo: [
       { user: {_id: '3'} }
@@ -40,7 +41,6 @@ describe('clientinclude', function() {
 describe('jswig endpoint', function(){
 
 	it('should get jswigtest-pass.js correctly', function(done){
-
 		request(app)
 			.get('/jswig/./partials/jswigtest-pass.js')
 			.end(function(err, res){

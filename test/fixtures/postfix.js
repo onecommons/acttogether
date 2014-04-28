@@ -25,7 +25,8 @@ for(var j =1; j < 5; j++){
 		parent: '@post@'+j,
 		creator: '@user@100',
 		creationDate: Date.now(),
-		modDate: Date.now()
+		modDate: Date.now(),
+		tags: ['good', 'bad', 'ugly']
 	});
 
 	for(var i=0; i< 3; i++){

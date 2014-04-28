@@ -54,7 +54,7 @@ $(document).ready(function() {
 	function addComment(){
 		// alert('adding comment');
 		$('#create-comment').dbCreate(function(data){console.log("databack", data)});
-		// location.reload();  // temporary solution.
+		location.reload(true);  // temporary solution; should add comment to db and re-render comment list.
 	}
 
 	// on Click event for toggle comments 'views' 
@@ -76,17 +76,13 @@ $(document).ready(function() {
 
         if (empty) {
             $('#add-comment').addClass('disabled')
+            $('#add-comment').unbind('click');
          } else {
-            $('#add-comment').removeClass('disabled')
+            $('#add-comment').removeClass('disabled');
+            $('#add-comment').unbind('click');
+            $('#add-comment').bind('click', addComment);
          }
     });
 
-	$('#add-comment').bind('click', addComment); // disable by default until there is some data in form textarea.
-
-	$('#add-comment').click(function(e){
-		if($('#add-comment').hasClass('disabled')){
-			e.preventDefault();
-		}
-	})
 
 });

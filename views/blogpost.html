@@ -21,22 +21,20 @@
         </div>
          <div class="topics-display">
            <i class="show-hide-toggle"></i>
-            <ul> <!-- TODO -- datafy this TRP -->
-                <li><a href="#">Celiac Disease</a></li>
-                <li><a href="#">Tips and Tricks</a></li>
-                <li><a href="#">Personal Anecdotes</a></li>
-                <li><a href="#">East Coast</a></li>
-                <li><a href="#">NYC</a></li>
+            <ul> 
+              {% for tag in post.tags %}
+                <li><a href="#">{{tag}}</a></li>
+              {% endfor %}
             </ul>
         </div>         
         <div class="item-info">
-          <i class="icon-comments item-comments" title="19 Comments">19</i>
+          <i class="icon-comments item-comments" title="{{comments.length}} Comments">{{comments.length}}</i>
           <span class="profile-thumb">
             <a href="#" title="View profile of user">
               <i class="icon-profile"></i><!--replace with profile img-->
-            </a>
+              <span class="item-creator">{{post.creator.displayName}}</span>
+             </a>
           </span>
-          <span class="item-creator">{{post.creator.displayName}}</span>
           <span class="item-stats">last edit <span class="item-date">{{post_last_edit}}</span></span>
         </div>
       </div><!-- end item section-body -->        
@@ -73,11 +71,11 @@
             <span class="profile-thumb">
               <a href="#" title="View profile of user">
                 <i class="icon-profile"></i><!--replace with profile img-->
-              </a>
+                <span class="item-creator">{{comment.creator.displayName}}</span>
+             </a>
             </span>
-            <span class="item-creator">{{comment.creator.displayName}}</span>
-            <span class="item-stats">last edit <span class="item-date">Feb 23 2012</span></span>
-            <span class="item-time">32 minutes ago</span>
+            <!-- <span class="item-stats">last edit <span class="item-date">Feb 23 2012</span></span> -->
+            <span class="item-time">{{comment.ago}} </span>
           </div>
           <div class="interaction">                
               <i class="icon-up" title="Vote up"></i>
