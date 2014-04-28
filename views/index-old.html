@@ -63,22 +63,7 @@
           <h2 class='collective-heading'> {{ category.title }}</h2>
           <div class=row>
             <div class="col-sm-6">
-              {% if category.activity.length %}
-              <table class="table table-striped">
-              {% for item in category.activity %}
-                <tr><td>
-                  <div class="media">
-                    <a class="pull-left" href="#">
-                      <img class="media-object" src="{{item.avatar}}" alt="...">
-                    </a>
-                    <div class="media-body">{{item.contents|safe}}</div>
-                  </div>
-              </td></tr>
-              {% endfor %}
-              </table>
-              {% else %}
-                <em>No activity</em>
-              {% endif %}
+              {% clientmodel include "./partials/activitystream.html" with category only "stream-template" %}
             </div>
             <div class="col-sm-6">
               {% if category.topProposal %}
@@ -93,6 +78,8 @@
         </div>
      {% endfor %}      
      </div> <!-- row --> 
+     
+     <script type='application/swig' id='stream-template'></script>
 {% endblock %}
 
 {% block jsfooter %}
