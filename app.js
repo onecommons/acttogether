@@ -22,8 +22,6 @@ var util = require('util');
 
 var app = express();
 
-
-
 // DON'T DO THIS HERE.. hacky time. 
 if(process.env.BROWSER_TEST){
 
@@ -67,6 +65,10 @@ app.set('views', path.join(__dirname, 'views'));
 app.engine('html', consolidate.swig);
 swig.setDefaults({ cache: false });
 app.set('view engine', 'html');
+
+// using keystone's update.js, a data migration system: see
+//  http://keystonejs.com/docs/configuration/#updates
+app.set('autoUpdates', true); 
 
 app.use(express.favicon());
 app.use(express.logger('dev'));
@@ -114,9 +116,24 @@ routes(app, passport);
 //   res.send(500);
 // });
 
-http.createServer(app).listen(app.get('port'), 'localhost', function(){
-  console.log('Express server listening on port ' + app.get('port'));
-});
+// optionally apply data migrations in /updates folder before starting server.
+require('keystone').connect(mongoose); // need to do this for updates to work.
+var updates = require('keystone/lib/updates');
+
+if(app.set('autoUpdates')){ 
+    updates.apply(function(){
+         http.createServer(app)
+         .listen(app.get('port'), 'localhost', function(){
+                   console.log('Express server listening on port ' + app.get('port')); 
+       }); 
+    });
+
+} else {
+   http.createServer(app)
+   .listen(app.get('port'), 'localhost', function(){
+      console.log('Express server listening on port ' + app.get('port')); 
+    }); 
+}
 
  
 
