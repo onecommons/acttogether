@@ -1,14 +1,6 @@
 /**
  * Module dependencies.
  */
-
-
-
-var Item = require('./models/item');
-var Post = require('./models/post');
-var Comment = require('./models/comment');
-
-
 var express = require('express');
 var routes = require('./routes');
 var http = require('http');
@@ -79,9 +71,21 @@ app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
+// development only (needs to appear before static)
+if ('development' == app.get('env')) {
+  // add development vars to res.locals (enables debug_footer)
+  app.use(function debugFooterHandler(req, res, next) {
+    res.locals.debug = true;
+    res.locals.req = req;
+    next();
+  });
+}
+
 app.use(app.router);
 
-app.use(require('less-middleware')({ src: path.join(__dirname, 'public') }));
+app.use(require('less-middleware')({
+  src: path.join(__dirname, 'public')
+}));
 app.use(require('sass-middleware')({
   src: path.join(__dirname, 'public')
 }));
@@ -93,25 +97,15 @@ if( process.env.BROWSER_TEST){
     app.use(express.static(__dirname + '/test/public'));
 }
 
-
-// development only g
+// development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
-
 
 //
 // routes
 //
 routes(app, passport);
-
-// app.use(require('express-domain-middleware')); // to better handle errors without crashing node
-// error handler
-// app.use(function(err,req,res,next){
-//   console.error("An error occurred:", err.message);
-//   console.error("err.stack: ", err.stack);
-//   res.send(500);
-// });
 
 http.createServer(app).listen(app.get('port'), 'localhost', function(){
   console.log('Express server listening on port ' + app.get('port'));
