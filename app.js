@@ -12,7 +12,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var flash = require('connect-flash');
 var util = require('util');
-
+var models = require('./models');
 var app = express();
 
 // DON'T DO THIS HERE.. hacky time.

@@ -332,8 +332,21 @@ txn.commit();
         this.removeData('currentTxn');
         return this;        
      }
+    ,dbRenderToString: function(model, templatename) {
+      if (model === undefined) 
+        model = this.data('_model');
+      if (templatename === undefined)
+        templatename = this.data('_template');
+      return swig.run($.templates[templatename], model, templatename);
+    }
+    ,dbRender: function(model, templatename) {
+      this.html(this.dbRenderToString());
+      return this;
+    }
+    ,dbModel: function() {
+      return this.data('_model');
+    }
    })
-   
    $.db = { url : null, options : {} };
 })(jQuery);
 
