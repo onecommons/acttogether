@@ -15,7 +15,7 @@ module.exports = function(app, passport) {
   });
 
   app.get('/about/:pagename', about);
-  app.get('/jswig/:tmpl', jswig);
+  app.get('/jswig/*', jswig(app));
   app.get('/blogpost/:id', blogpost);
   app.post('/datarequest', datarequest);
 

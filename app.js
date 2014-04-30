@@ -15,12 +15,14 @@ var http = require('http');
 var path = require('path');
 var consolidate = require('consolidate');
 var swig = require('swig');
+require('./lib/swigextensions')(swig);
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash = require('connect-flash');
 var util = require('util');
 
 var app = express();
+
 
 // DON'T DO THIS HERE.. hacky time. 
 if(process.env.BROWSER_TEST){

@@ -95,7 +95,7 @@
     <script src="https://code.jquery.com/jquery-1.10.2.{% if debug %}min.{% endif %}js"></script>
     <script src="/static/js/bootstrap.{% if debug %}min.{% endif %}js"></script>
     <script src="/static/js/bootstrap-hover-dropdown.min.js"></script>
-
 {% block jsfooter %}{% endblock %}
+{%clientrender%}
   </body>
 </html>
