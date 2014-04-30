@@ -1,10 +1,9 @@
 // about.js  route
-var getVars = require('../lib/utils').getVars;
 
 // Render 'about' static pages
 module.exports = function(req, res) {
   console.log("handling about pagename= ", req.params.pagename);
-  res.render(req.params.pagename, getVars({
+  res.render(req.params.pagename, {
     categories: [{
       id: 1,
       title: "Environment",
@@ -42,5 +41,5 @@ module.exports = function(req, res) {
       title: "Internet Freedoms",
       activity: []
     }, ]
-  }));
+  });
 }

@@ -25,7 +25,7 @@ module.exports = function(app) {
           return;
         }
         try {
-          var prologue = "$.templates['" + thePath + "'] = "; 
+          var prologue = "$.templates['" + pathSegment + "'] = ";
           tpl = prologue + swig.precompile(data.toString()).tpl.toString().replace('anonymous', '');
         } catch(err) {
           next(err);

@@ -42,11 +42,21 @@ module.exports = function(req, res) {
       }
        // console.log(postItem, commentItems);
        var datestr = moment(postItem.modDate).format( "MMMM DD YYYY");
+       commentItems.push(
+        {
+          _id: "@Comment@1",
+          content: "hello world",
+          ago: "asdfadsf",
+          creator: {
+            displayName: 'sue'
+          }
+        }
+       )
        res.render('blogpost.html', {
          messages: req.flash('info'),
          post: postItem,
          post_last_edit: datestr,
-         comments: commentItems,
+         comments: { comments: commentItems },
          user: theUser  // vile hack TRP to keep going.
      });
 
