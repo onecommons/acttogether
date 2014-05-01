@@ -291,8 +291,7 @@ body {padding-top:20px;}
 <script type="text/javascript" src="/static/js/data.js"></script>
 
 <!-- payment processing -->
-<!-- <script type="text/javascript" src="https://js.balancedpayments.com/1.1/balanced.js"></script> -->
-<script type="text/javascript" src="/static/js/vendor/balanced/balanced.js"></script>
+<script type="text/javascript" src="https://js.balancedpayments.com/1.1/balanced.js"></script>
 
 <!-- front end validation, etc -->
 <script type="text/javascript" src="/static/js/creditcardjs-v0.10.9.min.js"></script>
@@ -487,7 +486,7 @@ $(document).ready(function () {
 
             
             // Call backend
-            jQuery.post("/process_charge", donationFormData, function(data) {
+            jQuery.post("/payment", donationFormData, function(data) {
             	{% if debug %}
             	console.dir("Server Response: " + JSON.stringify(data));
             	{% endif %}

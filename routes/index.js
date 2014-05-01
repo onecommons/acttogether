@@ -1,11 +1,12 @@
-var utils     = require('../lib/utils');
-
-var about = require('./about');
-var jswig = require('./jswig');
-var blogpost = require('./blogpost');
-var login = require('./login');
+var utils       = require('../lib/utils');
+var express     = require('express');
+  
+var about       = require('./about');
+var jswig       = require('./jswig');
+var blogpost    = require('./blogpost');
+var login       = require('./login');
 var datarequest = require('./datarequest');
-var payment = require('./payment');
+var payment     = require('./payment');
 
 // vars set here are available on all pages with sharedPageVars in the route
 var sharedPageVars = function(req, res, next) {
@@ -33,7 +34,7 @@ module.exports = function(app, passport) {
   app.get('/profile', utils.isLoggedIn, sharedPageVars, login.profile);
   app.get('/auth/facebook', login.facebookAuth);
   app.get('/auth/facebook/callback', login.facebookAuthCallback);
-  app.post('/payment', payment);
+  app.post('/payment', express.json(),payment);
 
   if(process.env.BROWSER_TEST) {
     var browsertest = require('./browsertest');
