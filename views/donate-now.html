@@ -291,7 +291,8 @@ body {padding-top:20px;}
 <script type="text/javascript" src="/static/js/data.js"></script>
 
 <!-- payment processing -->
-<script type="text/javascript" src="https://js.balancedpayments.com/1.1/balanced.js"></script>
+<!-- <script type="text/javascript" src="https://js.balancedpayments.com/1.1/balanced.js"></script> -->
+<script type="text/javascript" src="/static/js/vendor/balanced/balanced.js"></script>
 
 <!-- front end validation, etc -->
 <script type="text/javascript" src="/static/js/creditcardjs-v0.10.9.min.js"></script>
@@ -430,7 +431,7 @@ $(document).ready(function () {
             security_code: $('#cc-csc').val()
         };
 
-		if (donationFormValid() && ccjs.isValid()) {
+		if (donationFormValid() ){ // && ccjs.isValid()) {
 		    /* allow form submission */
 		    {% if debug %}
 		    console.log("valid cc form");
@@ -457,7 +458,7 @@ $(document).ready(function () {
 
     // Callback for handling responses from Balanced
     function handleResponse(response) {
-    	
+    		 console.log("in handle response",response); // TRP test
         // Successful tokenization
         if (response.status_code === 201) {
 

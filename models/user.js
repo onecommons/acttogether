@@ -10,6 +10,8 @@ var userSchema = mongoose.Schema({
     displayName       : String,
     avatarUrl         : String,
 
+    // NIY TRP add payment related stuff.
+
     local            : {
         email        : String,
         password     : String,
