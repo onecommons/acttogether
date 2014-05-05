@@ -3,15 +3,15 @@
 var mongoose = require('mongoose');
 var createModel = require('../lib/createmodel');
 
-// define the schema for our item model
+// define the schema for our transaction model
 var TransactionSchema = mongoose.Schema({
-    // NIY
-    // creator : {type: String, ref: "User"},
-    // creationDate : { type: Date, default: Date.now}, 
-    // modDate : {type: Date, default: Date.now},
-    // parent: { type: String, ref: 'Item'},
-    // title: String,
-    // content: String
+  status                   : {type: String, enum: ['success', 'fail']},
+  user                     : { type: String, ref: 'User'},
+  fi                       : { type: String, ref: 'FundingInstrument'},
+  date                     : Date,
+  amount                   : Number,
+  appearsOnStatementAs     : String,
+  description              : String
 });
 
 // expose model and schema to our app.

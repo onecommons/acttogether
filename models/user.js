@@ -10,7 +10,11 @@ var userSchema = mongoose.Schema({
     displayName       : String,
     avatarUrl         : String,
 
-    // NIY TRP add payment related stuff.
+    payplan           : {
+                          frequency  : { type: String, enum: ['once','M', 'Q', 'Y']},
+                          lastCharge : { type: Date, default: 0},
+                          fi         : { type: String, ref: 'FundingInstrument'}
+                         },
 
     local            : {
         email        : String,

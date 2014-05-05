@@ -457,7 +457,7 @@ $(document).ready(function () {
 
     // Callback for handling responses from Balanced
     function handleResponse(response) {
-    		 console.log("in handle response",response); // TRP test
+    		// console.log("in handle response",response); // TRP test
         // Successful tokenization
         if (response.status_code === 201) {
 
@@ -480,13 +480,13 @@ $(document).ready(function () {
             donationFormData.fundingInstrument = fundingInstrument.href;
            
 
-			{% if debug %}
+					{% if debug %}
         	console.dir(donationFormData);
         	{% endif %}
 
             
             // Call backend
-            jQuery.post("/payment", donationFormData, function(data) {
+            jQuery.post("/pay/balanced", donationFormData, function(data) {
             	{% if debug %}
             	console.dir("Server Response: " + JSON.stringify(data));
             	{% endif %}

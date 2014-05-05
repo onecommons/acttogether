@@ -5,13 +5,12 @@ var createModel = require('../lib/createmodel');
 
 // define the schema for our item model
 var FundingInstrumentSchema = mongoose.Schema({
-    // NIY
-    // creator : {type: String, ref: "User"},
-    // creationDate : { type: Date, default: Date.now}, 
-    // modDate : {type: Date, default: Date.now},
-    // parent: { type: String, ref: 'Item'},
-    // title: String,
-    // content: String
+  user             : { type: String, ref: 'User'},
+  last4            : String,
+  type             : { type: String, enum: ['cc', 'ach', 'paypal']},
+  cctype           : {type: String, enum: ["amex", "discover","mastercard","visa","diners-club","jcb",'' ]};
+  name_on_card     : String,
+  bp_token         : String
 });
 
 // expose model and schema to our app.
