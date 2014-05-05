@@ -10,6 +10,7 @@ var httpRequest  = require('request');
 
 describe('oc-balanced api', function(){
   var aToken = "/cards/CC5O7VeGswfdoJ3xCL8r8BPD";
+  var aBogusToken = "this-is-a-stinky-token";
   var api_key = 'ak-test-eyoGATiAg6YE5thvhSiWIi7NE0zg0l0U'; // for now test
 
    before(function(done) {
@@ -58,9 +59,38 @@ describe('oc-balanced api', function(){
                   "appears_on_statement_as": "statement blab",
                   "description": "dashboard blabbery" },
                   function(err,data){
+                    //console.log(data.debits);
                     assert.property(data,'debits');
                     assert.deepPropertyVal(data,'debits[0].status', 'succeeded');
-                    assert
+                    done();
+                  });
+  });
+
+  it('should NOT debit a card using cb based debitCard() method with bad FI and ERR out', function(done){
+     bp.debitCard(aToken, { "amount": 0, 
+                  "appears_on_statement_as": "statement blab",
+                  "description": "dashboard blabbery" },
+                  function(err,data){
+                    if(err) {
+                      assert.notNull(err);
+                    } else {
+                      //console.log(data);
+                    }
+                    done();
+                  });
+  });
+
+  it('should NOT debit a card using cb based debitCard() method with bad amount fail w/out err', function(done){
+     bp.debitCard(aToken, { "amount": 0, 
+                  "appears_on_statement_as": "statement blab",
+                  "description": "dashboard blabbery" },
+                  function(err,data){
+                    if(err) {
+                      assert.notNull(err);
+                    } else {
+                      assert.equal(data.errors[0].status,'Bad Request');
+                      //console.log(data);
+                    }
                     done();
                   });
   });

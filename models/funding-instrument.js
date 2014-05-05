@@ -8,7 +8,8 @@ var FundingInstrumentSchema = mongoose.Schema({
   user             : { type: String, ref: 'User'},
   last4            : String,
   type             : { type: String, enum: ['cc', 'ach', 'paypal']},
-  cctype           : {type: String, enum: ["amex", "discover","mastercard","visa","diners-club","jcb",'' ]};
+  cctype           : {type: String, enum:
+                       ["amex", "discover","mastercard","visa","diners-club","jcb",'' ]},
   name_on_card     : String,
   bp_token         : String
 });

@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var createModel = require('../lib/createmodel');
 
 // define the schema for our transaction model
-var TransactionSchema = mongoose.Schema({
+var FinancialTransactionSchema = mongoose.Schema({
   status                   : {type: String, enum: ['success', 'fail']},
   user                     : { type: String, ref: 'User'},
   fi                       : { type: String, ref: 'FundingInstrument'},
@@ -16,4 +16,4 @@ var TransactionSchema = mongoose.Schema({
 
 // expose model and schema to our app.
 
-module.exports = createModel('Transaction', TransactionSchema);
+module.exports = createModel('FinancialTransaction', FinancialTransactionSchema);
