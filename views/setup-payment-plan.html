@@ -485,6 +485,7 @@ $(document).ready(function () {
           donationFormData.cclastfour = $("[name='cc-card-number']").val().slice(-4);
           donationFormData.ccname = $("#cc-name").val();
           donationFormData.ccexp = $("#cc-ex-month").val() + $("#cc-ex-year").val();
+          donationFormData.cctype = $("[name='card-type']").val();
 
 					{% if debug %}
         	console.log("donationFormData: ",donationFormData);

@@ -9,11 +9,12 @@ var m           = require('../models');
 describe('setup payment plan', function () {
     
     var db, theUser, debitparams;
+    var theUserPwd = 'testuser';
 
 
     var app = express();
     app.use(express.bodyParser());
-    var spp = require('../routes/payments').setupPaymentPlan; 
+    var spp = require('../routes/payments').setupPaymentPlanPost; 
     app.post('/setup-payment-plan', spp); // add jswig routes to app.
 
 
@@ -26,46 +27,66 @@ describe('setup payment plan', function () {
         frequencyOptions: [ 'once', 'monthly', 'yearly' ],
         donationAmount: '2500',
         donationFrequency: 'monthly',
-        fundingInstrument: '/cards/CC5qnOfprsLelzxV4CZWv7Xk',
+        fundingInstrument: '/cards/CC1H6PIzndUjR7Si1WtDAuoa',
         cclastfour: '1111',
         ccname: 'John Doe',
-        ccexp: '1220' 
+        ccexp: '1220',
+        cctype: 'visa',
+        userId: '@User@0' // temp!!! will get from session eventually in endpoint handler.
       }
 
-      // setup user record.
-      theUser = new m.User();
-      theUser.displayName = "JohnDoe";
-      theUser.save(function(err,userback){
-        theUser = userback;
-        // since we dont have sessions working yet, include userId in form submission data.
-        debitparams.userId = theUser._id;
-        done();
-      });
-    });
+      // clear users and add test user record
+      m.User.remove({}
+      ,function(){
+          theUser = new m.User();
+          theUser.displayName = "TestGuy";
+          theUser.local.email = "test@user.com"
+          theUser.local.password = "$2a$08$/06iuOSo3ws1QzBpvRrQG.jgRwuEJB20LcHsWyEWHhOEm/ztwqPG."; // "testuser"
+          theUser._id = "@User@0";
+          theUser.save();
+          m.FundingInstrument.remove({}
+      ,function(err){
+          m.FinancialTransaction.remove({}, done);
 
-    after(function(done){
-      var db = mongoose.connection;
-      db.db.dropCollection('users');
-      done();
-    });
+      });  });
 
-    it('should have made theUser', function(done){
-      assert.equal(theUser.displayName, 'JohnDoe');
-      assert.isNotNull(theUser._id);
-      done();
-    });
 
-    it('should do a debit with good data', function(done){
+
+    }); // before()
+
+
+    it('should do a debit with good data and update user, fi, ft', function(done){
       request(app)
           .post('/setup-payment-plan')
+        //  .auth(theUser.local.email, theUserPwd)
           .send(debitparams)
           .expect('Content-Type', /json/)
           .expect(200)
           .end(function(err,res){
-            //console.log(res.body);
-          })
-      done();
-    });
+            assert(!err);
+
+             m.FundingInstrument.findOne({}
+             ,function(err,fi){
+                assert.equal(fi.user, theUser._id);
+                assert.equal(fi.bp_token, debitparams.fundingInstrument); // fi has been created.
+
+             m.User.findOne({_id: theUser.id}
+             ,function(err,u){
+                // console.log(u);
+                assert.equal(u.payplan.fi, fi._id); // user payment plan has been updated.
+
+             m.FinancialTransaction.findOne({}
+             ,function(err, ft){
+                assert.equal(ft.status, 'success');
+                assert.equal(ft.fi, fi._id);
+                assert.equal(ft.user, theUser._id); // FinancialTransaction record has been created.
+                done();    
+
+             }) }) });
+
+          }); // .end
+
+    }); // it...
 
     it('should NOT do a debit with a bad card token', function(done){
       debitparams.fundingInstrument = '/this/is-a-whack-card-token';

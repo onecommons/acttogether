@@ -11,7 +11,7 @@ var userSchema = mongoose.Schema({
     avatarUrl         : String,
 
     payplan           : {
-                          frequency  : { type: String, enum: ['once','M', 'Q', 'Y']},
+                          frequency  : { type: String, enum: ['once','monthly','quarterly','yearly']},
                           lastCharge : { type: Date, default: 0},
                           fi         : { type: String, ref: 'FundingInstrument'}
                          },

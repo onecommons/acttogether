@@ -10,6 +10,8 @@ var FinancialTransactionSchema = mongoose.Schema({
   fi                       : { type: String, ref: 'FundingInstrument'},
   date                     : Date,
   amount                   : Number,
+  currency                 : String,
+  transactionNumber        : String,
   appearsOnStatementAs     : String,
   description              : String
 });

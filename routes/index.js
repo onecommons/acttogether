@@ -34,7 +34,10 @@ module.exports = function(app, passport) {
   app.get('/profile', utils.isLoggedIn, sharedPageVars, login.profile);
   app.get('/auth/facebook', login.facebookAuth);
   app.get('/auth/facebook/callback', login.facebookAuthCallback);
-  app.post('/setup-payment-plan', express.json(),payments.setupPaymentPlan);
+
+  app.get('/setup-payment-plan', sharedPageVars, utils.isLoggedIn, function(req,res){
+    res.render('setup-payment-plan');  });
+  app.post('/setup-payment-plan', /* utils.isLoggedIn, */ payments.setupPaymentPlanPost);
 
   if(process.env.BROWSER_TEST) {
     var browsertest = require('./browsertest');
