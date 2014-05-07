@@ -4,28 +4,55 @@
 
 var go = process.env.BROWSER_TEST;
 
-if(go){
-
-    var phantomTimeout = 10000;
-
+if (go) {
     var mongoose = require('mongoose');
-
     var exec = require('child_process').exec
     var fs   = require('fs');
     var path = require('path');
-    var child = null;
     var assert = require('chai').assert;
+    var express = require('express');
+    var main = require('app');
+
+    var phantomTimeout = 10000;
+    var child = null;
+    var app = null;
+
     describe('---', function() {
 
         before(function() {
-            console.log('\n\n----- in phantomjs ----------------------------');
-            console.log("be sure ocdemo app is running with BROWSER_TEST=1");
+            console.log("*** Creating an app instance....");
+            app = main.createApp();
+
+            // configure code moved from app.js
+            app.set('port', process.env.PORT || 3000);
+
+            // doing browser tests: set up db, make a few models we will need.
+            console.log('env = ', app.get('env'));
+            var defaultDbUrl = "mongodb://127.0.0.1:27017/test";
+            console.log("WARNING: test mode,using db ", defaultDbUrl);
+            configDB = {url: defaultDbUrl}
+
+            // create some  models we will need for testing.
+            mongoose.model('DbTest1',
+              new mongoose.Schema({
+                __t: String,
+                 _id: String,
+                prop1: []
+                },{strict: false}) //'throw'
+            );
+            mongoose.connect(configDB.url); // connect to our database
+
+            console.log("Browser-based test routes added");
+            app.use(express.static(main.dirname + '/test/public'));
+
+            console.log("*** starting app instance");
+            main.startApp(app);
         });
 
         after(function() {
             console.log('----------------------------------\n\n');
+            console.log("*** need to shut down running app instance somehow?");
         })
-
 
         fs.readdirSync('./test/public/tests').filter(function(file){
             // Only keep the .js files
@@ -48,7 +75,7 @@ if(go){
 
                      // report on results.
                      var msg = '';
-                     //console.log("[error]", error, '[stdout]',stdout, '[stderr]',stderr);
+                     // console.log("[error]", error, '[stdout]',stdout, '[stderr]',stderr);
                      var data = JSON.parse(stdout);
                      var stats = data.stats;
                      // console.dir(stats);
@@ -78,6 +105,5 @@ if(go){
 
 
     }); // describe ...
-
 
 } // if(typeof(go !== 'undefined' && go === 'true')){

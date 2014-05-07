@@ -3,7 +3,6 @@
  */
 var express = require('express');
 var routes = require('./routes');
-var http = require('http');
 var path = require('path');
 var consolidate = require('consolidate');
 var swig = require('swig');
@@ -13,132 +12,127 @@ var passport = require('passport');
 var flash = require('connect-flash');
 var util = require('util');
 var models = require('./models');
-var app = express();
 
 
-// DON'T DO THIS HERE.. hacky time. 
-if(process.env.BROWSER_TEST){
+// return a minimally configured app object
+function createApp() {
+  var app = express();
 
-    // doing browser tests: set up db, make a few models we will need.
-    console.log('env = ', app.get('env'));
-    var defaultDbUrl = "mongodb://127.0.0.1:27017/test";
-    console.log("WARNING: test mode,using db ", defaultDbUrl);
-    configDB = {url: defaultDbUrl}
+  require('./config/passport')(passport); // pass passport for configuration
 
-    // create some  models we will need for testing.
-    mongoose.model('DbTest1', 
-      new mongoose.Schema({
-        __t: String,
-         _id: String,
-        prop1: []
-        },{strict: false}) //'throw'
-    );
-    
-} else {
-    var configDB = null;
-    try {
-      configDB = require('./config/database.js');
-    } catch (err) {
-      if (err.code == "MODULE_NOT_FOUND") {
-        var defaultDbUrl = "mongodb://127.0.0.1:27017/ocdemo";
-        console.log("WARNING: ./config/database.js not found, using", defaultDbUrl);
-        configDB = {url: defaultDbUrl}
-      } else {
-        throw err;
-      }
-    }
-}
+  // all environments
+  app.set('views', path.join(__dirname, 'views'));
+  app.engine('html', consolidate.swig);
+  swig.setDefaults({ cache: false });
+  app.set('view engine', 'html');
 
-mongoose.connect(configDB.url); // connect to our database
-require('./config/passport')(passport); // pass passport for configuration
+  app.use(express.favicon());
+  app.use(express.logger('dev'));
+  app.use(express.json());
+  app.use(express.urlencoded());
+  app.use(express.methodOverride());
+  app.use(express.cookieParser('your secret here')); //XXX
+  app.use(express.session());
 
-// all environments
-app.set('port', process.env.PORT || 3000);
+  app.use(passport.initialize());
+  app.use(passport.session()); // persistent login sessions
+  app.use(flash()); // use connect-flash for flash messages stored in session
 
-app.set('views', path.join(__dirname, 'views'));
-app.engine('html', consolidate.swig);
-swig.setDefaults({ cache: false });
-app.set('view engine', 'html');
-
-// using keystone's update.js, a data migration system: see
-//  http://keystonejs.com/docs/configuration/#updates
-app.set('autoUpdates', true); 
-
-app.use(express.favicon());
-app.use(express.logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.methodOverride());
-app.use(express.cookieParser('your secret here')); //XXX
-app.use(express.session());
-
-app.use(passport.initialize());
-app.use(passport.session()); // persistent login sessions
-app.use(flash()); // use connect-flash for flash messages stored in session
-
-// development only (needs to appear before static)
-if ('development' == app.get('env')) {
-  // add development vars to res.locals (enables debug_footer)
-  app.use(function debugFooterHandler(req, res, next) {
-    res.locals.debug = true;
-    res.locals.req = req;
-    next();
-  });
-}
-
-app.use(app.router);
-
-app.use(require('less-middleware')({
-  src: path.join(__dirname, 'public')
-}));
-app.use(require('sass-middleware')({
-  src: path.join(__dirname, 'public')
-}));
-app.use(express.static(path.join(__dirname, 'public')));
-
-// test only.
-if( process.env.BROWSER_TEST){
-    console.log("Browser-based test routes added")
-    app.use(express.static(__dirname + '/test/public'));
-}
-
-// development only
-if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
-}
-
-//
-// routes
-//
-routes(app, passport);
-
-// app.use(require('express-domain-middleware')); // to better handle errors without crashing node
-// error handler
-// app.use(function(err,req,res,next){
-//   console.error("An error occurred:", err.message);
-//   console.error("err.stack: ", err.stack);
-//   res.send(500);
-// });
-
-// optionally apply data migrations in /updates folder before starting server.
-require('keystone').connect(mongoose); // need to do this for updates to work.
-var updates = require('keystone/lib/updates');
-
-if(app.set('autoUpdates')){ 
-    updates.apply(function(){
-         http.createServer(app)
-         .listen(app.get('port'), 'localhost', function(){
-                   console.log('Express server listening on port ' + app.get('port')); 
-       }); 
+  // development only (needs to appear before static)
+  if ('development' == app.get('env')) {
+    // add development vars to res.locals (enables debug_footer)
+    app.use(function debugFooterHandler(req, res, next) {
+      res.locals.debug = true;
+      res.locals.req = req;
+      next();
     });
+  }
 
-} else {
-   http.createServer(app)
-   .listen(app.get('port'), 'localhost', function(){
-      console.log('Express server listening on port ' + app.get('port')); 
-    }); 
+  app.use(app.router);
+
+  app.use(require('less-middleware')({
+    src: path.join(__dirname, 'public')
+  }));
+  app.use(require('sass-middleware')({
+    src: path.join(__dirname, 'public')
+  }));
+  app.use(express.static(path.join(__dirname, 'public')));
+
+  // development only
+  if ('development' == app.get('env')) {
+    app.use(express.errorHandler());
+  }
+
+  //
+  // routes
+  //
+  routes(app, passport);
+
+  // app.use(require('express-domain-middleware')); // to better handle errors without crashing node
+  // error handler
+  // app.use(function(err,req,res,next){
+  //   console.error("An error occurred:", err.message);
+  //   console.error("err.stack: ", err.stack);
+  //   res.send(500);
+  // });
+
+  return app;
 }
 
- 
+function configureApp(app) {
+  var configDB = null;
+  try {
+    configDB = require('./config/database.js');
+  } catch (err) {
+    if (err.code == "MODULE_NOT_FOUND") {
+      var defaultDbUrl = "mongodb://127.0.0.1:27017/ocdemo";
+      console.log("WARNING: ./config/database.js not found, using", defaultDbUrl);
+      configDB = {url: defaultDbUrl}
+    } else {
+      throw err;
+    }
+  }
+  mongoose.connect(configDB.url); // connect to our database
 
+  app.set('port', process.env.PORT || 3000);
 
+  // using keystone's update.js, a data migration system: see
+  //  http://keystonejs.com/docs/configuration/#updates
+  app.set('autoUpdates', true);
+}
+
+function startApp(app) {
+  var server = app.listen(app.get('port'), 'localhost', function() {
+    console.log('Express server listening on port %d', server.address().port);
+  });
+  return server;
+}
+
+module.exports = {
+  dirname: __dirname,
+  createApp: createApp,
+  configureApp: configureApp,
+  startApp: startApp
+}
+
+// check to see if we're the main module (i.e. run directly, not require()'d)
+if (require.main === module) {
+
+  var app = createApp();
+  configureApp(app);
+
+  // XXX exposed startApp should probably do this...
+  // optionally apply data migrations in /updates folder before starting server.
+  if(app.set('autoUpdates')) {
+    console.log("checking for autoupdates to apply...");
+
+    require('keystone').connect(mongoose); // need to do this for updates to work.
+    var updates = require('keystone/lib/updates');
+
+    updates.apply(function(){
+      startApp();
+    });
+  } else {
+    startApp();
+  }
+}
