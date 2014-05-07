@@ -430,23 +430,23 @@ $(document).ready(function () {
             security_code: $('#cc-csc').val()
         };
 
-		if (donationFormValid() && ccjs.isValid()) {
-		    /* allow form submission */
-		    {% if debug %}
-		    console.log("valid cc form");
-		    {% endif %}
+		    if (donationFormValid() ){ // && ccjs.isValid()) {
+			    /* allow form submission */
+			    {% if debug %}
+			    console.log("valid cc form");
+			    {% endif %}
 
 		    balanced.card.create(payload, handleResponse);
 
-		} else {
-		    /* prevent form submission, show errors */
-		    {% if debug %}
-		    console.log("invalid cc form");
-		    {% endif %}
+			} else {
+			    /* prevent form submission, show errors */
+			    {% if debug %}
+			    console.log("invalid cc form");
+			    {% endif %}
 
-			var invalidsArray = ccjs.getInvalidFields();
-			_.each(invalidsArray, function(invalid) {
-				_.each(errorMessages, function(error) {
+			   var invalidsArray = ccjs.getInvalidFields();
+			   _.each(invalidsArray, function(invalid) {
+			   _.each(errorMessages, function(error) {
 					if (invalid == error.ccjsError) {
 						addError(error.message, "", error.fieldClass);
 					}
@@ -457,7 +457,7 @@ $(document).ready(function () {
 
     // Callback for handling responses from Balanced
     function handleResponse(response) {
-    	
+    		// console.log("in handle response",response); // TRP test
         // Successful tokenization
         if (response.status_code === 201) {
 
@@ -468,33 +468,38 @@ $(document).ready(function () {
             // XXX need to identify which donation option was selected by default
             
         	var donationFormData = $('#donation-form').dbData().get(0);
-            donationFormData['custom-donation-amount'] = customDonationNormalized;
+          donationFormData['custom-donation-amount'] = customDonationNormalized;
 
-            if ($('#custom-donation-amount').hasClass('btn-success')) {
-        		donationFormData.donationAmount = customDonationNormalized;
+          if ($('#custom-donation-amount').hasClass('btn-success')) {
+      		donationFormData.donationAmount = customDonationNormalized;
         	} else {
             	donationFormData.donationAmount = $('#donation-amount .btn-success').val();
         	}
 
-            donationFormData.donationFrequency = $('#donation-frequency .btn-success').val();
-            donationFormData.fundingInstrument = fundingInstrument.href;
-           
+          donationFormData.donationFrequency = $('#donation-frequency .btn-success').val();
+          donationFormData.fundingInstrument = fundingInstrument.href;
 
-			{% if debug %}
-        	console.dir(donationFormData);
-        	{% endif %}
 
             
-            // Call backend
-            jQuery.post("/process_charge", donationFormData, function(data) {
-            	{% if debug %}
-            	console.dir("Server Response: " + JSON.stringify(data));
-            	{% endif %}
-            }, 'json');
+          // Call backend, add in other data we want to save.
+          donationFormData.cclastfour = $("[name='cc-card-number']").val().slice(-4);
+          donationFormData.ccname = $("#cc-name").val();
+          donationFormData.ccexp = $("#cc-ex-month").val() + $("#cc-ex-year").val();
+          donationFormData.cctype = $("[name='card-type']").val();
 
-            //remove any previous errors
-            $('#alert-cc-decline').addClass('hide');
-            $('#list-of-errors').empty();
+					{% if debug %}
+        	console.log("donationFormData: ",donationFormData);
+        	{% endif %}
+
+          jQuery.post("/setup-payment-plan", donationFormData, function(data) {
+          	{% if debug %}
+          	console.dir("setup-payment-plan Response: " + JSON.stringify(data));
+          	{% endif %}
+          }, 'json');
+
+          //remove any previous errors
+          $('#alert-cc-decline').addClass('hide');
+          $('#list-of-errors').empty();
 
             /*
 			
