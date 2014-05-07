@@ -10,8 +10,7 @@ module.exports.login = function(req, res) {
 
 module.exports.loginPost = function(passport) {
   return passport.authenticate('local-login', {
-    successReturnToOrRedirect: true,
-    successRedirect: '/profile', // secure profile section
+    successReturnToOrRedirect: '/profile',
     failureRedirect: '/login',   // back to login on error
     failureFlash: true
   });
