@@ -130,9 +130,9 @@ if (require.main === module) {
     var updates = require('keystone/lib/updates');
 
     updates.apply(function(){
-      startApp();
+      startApp(app);
     });
   } else {
-    startApp();
+    startApp(app);
   }
 }
