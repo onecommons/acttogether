@@ -10,6 +10,12 @@ var userSchema = mongoose.Schema({
     displayName       : String,
     avatarUrl         : String,
 
+    payplan           : {
+                          frequency  : { type: String, enum: ['once','monthly','quarterly','yearly']},
+                          lastCharge : { type: Date, default: 0},
+                          fi         : { type: String, ref: 'FundingInstrument'}
+                         },
+
     local            : {
         email        : String,
         password     : String,
