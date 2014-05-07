@@ -137,8 +137,7 @@ function startApp() {
   return server;
 }
 
-module.exports = {  
-  app: app,
+module.exports = {
   createApp: createApp,
   startApp: startApp,
   configureApp: configureApp
@@ -150,6 +149,7 @@ if (require.main === module) {
   var app = createApp();
   configureApp(app);
 
+  // XXX exposed startApp should probably do this...
   // optionally apply data migrations in /updates folder before starting server.
   if(app.set('autoUpdates')) {
     console.log("checking for autoupdates to apply...");
