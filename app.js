@@ -14,29 +14,6 @@ var util = require('util');
 var models = require('./models');
 
 
-// DON'T DO THIS HERE.. hacky time. 
-/*
-if(process.env.BROWSER_TEST){
-
-    // doing browser tests: set up db, make a few models we will need.
-    console.log('env = ', app.get('env'));
-    var defaultDbUrl = "mongodb://127.0.0.1:27017/test";
-    console.log("WARNING: test mode,using db ", defaultDbUrl);
-    configDB = {url: defaultDbUrl}
-
-    // create some  models we will need for testing.
-    mongoose.model('DbTest1', 
-      new mongoose.Schema({
-        __t: String,
-         _id: String,
-        prop1: []
-        },{strict: false}) //'throw'
-    );
-    mongoose.connect(configDB.url); // connect to our database
-}
-*/
-
-
 // return a minimally configured app object
 function createApp() {
   var app = express();
@@ -81,12 +58,6 @@ function createApp() {
   }));
   app.use(express.static(path.join(__dirname, 'public')));
 
-  // test only.
-  if( process.env.BROWSER_TEST){
-      console.log("Browser-based test routes added")
-      app.use(express.static(__dirname + '/test/public'));
-  }
-
   // development only
   if ('development' == app.get('env')) {
     app.use(express.errorHandler());
@@ -130,7 +101,7 @@ function configureApp(app) {
   app.set('autoUpdates', true);
 }
 
-function startApp() {
+function startApp(app) {
   var server = app.listen(app.get('port'), 'localhost', function() {
     console.log('Express server listening on port %d', server.address().port);
   });
@@ -138,9 +109,10 @@ function startApp() {
 }
 
 module.exports = {
+  dirname: __dirname,
   createApp: createApp,
-  startApp: startApp,
-  configureApp: configureApp
+  configureApp: configureApp,
+  startApp: startApp
 }
 
 // check to see if we're the main module (i.e. run directly, not require()'d)
