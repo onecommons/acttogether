@@ -22,14 +22,16 @@ module.exports.setupPaymentPlanPost = function(req, res) {
 
        // validate fields.
        if( data.fundingInstrument.match(/\/cards\//) === null) {
-        res.json({status: 'error', message: "bad funding instrument token"});
+        res.json({status: 'error', message: "bad funding instrument token, no transaction attempted."});
         return;
        }
 
        // validate min/max amount of transaction? 
        if(data.donationAmount < bp.minAmount || data.donationAmount > bp.maxAmount){
-        res.json({status: 'error', message: "payment amount out of range: " + data.amount / 100.0 })
+        res.json({status: 'error', message: "no transaction attempted, payment amount out of range: " + data.amount / 100.0 })
        }
+
+       console.log('data.fundingInstrument = ', data.fundingInstrument);
 
        /* entering 5-deep callback waterfall!!! */
        bp.debitCard(data.fundingInstrument, {amount: data.donationAmount }
@@ -38,22 +40,27 @@ module.exports.setupPaymentPlanPost = function(req, res) {
             var now = new Date;
 
             if(err) {
-              res.json({status:'error', message: 'payment attempt failed, bad FI'});
+              res.json({status:'error', 
+                  message: "error returned from balanced payments",
+                  bp_reply: bp_reply });
               return;
             }
 
             // no err, but there still could be a transaction failure. If so, record it and return.
-            if(data.errors) {
+            if(bp_reply.errors) {
               var fft = new FinancialTransaction();
               fft.status = 'fail';
               fft.user = theUser._id;
               fft.date = now;
               fft.amount = data.donationAmount;
-              fft.description = data.errors[0].status +
-                             ' ' + data.errors[0].description;
-              fft.save();
-              res.json({status:'error', 
-                    message: fft.description });
+              fft.description = bp_reply.errors[0].status +
+                             ' ' + bp_reply.errors[0].description;
+              fft.save(
+              function(){
+                res.json({status: bp_reply.errors[0].status,
+                    message: bp_reply.errors[0].description,
+                    bp_reply: bp_reply });
+              });
               return;
             }
 
@@ -77,7 +84,7 @@ module.exports.setupPaymentPlanPost = function(req, res) {
             // setup users payment plan.
           User.findOne({_id: theUser._id}
           ,function(err,u){
-              u.payplan =  {
+              u.payPlan =  {
                       frequency: data.donationFrequency, 
                       lastCharge: now,
                       fi: fi._id
@@ -103,8 +110,9 @@ module.exports.setupPaymentPlanPost = function(req, res) {
           function(err, ftback){
             // send response.
             res.json({
-              status: 'success',
-              message: 'transaction Number ' + bp_reply.debits[0].transaction_number + ' succeeded.'
+              status: bp_reply.debits[0].status,
+              message: 'transaction Number ' + bp_reply.debits[0].transaction_number + ' ' + bp_reply.debits[0].description,
+              bp_reply: bp_reply
             });
 
       }) }) }) }) }); // bp.debitCard(function(){ ... 

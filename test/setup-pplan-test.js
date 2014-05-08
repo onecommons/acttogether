@@ -21,20 +21,6 @@ describe('setup payment plan', function () {
     before(function(done) {
       db = mongoose.connect('mongodb://localhost/test');
 
-      debitparams = {
-        donationOptions: [ '1000', '2500', '5000' ],
-        'custom-donation-amount': '',
-        frequencyOptions: [ 'once', 'monthly', 'yearly' ],
-        donationAmount: '2500',
-        donationFrequency: 'monthly',
-        fundingInstrument: '/cards/CC1H6PIzndUjR7Si1WtDAuoa',
-        cclastfour: '1111',
-        ccname: 'John Doe',
-        ccexp: '1220',
-        cctype: 'visa',
-        userId: '@User@0' // temp!!! will get from session eventually in endpoint handler.
-      }
-
       // clear users and add test user record
       m.User.remove({}
       ,function(){
@@ -50,9 +36,24 @@ describe('setup payment plan', function () {
 
       });  });
 
-
-
     }); // before()
+
+    beforeEach(function(){
+      debitparams = {
+        donationOptions: [ '1000', '2500', '5000' ],
+        'custom-donation-amount': '',
+        frequencyOptions: [ 'once', 'monthly', 'yearly' ],
+        donationAmount: '2500',
+        donationFrequency: 'monthly',
+        fundingInstrument: '/cards/CC1H6PIzndUjR7Si1WtDAuoa',
+        cclastfour: '1111',
+        ccname: 'John Doe',
+        ccexp: '1220',
+        cctype: 'visa',
+        userId: '@User@0' // temp!!! will get from session eventually in endpoint handler.
+      }
+      console.log('in beforeEach: fi = ', debitparams.fundingInstrument);
+    });
 
 
     it('should do a debit with good data and update user, fi, ft', function(done){
@@ -73,7 +74,7 @@ describe('setup payment plan', function () {
              m.User.findOne({_id: theUser.id}
              ,function(err,u){
                 // console.log(u);
-                assert.equal(u.payplan.fi, fi._id); // user payment plan has been updated.
+                assert.equal(u.payPlan.fi, fi._id); // user payment plan has been updated.
 
              m.FinancialTransaction.findOne({}
              ,function(err, ft){
@@ -96,10 +97,24 @@ describe('setup payment plan', function () {
           .expect('Content-Type', /json/)
           .expect(200)
           .end(function(err,res){
+            console.log('in NOT test cb', res.body);
             assert.equal(res.body.status, 'error');
-            // console.log(res.body);
-          })
-      done();
+            done();
+            });// .end()
+    });
+
+    it('should NOT do a debit with a bad card token', function(done){
+      debitparams.fundingInstrument = '/this/is-a-whack-card-token';
+      request(app)
+          .post('/setup-payment-plan')
+          .send(debitparams)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end(function(err,res){
+            console.log('in NOT test cb', res.body);
+            assert.equal(res.body.status, 'error');
+            done();
+            });// .end()
     });
 
 });

@@ -10,9 +10,9 @@ var userSchema = mongoose.Schema({
     displayName       : String,
     avatarUrl         : String,
 
-    payplan           : {
+    payPlan           : {
                           frequency  : { type: String, enum: ['once','monthly','quarterly','yearly']},
-                          lastCharge : { type: Date, default: 0},
+                          lastCharge : { type: String, ref: 'FinancialTransaction'},
                           fi         : { type: String, ref: 'FundingInstrument'}
                          },
 
@@ -51,6 +51,20 @@ userSchema.methods.generateHash = function(password) {
 userSchema.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.local.password);
 };
+
+
+userSchema.methods.setupPaymentPlan = function(params){
+    // edit payPlan fields from given params.
+
+}
+
+userSchema.methods.doPaymentPlanDebit = function(){
+    // setup new FT record.
+    // ft.doBPDebit()
+    // save updated FT.
+    // update reference to FT in user.payplan.lastCharge.
+}
+
 
 // create the model for users and expose it to our app
 module.exports = createModel('User', userSchema);
