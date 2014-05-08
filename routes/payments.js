@@ -90,6 +90,7 @@ module.exports.setupPaymentPlanPost = function(req, res) {
             ft = new FinancialTransaction();
             ft.status = 'success';
             ft.user = theUser._id;
+            ft.transactionType = 'paymentPlan';
             ft.fi = fi._id;
             ft.date = now;
             ft.amount = bpdata.amount;

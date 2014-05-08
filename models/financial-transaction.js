@@ -8,6 +8,7 @@ var FinancialTransactionSchema = mongoose.Schema({
   status                   : {type: String, enum: ['success', 'fail']},
   user                     : { type: String, ref: 'User'},
   fi                       : { type: String, ref: 'FundingInstrument'},
+  transactionType          : { type: String, enum: ['oneTime', 'paymentPlan']},
   date                     : Date,
   amount                   : Number,
   currency                 : String,
