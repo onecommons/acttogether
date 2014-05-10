@@ -31,8 +31,6 @@ module.exports.setupPaymentPlanPost = function(req, res) {
         res.json({status: 'error', message: "no transaction attempted, payment amount out of range: " + data.amount / 100.0 })
        }
 
-       console.log('data.fundingInstrument = ', data.fundingInstrument);
-
        /* entering 5-deep callback waterfall!!! */
        bp.debitCard(data.fundingInstrument, {amount: data.donationAmount }
          ,function(err,bp_reply){
@@ -84,7 +82,7 @@ module.exports.setupPaymentPlanPost = function(req, res) {
             // setup users payment plan.
           User.findOne({_id: theUser._id}
           ,function(err,u){
-              u.payPlan =  {
+              u.paymentPlan =  {
                       frequency: data.donationFrequency, 
                       lastCharge: now,
                       fi: fi._id
@@ -95,9 +93,9 @@ module.exports.setupPaymentPlanPost = function(req, res) {
             // save financial transaction
             var bpdata = bp_reply.debits[0];
             ft = new FinancialTransaction();
-            ft.status = 'success';
+            ft.status = 'succeeded';
             ft.user = theUser._id;
-            ft.transactionType = 'paymentPlan';
+            ft.transactionType = 'paymentPlanDebit';
             ft.fi = fi._id;
             ft.date = now;
             ft.amount = bpdata.amount;

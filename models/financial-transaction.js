@@ -15,7 +15,7 @@ var financialTransactionSchema = mongoose.Schema({
                                 enum: ['oneTimeDebit', 'paymentPlanDebit', 'credit'], 
                                 default: 'paymentPlanDebit'},
   paymentProcessor         : { type: String, enum: ['balancedPayments', 'stripe', 'payPal'], default: 'balancedPayments' },
-  date                     : Date,
+  date                     : { type: Date, default: Date.now },
   amount                   : { type: Number, max: 1500000, min: 100},
   currency                 : { type: String, default: 'USD' }, 
   appearsOnStatementAs     : { type: String, default: 'One Commons' },
@@ -31,67 +31,112 @@ var financialTransactionSchema = mongoose.Schema({
 //
 // On return, date will be set and status will be 'succeeded' or 'failed'.
 //
-financialTransactionSchema.methods.doDebit = function(options, cb){
+
+// utility last thing to do no matter what path we take through the callbacks in doDebit():
+// save the financial transaction, the updated user (if changed) and call the callback.
+
+// financialTransactionSchema.methods.ddExit = function(ft, user, cb) {
+//   ft.save(function(err, ftback){
+//     console.log('cb = ',cb, 'ft= ', ft);
+//     cb(null, ft);
+//   //  if(user !== null ) { user.save(cb(null, ft)) }
+//   //  else { cb(null, ft) }
+//   })
+// }
+
+
+financialTransactionSchema.methods.doDebit = function(options, callback){
 
   theFT = this;
+  var theUser, theFI;
+  var amount, description, theBPToken;
 
-  for(key in options){
-    if(theFT.hasOwnProperty(key)){
-     theFT[key] = theFT[key] || options[key];
-    }
+  function ddExit(ft,user,cb, err1){
+    ft.save(function(err, ftback){
+     if(false /*user != null */ ) { user.save(cb(err1, ft)) }
+     else { cb(err1, ft) }
+    })
   }
 
-  var amount, description;
+  for(key in options){
+     theFT[key] = options[key];
+  }
+
 
   theFT.date = new Date;
-
-  // first, error returns:
+  // first, easy synchronous error returns:
 
   if( theFT.paymentProcessor !== 'balancedPayments'){
     theFT.status = 'failed';
     theFT.description = 'failed transaction: unsupported payment processor ' + theFT.paymentProcessor;
-    theFT.save(cb(err,ftback));
+    ddExit(theFT, null, callback, new Error(theFT.description));
     return;
   } 
 
   if( theFT.transactionType === 'credit') {
     theFT.status = 'failed';
     theFT.description = 'Credit transactions not yet supported'; 
-    theFT.save(cb(err,ftback));
+    ddExit(theFT, null, callback, new Error(theFT.description));
     return;
   }
   
 
-  // OK, entering callback hell.
+  // // OK, entering callback chain.
 
-  User.findById(theFT.user
-  ,function(err,u){
-    if(err){ theFT.status = 'failed'; theFT.description = 'couldnt find user'; return }
-
-    if(theFT.transactionType === 'paymentPlanDebit'){
-      theFT.amount = theFT.user.paymentPlan.amount;
-      theFT.fi = u.paymentPlan.fi;
+  User.findById(theFT.user, function(err,u){
+    if(!u){ 
+      theFT.status = 'failed'; theFT.description = 'couldnt find user'; 
+      ddExit(theFT, theUser, callback, new Error(theFT.description));
+      return;
     }
 
-  FI.findById(theFT.fi
-  ,function(err,fi){
-    if(err){ theFT.status = 'failed'; theFT.description = 'couldnt find Funding Instrument'; return }
+    theUser = u;
 
-  bp.debitCard(theFT.fi.bp_token, theFT.amount, theFT.appearsOnStatementAs, theFT.description
-  ,function(err, bp_reply){
-      if(err){ theFT.status = 'failed'; theFT.description = "couldn't reach payment processor"; return }
-      if(bp_reply.errors){ 
-        theFT.status = 'failed';
-        theFT.description = bp_reply.errors[0].description;
+    
+    if(theFT.transactionType === 'paymentPlanDebit'){
+      theFT.amount = theUser.paymentPlan.amount;
+      theFT.fi = theUser.paymentPlan.fi;
+    }
+
+    FundingInstrument.findById(theFT.fi, function(err,fi){
+      if(!fi || !theFT){ 
+        theFT.status = 'failed'; theFT.description = 'couldnt find Funding Instrument'; 
+        ddExit(theFT, theUser, callback, new Error(theFT.description) );
         return;
-      } else {
-        theFT.status = 'succeeded';
-        theFT.description = bp_reply.debits[0].description;
       }
 
-  }) }) });
+      theFI = fi;
+      theBPToken = theFI.bp_token;
 
-  theFT.save(cb(err,ftback));
+      bp.debitCard(theBPToken, 
+        { amount: theFT.amount, 
+          appears_on_statements_as: 
+          theFT.appearsOnStatementAs, 
+          description: theFT.description}, 
+            function(err, bp_reply){
+
+              if(err){ 
+                theFT.status = 'failed'; theFT.description = "couldn't reach payment processor";
+                theFT.ddExit(theFT, theUser, callback, new Error(theFT.description));  
+                return;
+
+              } 
+
+              if (bp_reply.errors){ 
+                theFT.status = 'failed';
+                theFT.description = bp_reply.errors[0].description;
+                ddExit(theFT, null, callback, new Error(theFT.description));
+                return;
+
+              } 
+
+              // else success!
+              theFT.status = 'succeeded';
+              theFT.description = bp_reply.debits[0].description;
+              theUser.paymentPlan.lastCharge = theFT._id;
+              ddExit(theFT, theUser, callback, null);
+              return;
+      }) }) })
 
 }
 

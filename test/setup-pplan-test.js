@@ -52,7 +52,6 @@ describe('setup payment plan', function () {
         cctype: 'visa',
         userId: '@User@0' // temp!!! will get from session eventually in endpoint handler.
       }
-      console.log('in beforeEach: fi = ', debitparams.fundingInstrument);
     });
 
 
@@ -65,7 +64,6 @@ describe('setup payment plan', function () {
           .expect(200)
           .end(function(err,res){
             assert(!err);
-
              m.FundingInstrument.findOne({}
              ,function(err,fi){
                 assert.equal(fi.user, theUser._id);
@@ -74,11 +72,11 @@ describe('setup payment plan', function () {
              m.User.findOne({_id: theUser.id}
              ,function(err,u){
                 // console.log(u);
-                assert.equal(u.payPlan.fi, fi._id); // user payment plan has been updated.
+                assert.equal(u.paymentPlan.fi, fi._id); // user payment plan has been updated.
 
              m.FinancialTransaction.findOne({}
              ,function(err, ft){
-                assert.equal(ft.status, 'success');
+                assert.equal(ft.status, 'succeeded');
                 assert.equal(ft.fi, fi._id);
                 assert.equal(ft.user, theUser._id); // FinancialTransaction record has been created.
                 done();    
@@ -97,24 +95,10 @@ describe('setup payment plan', function () {
           .expect('Content-Type', /json/)
           .expect(200)
           .end(function(err,res){
-            console.log('in NOT test cb', res.body);
             assert.equal(res.body.status, 'error');
             done();
             });// .end()
     });
 
-    it('should NOT do a debit with a bad card token', function(done){
-      debitparams.fundingInstrument = '/this/is-a-whack-card-token';
-      request(app)
-          .post('/setup-payment-plan')
-          .send(debitparams)
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .end(function(err,res){
-            console.log('in NOT test cb', res.body);
-            assert.equal(res.body.status, 'error');
-            done();
-            });// .end()
-    });
 
 });

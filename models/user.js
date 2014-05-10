@@ -10,10 +10,11 @@ var userSchema = mongoose.Schema({
     displayName       : String,
     avatarUrl         : String,
 
-    payPlan           : {
+    paymentPlan           : {
                           frequency  : { type: String, enum: ['once','monthly','quarterly','yearly']},
                           lastCharge : { type: String, ref: 'FinancialTransaction'},
-                          fi         : { type: String, ref: 'FundingInstrument'}
+                          fi         : { type: String, ref: 'FundingInstrument'},
+                          amount     : { type: Number, max: 1500000, min: 100}
                          },
 
     local            : {
@@ -54,7 +55,7 @@ userSchema.methods.validPassword = function(password) {
 
 
 userSchema.methods.setupPaymentPlan = function(params){
-    // edit payPlan fields from given params.
+    // edit paymentPlan fields from given params.
 
 }
 
