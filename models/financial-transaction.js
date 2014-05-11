@@ -36,7 +36,7 @@ var financialTransactionSchema = mongoose.Schema({
 // utility last thing to do no matter what path we take through the callbacks in doDebit():
 // save the financial transaction, the updated user (if changed) and call the callback.
 
-// financialTransactionSchema.methods.ddExit = function(ft, user, cb) {
+// financialTransactionSchema.methods.errExit = function(ft, user, cb) {
 //   ft.save(function(err, ftback){
 //     console.log('cb = ',cb, 'ft= ', ft);
 //     cb(null, ft);
@@ -52,12 +52,21 @@ financialTransactionSchema.methods.doDebit = function(options, callback){
   var theUser, theFI;
   var amount, description, theBPToken;
 
-  function ddExit(ft,user,cb, err1){
+  function errExit(ft,user,cb, err1){
     ft.save(function(err, ftback){
      if(false /*user != null */ ) { user.save(cb(err1, ft)) }
      else { cb(err1, ft) }
     })
   }
+
+  function successExit(ft,user,cb){
+    ft.save(function(err, ftback){
+      if(err){ throw new Error("couldnt save FT"); }
+      user.paymentPlan.lastCharge = ftback._id;
+      user.save(cb(null, ftback));
+    });
+  }
+
 
   for(key in options){
      theFT[key] = options[key];
@@ -70,14 +79,14 @@ financialTransactionSchema.methods.doDebit = function(options, callback){
   if( theFT.paymentProcessor !== 'balancedPayments'){
     theFT.status = 'failed';
     theFT.description = 'failed transaction: unsupported payment processor ' + theFT.paymentProcessor;
-    ddExit(theFT, null, callback, new Error(theFT.description));
+    errExit(theFT, null, callback, new Error(theFT.description));
     return;
   } 
 
   if( theFT.transactionType === 'credit') {
     theFT.status = 'failed';
     theFT.description = 'Credit transactions not yet supported'; 
-    ddExit(theFT, null, callback, new Error(theFT.description));
+    errExit(theFT, null, callback, new Error(theFT.description));
     return;
   }
   
@@ -87,7 +96,7 @@ financialTransactionSchema.methods.doDebit = function(options, callback){
   User.findById(theFT.user, function(err,u){
     if(!u){ 
       theFT.status = 'failed'; theFT.description = 'couldnt find user'; 
-      ddExit(theFT, theUser, callback, new Error(theFT.description));
+      errExit(theFT, theUser, callback, new Error(theFT.description));
       return;
     }
 
@@ -103,7 +112,7 @@ financialTransactionSchema.methods.doDebit = function(options, callback){
     FundingInstrument.findById(theFT.fi, function(err,fi){
       if(!fi || !theFT){ 
         theFT.status = 'failed'; theFT.description = 'couldnt find Funding Instrument'; 
-        ddExit(theFT, theUser, callback, new Error(theFT.description) );
+        errExit(theFT, theUser, callback, new Error(theFT.description) );
         return;
       }
 
@@ -119,7 +128,7 @@ financialTransactionSchema.methods.doDebit = function(options, callback){
 
               if(err){ 
                 theFT.status = 'failed'; theFT.description = "couldn't reach payment processor";
-                theFT.ddExit(theFT, theUser, callback, new Error(theFT.description));  
+                theFT.errExit(theFT, theUser, callback, new Error(theFT.description));  
                 return;
 
               } 
@@ -127,7 +136,7 @@ financialTransactionSchema.methods.doDebit = function(options, callback){
               if (bp_reply.errors){ 
                 theFT.status = 'failed';
                 theFT.description = bp_reply.errors[0].description;
-                ddExit(theFT, null, callback, new Error(theFT.description));
+                errExit(theFT, null, callback, new Error(theFT.description));
                 return;
 
               } 
@@ -136,7 +145,7 @@ financialTransactionSchema.methods.doDebit = function(options, callback){
               theFT.status = 'succeeded';
               theFT.description = bp_reply.debits[0].description;
               theUser.paymentPlan.lastCharge = theFT._id;
-              ddExit(theFT, theUser, callback, null);
+              successExit(theFT, theUser, callback);
               return;
       }) }) })
 
@@ -162,14 +171,14 @@ financialTransactionSchema.methods.doDebitQ = function(options){
   if( theFT.paymentProcessor !== 'balancedPayments'){
     theFT.status = 'failed';
     theFT.description = 'failed transaction: unsupported payment processor ' + theFT.paymentProcessor;
-    ddExit(theFT, null, callback, new Error(theFT.description));
+    errExit(theFT, null, callback, new Error(theFT.description));
     return;
   } 
 
   if( theFT.transactionType === 'credit') {
     theFT.status = 'failed';
     theFT.description = 'Credit transactions not yet supported'; 
-    ddExit(theFT, null, callback, new Error(theFT.description));
+    errExit(theFT, null, callback, new Error(theFT.description));
     return;
   }
   
@@ -210,7 +219,7 @@ financialTransactionSchema.methods.doDebitQ = function(options){
   User.findById(theFT.user, function(err,u){
     if(!u){ 
       theFT.status = 'failed'; theFT.description = 'couldnt find user'; 
-      ddExit(theFT, theUser, callback, new Error(theFT.description));
+      errExit(theFT, theUser, callback, new Error(theFT.description));
       return;
     }
 
@@ -226,7 +235,7 @@ financialTransactionSchema.methods.doDebitQ = function(options){
     FundingInstrument.findById(theFT.fi, function(err,fi){
       if(!fi || !theFT){ 
         theFT.status = 'failed'; theFT.description = 'couldnt find Funding Instrument'; 
-        ddExit(theFT, theUser, callback, new Error(theFT.description) );
+        errExit(theFT, theUser, callback, new Error(theFT.description) );
         return;
       }
 
@@ -242,7 +251,7 @@ financialTransactionSchema.methods.doDebitQ = function(options){
 
               if(err){ 
                 theFT.status = 'failed'; theFT.description = "couldn't reach payment processor";
-                theFT.ddExit(theFT, theUser, callback, new Error(theFT.description));  
+                theFT.errExit(theFT, theUser, callback, new Error(theFT.description));  
                 return;
 
               } 
@@ -250,7 +259,7 @@ financialTransactionSchema.methods.doDebitQ = function(options){
               if (bp_reply.errors){ 
                 theFT.status = 'failed';
                 theFT.description = bp_reply.errors[0].description;
-                ddExit(theFT, null, callback, new Error(theFT.description));
+                errExit(theFT, null, callback, new Error(theFT.description));
                 return;
 
               } 
@@ -259,7 +268,7 @@ financialTransactionSchema.methods.doDebitQ = function(options){
               theFT.status = 'succeeded';
               theFT.description = bp_reply.debits[0].description;
               theUser.paymentPlan.lastCharge = theFT._id;
-              ddExit(theFT, theUser, callback, null);
+              errExit(theFT, theUser, callback, null);
               return;
       }) }) })
 
