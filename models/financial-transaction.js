@@ -5,6 +5,7 @@ var createModel             = require('../lib/createmodel');
 var bp                      = require('../lib/oc-balanced');
 var User                    = require('./user');
 var FundingInstrument       = require('./funding-instrument');
+var Q                       = require('q'); 
 
 // define the schema for our transaction model
 var financialTransactionSchema = mongoose.Schema({
@@ -97,7 +98,8 @@ financialTransactionSchema.methods.doDebit = function(options, callback){
       theFT.amount = theUser.paymentPlan.amount;
       theFT.fi = theUser.paymentPlan.fi;
     }
-
+    
+    
     FundingInstrument.findById(theFT.fi, function(err,fi){
       if(!fi || !theFT){ 
         theFT.status = 'failed'; theFT.description = 'couldnt find Funding Instrument'; 
@@ -140,6 +142,130 @@ financialTransactionSchema.methods.doDebit = function(options, callback){
 
 }
 
+/*
+financialTransactionSchema.methods.doDebitQ = function(options){
+
+  theFT = this;
+  var theUser, theFI;
+  var amount, description, theBPToken;
+
+
+  // update values in this FT with options.
+  for(key in options){
+     theFT[key] = options[key];
+  }
+
+  theFT.date = new Date;
+  // first, easy synchronous error returns:
+
+  /* 
+  if( theFT.paymentProcessor !== 'balancedPayments'){
+    theFT.status = 'failed';
+    theFT.description = 'failed transaction: unsupported payment processor ' + theFT.paymentProcessor;
+    ddExit(theFT, null, callback, new Error(theFT.description));
+    return;
+  } 
+
+  if( theFT.transactionType === 'credit') {
+    theFT.status = 'failed';
+    theFT.description = 'Credit transactions not yet supported'; 
+    ddExit(theFT, null, callback, new Error(theFT.description));
+    return;
+  }
+  
+
+  // // OK, entering callback chain.
+
+  User
+    .findOne({_id: theFT.user})
+    .exec()
+    .then(
+      function(u){ 
+        if(!u){
+          throw new Error('user not found');
+        } else {
+          console.log("USER FOUND u = ", u);
+          theUser = u;
+          return theFT }
+
+      })
+    .then(null,function(err){console.log("rejected"); return err; })
+    .then(function(theFT){return theFT; });
+
+    // .then(function(){
+    //   if(theFT.transactionType === 'paymentPlanDebit'){
+    //     theFT.amount = theUser.paymentPlan.amount;
+    //     theFT.fi = theUser.paymentPlan.fi;
+    //   }
+    //   FundingInstrument
+    //     .findByID(theFT.fi)
+    //     .exec()
+    //     .then(function(fi){
+    //       theFI = fi;
+    //       theBPToken = theFI.BPToken;
+    //     }, function(err) { return new Error('FI not found')})
+
+
+    /*
+  User.findById(theFT.user, function(err,u){
+    if(!u){ 
+      theFT.status = 'failed'; theFT.description = 'couldnt find user'; 
+      ddExit(theFT, theUser, callback, new Error(theFT.description));
+      return;
+    }
+
+    theUser = u;
+
+    
+    if(theFT.transactionType === 'paymentPlanDebit'){
+      theFT.amount = theUser.paymentPlan.amount;
+      theFT.fi = theUser.paymentPlan.fi;
+    }
+    
+    
+    FundingInstrument.findById(theFT.fi, function(err,fi){
+      if(!fi || !theFT){ 
+        theFT.status = 'failed'; theFT.description = 'couldnt find Funding Instrument'; 
+        ddExit(theFT, theUser, callback, new Error(theFT.description) );
+        return;
+      }
+
+      theFI = fi;
+      theBPToken = theFI.bp_token;
+
+      bp.debitCard(theBPToken, 
+        { amount: theFT.amount, 
+          appears_on_statements_as: 
+          theFT.appearsOnStatementAs, 
+          description: theFT.description}, 
+            function(err, bp_reply){
+
+              if(err){ 
+                theFT.status = 'failed'; theFT.description = "couldn't reach payment processor";
+                theFT.ddExit(theFT, theUser, callback, new Error(theFT.description));  
+                return;
+
+              } 
+
+              if (bp_reply.errors){ 
+                theFT.status = 'failed';
+                theFT.description = bp_reply.errors[0].description;
+                ddExit(theFT, null, callback, new Error(theFT.description));
+                return;
+
+              } 
+
+              // else success!
+              theFT.status = 'succeeded';
+              theFT.description = bp_reply.debits[0].description;
+              theUser.paymentPlan.lastCharge = theFT._id;
+              ddExit(theFT, theUser, callback, null);
+              return;
+      }) }) })
+
+
+} // doDebitQ()
+*/
 
 
 

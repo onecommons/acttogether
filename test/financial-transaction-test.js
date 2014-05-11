@@ -55,7 +55,7 @@ describe('FT', function () {
         theFT.user        = theUser._id;
         theFT.fi          = theUser.paymentPlan.fi;
         theFT.amount      = theUser.paymentPlan.amount;
-        done();
+        theFT.save(done);
       }) 
     }); // beforeEach
 
@@ -73,7 +73,6 @@ describe('FT', function () {
     });
 
     it('shouldnt do a credit yet', function(done){
-      // confirm theFT is fully filled in.
       theFT.doDebit({ transactionType: 'credit'}, function(err, ftback){
         assert.isNotNull(err);
         //console.log(err);
@@ -82,7 +81,6 @@ describe('FT', function () {
     });
 
     it('shouldnt do a proper debit with an unsupported payment processor', function(done){
-      // confirm theFT is fully filled in.
       theFT.doDebit({ paymentProcessor: 'stripe'}, function(err, ftback){
         assert.isNotNull(err);
         //console.log(err);
@@ -92,36 +90,44 @@ describe('FT', function () {
 
 
     it('shouldnt do anything if user unfound', function(done){
-      // confirm theFT is fully filled in.
       theFT.doDebit({ user: undefined }, function(err, ftback){
         assert.isNotNull(err);
-        //console.log(err);
         done();
       }) 
     });
 
-/*
 
+    // it('Q version should find user', function(){
+    //   theFT.doDebitQ()
+    //   .then(function(rv){console.log(rv); done()}, 
+    //         function(rv){console.log(rv); done()});
+    // });
+
+    // it('Q version shouldnt find user if FT ref to it is blown', function(done){
+    //   theFT.doDebitQ({user: null})
+    //   .then(function(rv){console.log(rv); done()}, 
+    //         function(rv){console.log(rv); done()});
+    // });
+
+ 
     it('should give proper error if cant reach payment processor', function(done){
-      // confirm theFT is fully filled in.
       theFI.bp_token = "/xxxxx"; // completely whack url.
-      theFT.doDebit({}, function(err, ftback){
-        //assert.isNotNull(err);
-        console.log(err, ftback);
-        done();
-      }) 
+      theFI.save(function(){
+        theFT.doDebit({}, function(err, ftback){
+          assert.isNotNull(err);
+          done();
+        }) 
+      })
     });
 
     it('should give proper error if card refused', function(done){
-      // confirm theFT is fully filled in.
       theFI.bp_token = "/cards/CC3h0aMqs0opvI0UAq7LS1O2"; // bad card.
-      theFT.doDebit({}, function(err, ftback){
-        //assert.isNotNull(err);
-        console.log(err, ftback);
-        done();
-      }) 
+      theFI.save(function(){
+        theFT.doDebit({}, function(err, ftback){
+          assert.isNotNull(err);
+          done();
+        }) 
+      })
     });
 
-
-*/
 });
