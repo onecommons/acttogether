@@ -21,7 +21,7 @@ DEBUG=express:* node app.js
 Run unit tests:
 
 ```
-NODE_ENV=test ./node_modules/.bin/mocha
+NODE_ENV=test ./node_modules/.bin/mocha --reporter=list
 ```
 
 To run client side unit tests in phantomjs at same time, also set BROWSER_TEST:
