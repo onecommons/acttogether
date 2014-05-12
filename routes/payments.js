@@ -3,7 +3,6 @@ var User                    = require('../models/user');
 var FundingInstrument       = require('../models/funding-instrument');
 var FinancialTransaction    = require('../models/financial-transaction');
 var bp                      = require('../lib/oc-balanced');
-var assert                  = require('chai').assert;
 
 // setup users payment plan and do a payment transaction with balanced API.
 module.exports.setupPaymentPlanPost = function(req, res) {
