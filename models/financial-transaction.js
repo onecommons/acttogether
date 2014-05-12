@@ -5,7 +5,6 @@ var createModel             = require('../lib/createmodel');
 var bp                      = require('../lib/oc-balanced');
 var User                    = require('./user');
 var FundingInstrument       = require('./funding-instrument');
-var Q                       = require('q'); 
 
 // define the schema for our transaction model
 var financialTransactionSchema = mongoose.Schema({
