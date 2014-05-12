@@ -9,18 +9,20 @@ var Q                       = require('q');
 
 // define the schema for our transaction model
 var financialTransactionSchema = mongoose.Schema({
-  status                   : { type: String, enum: ['prepare', 'succeeded', 'failed'], default: 'prepare'},
-  user                     : { type: String, ref: 'User'},
-  fi                       : { type: String, ref: 'FundingInstrument'}, 
-  transactionType          : { type: String, 
-                                enum: ['oneTimeDebit', 'paymentPlanDebit', 'credit'], 
-                                default: 'paymentPlanDebit'},
-  paymentProcessor         : { type: String, enum: ['balancedPayments', 'stripe', 'payPal'], default: 'balancedPayments' },
-  date                     : { type: Date, default: Date.now },
-  amount                   : { type: Number, max: 1500000, min: 100},
-  currency                 : { type: String, default: 'USD' }, 
-  appearsOnStatementAs     : { type: String, default: 'One Commons' },
-  description              : { type: String, default: 'normal paymentPlan debit' }
+  status                        : { type: String, enum: ['prepare', 'succeeded', 'failed'], default: 'prepare'},
+  user                          : { type: String, ref: 'User'},
+  fi                            : { type: String, ref: 'FundingInstrument'}, 
+  transactionType               : { type: String, 
+                                     enum: ['oneTimeDebit', 'paymentPlanDebit', 'credit', 'refund'], 
+                                     default: 'paymentPlanDebit'},
+  paymentProcessor              : { type: String, enum: ['balancedPayments', 'stripe', 'payPal'], default: 'balancedPayments' },
+  date                          : { type: Date, default: Date.now },
+  amount                        : { type: Number, max: 1500000, min: 100},
+  currency                      : { type: String, default: 'USD' }, 
+  appearsOnStatementAs          : { type: String, default: 'One Commons' },
+  description                   : { type: String, default: 'normal paymentPlan debit' },
+  processorTransactionId        : String,  // in BP, e.g. debits.id
+  processorTransactionNumber    : String   // in BP, e.g. debits.transaction_number
 });
 
 
@@ -31,20 +33,9 @@ var financialTransactionSchema = mongoose.Schema({
 //  user, fi, transactionType, paymentProcessor, amount, currency, appearsOnStatementAs, description.
 //
 // On return, date will be set and status will be 'succeeded' or 'failed'.
+//  processorTransactionId and processorTransactionNumber will be set from the processor reply,
+//  and if it is a paymentPlanDebit, the user payment plan 'lastCharge' will be set to refer to this transaction.
 //
-
-// utility last thing to do no matter what path we take through the callbacks in doDebit():
-// save the financial transaction, the updated user (if changed) and call the callback.
-
-// financialTransactionSchema.methods.errExit = function(ft, user, cb) {
-//   ft.save(function(err, ftback){
-//     console.log('cb = ',cb, 'ft= ', ft);
-//     cb(null, ft);
-//   //  if(user !== null ) { user.save(cb(null, ft)) }
-//   //  else { cb(null, ft) }
-//   })
-// }
-
 
 financialTransactionSchema.methods.doDebit = function(options, callback){
 
@@ -83,9 +74,9 @@ financialTransactionSchema.methods.doDebit = function(options, callback){
     return;
   } 
 
-  if( theFT.transactionType === 'credit') {
+  if( theFT.transactionType !== 'paymentPlanDebit') {
     theFT.status = 'failed';
-    theFT.description = 'Credit transactions not yet supported'; 
+    theFT.description = 'Transaction type ' + theFT.transactionType + ' not yet supported'; 
     errExit(theFT, null, callback, new Error(theFT.description));
     return;
   }
@@ -111,7 +102,7 @@ financialTransactionSchema.methods.doDebit = function(options, callback){
     
     FundingInstrument.findById(theFT.fi, function(err,fi){
       if(!fi || !theFT){ 
-        theFT.status = 'failed'; theFT.description = 'couldnt find Funding Instrument'; 
+        theFT.status = 'failed'; theFT.description = "couldn't find Funding Instrument"; 
         errExit(theFT, theUser, callback, new Error(theFT.description) );
         return;
       }
@@ -136,145 +127,40 @@ financialTransactionSchema.methods.doDebit = function(options, callback){
               if (bp_reply.errors){ 
                 theFT.status = 'failed';
                 theFT.description = bp_reply.errors[0].description;
+                if(bp_reply.debits){
+                  theFT.processorTransactionId          = bp_reply.debits[0].id;
+                  theFT.processorTransactionNumber      = bp_reply.debits[0].transaction_number;
+                }
                 errExit(theFT, null, callback, new Error(theFT.description));
                 return;
 
               } 
 
               // else success!
-              theFT.status = 'succeeded';
-              theFT.description = bp_reply.debits[0].description;
-              theUser.paymentPlan.lastCharge = theFT._id;
+              theFT.status                          = 'succeeded';
+              theFT.description                     = bp_reply.debits[0].description;
+              theFT.processorTransactionId          = bp_reply.debits[0].id;
+              theFT.processorTransactionNumber      = bp_reply.debits[0].transaction_number;
+
+              if(theFT.transactionType === 'paymentPlanDebit'){
+                theUser.paymentPlan.lastCharge = theFT._id;
+              }
               successExit(theFT, theUser, callback);
               return;
       }) }) })
 
 }
 
-/*
-financialTransactionSchema.methods.doDebitQ = function(options){
 
-  theFT = this;
-  var theUser, theFI;
-  var amount, description, theBPToken;
+// Refund an existing debit.
+financialTransactionSchema.methods.refundDebit = function(debitFT, callback){
+  var theFT = this;
 
-
-  // update values in this FT with options.
-  for(key in options){
-     theFT[key] = options[key];
-  }
-
-  theFT.date = new Date;
-  // first, easy synchronous error returns:
-
-  /* 
-  if( theFT.paymentProcessor !== 'balancedPayments'){
-    theFT.status = 'failed';
-    theFT.description = 'failed transaction: unsupported payment processor ' + theFT.paymentProcessor;
-    errExit(theFT, null, callback, new Error(theFT.description));
-    return;
-  } 
-
-  if( theFT.transactionType === 'credit') {
-    theFT.status = 'failed';
-    theFT.description = 'Credit transactions not yet supported'; 
-    errExit(theFT, null, callback, new Error(theFT.description));
-    return;
-  }
-  
-
-  // // OK, entering callback chain.
-
-  User
-    .findOne({_id: theFT.user})
-    .exec()
-    .then(
-      function(u){ 
-        if(!u){
-          throw new Error('user not found');
-        } else {
-          console.log("USER FOUND u = ", u);
-          theUser = u;
-          return theFT }
-
-      })
-    .then(null,function(err){console.log("rejected"); return err; })
-    .then(function(theFT){return theFT; });
-
-    // .then(function(){
-    //   if(theFT.transactionType === 'paymentPlanDebit'){
-    //     theFT.amount = theUser.paymentPlan.amount;
-    //     theFT.fi = theUser.paymentPlan.fi;
-    //   }
-    //   FundingInstrument
-    //     .findByID(theFT.fi)
-    //     .exec()
-    //     .then(function(fi){
-    //       theFI = fi;
-    //       theBPToken = theFI.BPToken;
-    //     }, function(err) { return new Error('FI not found')})
-
-
-    /*
-  User.findById(theFT.user, function(err,u){
-    if(!u){ 
-      theFT.status = 'failed'; theFT.description = 'couldnt find user'; 
-      errExit(theFT, theUser, callback, new Error(theFT.description));
-      return;
-    }
-
-    theUser = u;
-
-    
-    if(theFT.transactionType === 'paymentPlanDebit'){
-      theFT.amount = theUser.paymentPlan.amount;
-      theFT.fi = theUser.paymentPlan.fi;
-    }
-    
-    
-    FundingInstrument.findById(theFT.fi, function(err,fi){
-      if(!fi || !theFT){ 
-        theFT.status = 'failed'; theFT.description = 'couldnt find Funding Instrument'; 
-        errExit(theFT, theUser, callback, new Error(theFT.description) );
-        return;
-      }
-
-      theFI = fi;
-      theBPToken = theFI.bp_token;
-
-      bp.debitCard(theBPToken, 
-        { amount: theFT.amount, 
-          appears_on_statements_as: 
-          theFT.appearsOnStatementAs, 
-          description: theFT.description}, 
-            function(err, bp_reply){
-
-              if(err){ 
-                theFT.status = 'failed'; theFT.description = "couldn't reach payment processor";
-                theFT.errExit(theFT, theUser, callback, new Error(theFT.description));  
-                return;
-
-              } 
-
-              if (bp_reply.errors){ 
-                theFT.status = 'failed';
-                theFT.description = bp_reply.errors[0].description;
-                errExit(theFT, null, callback, new Error(theFT.description));
-                return;
-
-              } 
-
-              // else success!
-              theFT.status = 'succeeded';
-              theFT.description = bp_reply.debits[0].description;
-              theUser.paymentPlan.lastCharge = theFT._id;
-              errExit(theFT, theUser, callback, null);
-              return;
-      }) }) })
-
-
-} // doDebitQ()
-*/
+  theFT.transactionType = 'refund';
+  theFT.user = debitFT.user;
+  theFT.fi   = debitFT.fi;
+    // NIY
+}
 
 
 
