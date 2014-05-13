@@ -1,11 +1,22 @@
 var should = require('should')
   , assert = require('assert')
   , mongodb = require('mongodb')
-  , datastore = require('datastore')
+  , datastore = require('../lib/datastore')
   , mongoose = require('mongoose');
 var DBRef = mongodb.DBRef, ObjectID = mongodb.ObjectID;
 
 describe('datastore', function(){
+
+  after(function(done){
+    var db = mongoose.connection;
+     db.db.dropCollection('test1', function(err, result) { 
+        //may or may not exits, if it doesn't err will be set
+        //console.log("dropCollection", err, result);
+        done();
+      });
+
+  });
+
   describe('.pJSON', function(){
     
   it('should escape strings that look like objectids',  function(){
@@ -94,9 +105,9 @@ describe('datastore', function(){
  
      it('create with user-defined ids',  function(done){
       assert(ds);
-      ds.create('{"_id": "Test1@1","prop": "test"}', function(err, doc) {
+      ds.create('{"_id": "@Test1@1","prop": "test"}', function(err, doc) {
         assert(!err, JSON.stringify(err));
-        assert.deepEqual(doc.toObject(), {"__v":0,"_id":"Test1@1","prop":"test","prop1":[]});
+        assert.deepEqual(doc.toObject(), {"__v":0,"_id":"@Test1@1","prop":"test","prop1":[]});
         done();
       });
     });
@@ -183,7 +194,7 @@ describe('datastore', function(){
     describe('.jsonrpc', function(){
       var express = require('express')
        , request = require('supertest')
-       , jsonrpc = require('jsonrpc');
+       , jsonrpc = require('../lib/jsonrpc');
 
       var app = express();
       app.use(express.bodyParser({reviver: datastore.pJSON.reviver}));
@@ -199,7 +210,7 @@ describe('datastore', function(){
         .post('/')
         //.set('Content-Type', 'application/json') //unnecessary since its the default
         .send(
-          [{"jsonrpc":"2.0","method":"create","params":{"_id":"Test1@2","prop1":"adds a value to prop1"},"id":05968226976111071},{"jsonrpc":"2.0","method":"transaction_info","params":{"comment":"created $new05968226976111071"},"id": 49884485029342773}]
+          [{"jsonrpc":"2.0","method":"create","params":{"_id":"@Test1@2","prop1":"adds a value to prop1"},"id":05968226976111071},{"jsonrpc":"2.0","method":"transaction_info","params":{"comment":"created $new05968226976111071"},"id": 49884485029342773}]
           )
         .expect('[{"jsonrpc":"2.0","id":5968226976111071,"result":{"__v":0,"_id":"@Test1@2","prop1":["adds a value to prop1"]}},{"jsonrpc":"2.0","id":49884485029342776,"result":{}}]', done);
       });
@@ -269,7 +280,7 @@ describe('datastore', function(){
       assert(ds);
       ds.create('{"_id": "@1","prop": "test"}', function(err, doc) {
         assert(!err, JSON.stringify(err));
-        assert.deepEqual(doc, [{"_id":"1","prop":"test"}]);
+        assert.deepEqual(doc, [{"_id":"@1","prop":"test"}]);
         done();
       });
     });
@@ -291,7 +302,7 @@ describe('datastore', function(){
     describe('.jsonrpc', function(){
       var express = require('express')
        , request = require('supertest')
-       , jsonrpc = require('jsonrpc');
+       , jsonrpc = require('../lib/jsonrpc');
 
       var app = express();
       app.use(express.bodyParser({reviver: datastore.pJSON.reviver}));
@@ -307,7 +318,7 @@ describe('datastore', function(){
         .post('/')
         //.set('Content-Type', 'application/json') //unnecessary since its the default
         .send(
-          [{"jsonrpc":"2.0","method":"create","params":{"_id":"2","prop1":"adds a value to prop1"},"id":05968226976111071},{"jsonrpc":"2.0","method":"transaction_info","params":{"comment":"created $new05968226976111071"},"id": 49884485029342773}]
+          [{"jsonrpc":"2.0","method":"create","params":{"_id":"@2","prop1":"adds a value to prop1"},"id":05968226976111071},{"jsonrpc":"2.0","method":"transaction_info","params":{"comment":"created $new05968226976111071"},"id": 49884485029342773}]
           )
         .expect('[{"jsonrpc":"2.0","id":5968226976111071,"result":[{"_id":"@2","prop1":"adds a value to prop1"}]},{"jsonrpc":"2.0","id":49884485029342776,"result":{}}]', done);
       });

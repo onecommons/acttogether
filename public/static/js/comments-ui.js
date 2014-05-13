@@ -37,10 +37,30 @@ function initDisplay() {
 
 }
 
+function showComments(){
+		$('show-hide-toggle').addClass('hover');
+		$('div.comments').addClass('show-all');
+}
+
+function hideComments() {
+		$('show-hide-toggle').removeClass('hover');
+		$('div.comments').removeClass('show-all');
+}
+
 $(document).ready(function() {
 
   	initDisplay();
  
+	function addComment(){
+		// alert('adding comment');
+		$('#create-comment').dbCreate(function(data){
+		  console.log("comment created", data);
+		  $('#comment-section').dbModel().comments.push(data);
+		  $('#comment-section').dbRender();
+		});
+		//location.reload(true);  // temporary solution; should add comment to db and re-render comment list.
+	}
+
 	// on Click event for toggle comments 'views' 
 	$('.show-hide-toggle').click(function(){
 		if (!$(this).hasClass('hover')) {
@@ -50,5 +70,23 @@ $(document).ready(function() {
 		}
 
 	});
+
+  $('.comment-entry-field').keyup(function() {
+
+        var empty = false;
+         if ($(this).val() == '') {
+                empty = true;
+         }
+
+        if (empty) {
+            $('#add-comment').addClass('disabled')
+            $('#add-comment').unbind('click');
+         } else {
+            $('#add-comment').removeClass('disabled');
+            $('#add-comment').unbind('click');
+            $('#add-comment').bind('click', addComment);
+         }
+    });
+
 
 });

@@ -37,7 +37,7 @@ Txn.prototype = {
 
     idcounter : 0,
 
-    url : 'datarequest',
+    url : '/datarequest',
 
     execute : function(action, data, callback, elem) {
         var elem = elem || document;
@@ -106,7 +106,7 @@ Txn.prototype = {
         function ajaxCallback(data, textStatus) {
             //responses should be a list of successful responses
             //if any request failed it should be an http-level error
-            konsole.log("datarequest", data, textStatus, 'dbdata.'+txnId, comment);
+           // konsole.log("datarequest", data, textStatus, 'dbdata.'+txnId, comment);
             if (textStatus == 'success') {
                 $(elem).trigger('dbdata.'+txnId, [data, request, comment]);
                 $(elem).trigger('dbdata-*', [data, request, comment]);
@@ -332,8 +332,21 @@ txn.commit();
         this.removeData('currentTxn');
         return this;        
      }
+    ,dbRenderToString: function(model, templatename) {
+      if (model === undefined) 
+        model = this.data('_model');
+      if (templatename === undefined)
+        templatename = this.data('_template');
+      return swig.run($.templates[templatename], model, templatename);
+    }
+    ,dbRender: function(model, templatename) {
+      this.html(this.dbRenderToString());
+      return this;
+    }
+    ,dbModel: function() {
+      return this.data('_model');
+    }
    })
-   
    $.db = { url : null, options : {} };
 })(jQuery);
 
@@ -826,7 +839,12 @@ Binder.FormBinder.prototype = {
       }
     } else {      
         value = this._parse( element.name, element.value, element );
-        accessor.set( element.name, value );      
+        if( accessor.isIndexed(element.name) ) {
+          var current = accessor.get( element.name ) ||  [];
+          current.push(value);
+          value = current;
+        }
+        accessor.set( element.name, value );
     }
     return accessor.target;
   },

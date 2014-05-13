@@ -11,7 +11,7 @@
     <title>OneCommons: Harnessing the power of collective action</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="/static/css/bootstrap.{% if debug %}min.{% endif %}css" rel="stylesheet">
+    <link href="/static/css/bootstrap.{% if !debug %}min.{% endif %}css" rel="stylesheet">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
 
 
@@ -27,6 +27,8 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    {% block head %} {% endblock %}
   </head>
 
   <body>
@@ -55,7 +57,7 @@
                           <li><a href="">Something we havent thought of</a></li>
                   </ul>
                 </li>
-                <li><a href="/about/login"><span class="glyphicon glyphicon-user"></span>Join In / Login</a></li>
+                <li><a href="/login"><span class="glyphicon glyphicon-user"></span>Sign Up / Login</a></li>
           </ul>
         </div><!--/.navbar-collapse -->
       </div> <!-- container -->
@@ -89,14 +91,14 @@
       </footer>
     </div> <!-- /container -->
 
-
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-1.10.2.{% if debug %}min.{% endif %}js"></script>
-    <script src="/static/js/bootstrap.{% if debug %}min.{% endif %}js"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.{% if !debug %}min.{% endif %}js"></script>
+    <script src="/static/js/bootstrap.{% if !debug %}min.{% endif %}js"></script>
     <script src="/static/js/bootstrap-hover-dropdown.min.js"></script>
-
 {% block jsfooter %}{% endblock %}
+{%clientrender%}
+{% include "partials/debug_footer.html" %}
   </body>
 </html>
