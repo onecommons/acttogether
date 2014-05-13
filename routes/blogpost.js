@@ -52,11 +52,11 @@ module.exports = function(req, res) {
           }
         }
        )
+       postItem.comments = commentItems
        res.render('blogpost.html', {
          messages: req.flash('info'),
          post: postItem,
          post_last_edit: datestr,
-         comments: { comments: commentItems },
          user: theUser  // vile hack TRP to keep going.
      });
 

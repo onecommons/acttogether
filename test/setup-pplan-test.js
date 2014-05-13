@@ -5,18 +5,14 @@ var mongoose    = require('mongoose');
 var bp          = require('../lib/oc-balanced');
 var m           = require('../models');
 
-
 describe('setup payment plan', function () {
-    
     var db, theUser, debitparams;
     var theUserPwd = 'testuser';
-
 
     var app = express();
     app.use(express.bodyParser());
     var spp = require('../routes/payments').setupPaymentPlanPost; 
-    app.post('/setup-payment-plan', spp); // add jswig routes to app.
-
+    app.post('/setup-payment-plan', function(req, res) {spp(req,res, theUser);});
 
     before(function(done) {
       db = mongoose.connect('mongodb://localhost/test');

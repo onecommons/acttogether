@@ -95,50 +95,33 @@ describe('oc-balanced api', function(){
                   });
   });
 
-  // it('should work with promise based debitCardq()', function(){
-  //    var rv = bp.debitCardq(aToken, { "amount": 5000, 
-  //                 "appears_on_statement_as": "statement blab",
-  //                 "description": "dashboard blabbery" });
+  it('should debit, then credit a good card transaction once only', function(done){
+      var debitId;
+      var theAmount = 1000;
+      bp.debitCard(aToken, { "amount": theAmount, 
+                  "appears_on_statement_as": "statement blab",
+                  "description": "dashboard blabbery" },
+        function(err,data){
+          assert.property(data,'debits');
+          assert.deepPropertyVal(data,'debits[0].status', 'succeeded');
+          debitId = data.debits[0].id;
 
-  //     // rv.then(function(body){ console.log("DCQ ", body)};
-  //     return assert.isFulfilled(rv);
+          // do refund.
+          bp.refundDebit(debitId, theAmount, "refund description",
+            function(err,rr){
+              assert.deepPropertyVal(rr,'refunds[0].status', 'succeeded');
+              assert.equal(rr.refunds[0].amount, theAmount);
+              assert.equal(rr.refunds[0].links.debit, debitId);
 
-  // });
-
-  // // balanced-official based attempts. No go. 
-
-  // before(function(){
-  //   // use the test api key.
-  //   balanced.configure('ak-test-eyoGATiAg6YE5thvhSiWIi7NE0zg0l0U');
-  //   // console.log('test API key set: ', fixtures.card.token);
-  // });
-   
-  // // it('create api key and configure', function(done){
-  // //   var rv = balanced
-  // //           .api_key
-  // //           .create()
-  // //           .then(function(obj){
-  // //             assert.property(obj, 'secret');
-  // //             console.log("API key ", obj.secret);
-  // //             balanced.configure(obj.secret)
-  // //             done();
-  // //   });
-  // // });
-
-
-  // it('should debit the card', function (done) {
-  //   var rv = balanced
-  //               .get("/cards/CC5O7VeGswfdoJ3xCL8r8BPD") // fixtures.card.token)
-  //               // .debit({
-  //               //   "appears_on_statement_as": "Statement text", 
-  //               //   "amount": 5000, 
-  //               //   "description": "Some descriptive text for the debit in the dashboard"
-  //               // })
-  //               .then(function(data){
-  //                 console.log(data);
-  //                 done();
-  //               })
-  // });
+              // try another refund on same original debit transaction; should fail.
+              bp.refundDebit(debitId, theAmount, "refund description",
+                function(err,rrr){
+                  assert.deepPropertyVal(rrr, 'errors[0].status', "Bad Request");
+                  done();
+              })
+          });
+      });
+  });
 
   
  }); // describe...
