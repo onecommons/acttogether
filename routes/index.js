@@ -5,6 +5,7 @@ var about           = require('./about');
 var jswig           = require('./jswig');
 var blogpost        = require('./blogpost');
 var login           = require('./login');
+var profile           = require('./profile');
 var datarequest     = require('./datarequest');
 var payments        = require('./payments');
 var namedRoutes = {};
@@ -18,6 +19,7 @@ var sharedPageVars = function(req, res, next) {
 }
 
 module.exports = function(app, passport) {
+  //enables named routes, eg <a href='{{routes.profile}}'>my profile</a>
   var routes = {
     index: ['/', sharedPageVars, function(req, res) { res.render('index'); }]
     //use this form for methods other than GET
@@ -31,7 +33,7 @@ module.exports = function(app, passport) {
     }
     ,datarequest: {post: datarequest}
     ,profile: [utils.isLoggedIn, sharedPageVars, login.profile]
-    //,userTransactions: ['/profile/transactions', utils.isLoggedIn, sharedPageVars, profile.transactionhistory]
+    ,userTransactions: ['/profile/transactions', utils.isLoggedIn, sharedPageVars, profile.transactionHistory]
   };
 
   app.get('/about/:pagename', sharedPageVars, about);
