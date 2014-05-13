@@ -7,6 +7,7 @@ var blogpost        = require('./blogpost');
 var login           = require('./login');
 var datarequest     = require('./datarequest');
 var payments        = require('./payments');
+var profile         = require('./profile');
 
 // vars set here are available on all pages with sharedPageVars in the route
 var sharedPageVars = function(req, res, next) {
@@ -32,6 +33,7 @@ module.exports = function(app, passport) {
   app.get('/signup', login.signup);
   app.post('/signup', sharedPageVars, login.signupPost(passport));
   app.get('/profile', utils.isLoggedIn, sharedPageVars, login.profile);
+  app.get('/profile/transactions', utils.isLoggedIn, sharedPageVars, profile.transactionHistory);
   app.get('/auth/facebook', login.facebookAuth);
   app.get('/auth/facebook/callback', login.facebookAuthCallback);
 
