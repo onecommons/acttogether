@@ -5,7 +5,7 @@ var FinancialTransaction    = require('../models/financial-transaction');
 var bp                      = require('../lib/oc-balanced');
 
 // setup users payment plan and do a payment transaction with balanced API.
-module.exports.setupPaymentPlanPost = function(req, res) {
+module.exports.setupPaymentPlanPost = function(req, res, testuser) {
        // NIY
 
        // console.log("in setupPaymentPlanPost user = ", req.user);
@@ -15,9 +15,7 @@ module.exports.setupPaymentPlanPost = function(req, res) {
 
        var resultStatus = 'error';
        var resultMessage = 'nothing happened';
-
-       // get user from session. for now, since this dont work, we use our generic test user 0.
-       var theUser =  { _id: "@User@0" };
+       var theUser = testuser ? testuser : req.user; //testuser only used by unit tests
 
        // validate fields.
        if( data.fundingInstrument.match(/\/cards\//) === null) {
