@@ -27,8 +27,8 @@ module.exports = function(app, passport) {
     ,logout:    [login.logout]
     ,signup:  {get:login.signup, post: [sharedPageVars, login.signupPost(passport)]}
     ,setupPaymentPlan: {path: 
-                '/setup-payment-plan'
-                        ,get: [sharedPageVars, utils.isLoggedIn, function(req,res){res.render('setup-payment-plan');}]
+                '/profile/setup-payment-plan'
+                        ,get: [sharedPageVars, utils.isLoggedIn, function(req,res){res.render('profile/setup-payment-plan');}]
                         ,post: [utils.isLoggedIn, payments.setupPaymentPlanPost]
     }
     ,datarequest: {post: datarequest}

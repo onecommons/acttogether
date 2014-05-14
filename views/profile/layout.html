@@ -1,0 +1,17 @@
+{% extends '../layout.html' %}
+
+{% block content %}
+    <!-- PROFILE LINKS -->
+    <div class="col-sm-3">
+        <ul>
+            <li><a href="{{routes.userTransactions}}">Transaction History</a></li>
+            <li><a href="{{routes.setupPaymentPlan}}">Payment Plan</a></li>
+        </ul>
+    </div>
+
+    <!-- PROFILE CONTENT -->
+    <div class="col-sm-9">
+		{% block profilecontent %}{% endblock %}
+	</div>
+
+{% endblock %}

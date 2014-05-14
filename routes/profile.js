@@ -19,7 +19,7 @@ for(var j =0; j < 5; j++){
 }
 
 module.exports.transactionHistory = function(req, res) {
-  res.render('transaction-history.html', {
+  res.render('profile/transaction-history.html', {
     user : req.user
     ,transactions : testTransactions
 
