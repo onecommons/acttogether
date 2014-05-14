@@ -1,4 +1,4 @@
-// profile.js  routes for user's profile pages
+// profile.js routes for user's profile pages
 
 //
 // Transaction History

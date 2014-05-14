@@ -10,9 +10,17 @@
 
     <div class="row">
 
+        <!-- PROFILE LINKS -->
+        <div class="col-sm-4">
+            <ul>
+                <li><a href="{{routes.userTransactions}}">Transaction History</a></li>
+                <li><a href="{{routes.setupPaymentPlan}}">Payment Plan</a></li>
+            </ul>
+        </div>
+
         <!-- LOCAL INFORMATION -->
         {% if user.local.email %}
-        <div class="col-sm-6">
+        <div class="col-sm-4">
             <div class="well">
                 <h3><span class="fa fa-user"></span> Local</h3>
                     <p>
@@ -27,7 +35,7 @@
 
         <!-- FACEBOOK INFORMATION -->
         {% if user.facebook.id %}
-        <div class="col-sm-6">
+        <div class="col-sm-4">
             <div class="well">
                 <h3 class="text-primary"><span class="fa fa-facebook"></span> Facebook</h3>
                     <p>
