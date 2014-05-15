@@ -22,21 +22,21 @@ var sharedPageVars = function(req, res, next) {
 module.exports = function(app, passport) {
   //enables named routes, eg <a href='{{routes.profile}}'>my profile</a>
   var routes = {
-    index: ['/', sharedPageVars, function(req, res) { res.render('index'); }]
+    index: ['/', sharedPageVars, function(req, res) { res.render('index'); }],
     //use this form for methods other than GET
-    ,login:   {get:[sharedPageVars, login.login],post: [login.loginPost(passport)]}
-    ,logout:    [login.logout]
-    ,signup:  {get:login.signup, post: [sharedPageVars, login.signupPost(passport)]}
-    ,setupPaymentPlan: {path: 
-                '/profile/setup-payment-plan'
-                        ,get: [sharedPageVars, utils.isLoggedIn, function(req,res){res.render('profile/setup-payment-plan');}]
-                        ,post: [utils.isLoggedIn, payments.setupPaymentPlanPost]
-    }
-    ,datarequest: {post: datarequest}
-    ,profile: [utils.isLoggedIn, sharedPageVars, login.profile]
-    ,userTransactions: ['/profile/transactions', utils.isLoggedIn, sharedPageVars, profile.transactionHistory]
-    ,directory: ['/directory', sharedPageVars, directory.fullDirectory]
-    ,directoryItem: ['/directory/id', sharedPageVars, directory.directoryItem] //XXX this is a temporary hacky thing. need to support customized urls and have way to reference them
+    login:   {get:[sharedPageVars, login.login],
+              post: [login.loginPost(passport)]},
+    logout:  login.logout,
+    signup:  {get:login.signup,
+              post: [sharedPageVars, login.signupPost(passport)]},
+    setupPaymentPlan: {path: '/profile/setup-payment-plan',
+                       get: [sharedPageVars, utils.isLoggedIn, function(req,res){res.render('profile/setup-payment-plan');}],
+                       post:[utils.isLoggedIn, payments.setupPaymentPlanPost]},
+    datarequest: {post: datarequest},
+    profile: [utils.isLoggedIn, sharedPageVars, login.profile],
+    userTransactions: ['/profile/transactions', utils.isLoggedIn, sharedPageVars, profile.transactionHistory],
+    directory: ['/directory', sharedPageVars, directory.fullDirectory],
+    directoryItem: ['/directory/id', sharedPageVars, directory.directoryItem] //XXX this is a temporary hacky thing. need to support customized urls and have way to reference them
   };
 
   app.get('/about/:pagename', sharedPageVars, about);
@@ -47,7 +47,11 @@ module.exports = function(app, passport) {
 
   for (var name in routes) {
     var route = routes[name];
-    if (!Array.isArray(route)) {
+    if (typeof route === 'function') {
+        var path = '/'+name; //use varname as path
+        app.get(path, route);
+        namedRoutes[name] = path;
+    } else if (!Array.isArray(route)) {
       var path = route.path || '/'+name;
       for (var key in route) {
         if (key == "path" || !app[key])
