@@ -5,7 +5,8 @@ var about           = require('./about');
 var jswig           = require('./jswig');
 var blogpost        = require('./blogpost');
 var login           = require('./login');
-var profile           = require('./profile');
+var profile          = require('./profile');
+var directory          = require('./directory');
 var datarequest     = require('./datarequest');
 var payments        = require('./payments');
 var namedRoutes = {};
@@ -34,6 +35,8 @@ module.exports = function(app, passport) {
     ,datarequest: {post: datarequest}
     ,profile: [utils.isLoggedIn, sharedPageVars, login.profile]
     ,userTransactions: ['/profile/transactions', utils.isLoggedIn, sharedPageVars, profile.transactionHistory]
+    ,directory: ['/directory', sharedPageVars, directory.fullDirectory]
+    ,directoryItem: ['/directory/id', sharedPageVars, directory.directoryItem] //XXX this is a temporary hacky thing. need to support customized urls and have way to reference them
   };
 
   app.get('/about/:pagename', sharedPageVars, about);

@@ -18,17 +18,7 @@
 
 {% block profilecontent %}
 
-<div class="container">
-	<h2>This is a tentative donation processing flow</h2>
-	<p>Hello, please give us money.</p>
-	<ul>
-		<li><a href="#payment">Payment Processing</a></li>
-		<li><a href="#history">Donation History</a></li>
-	</ul>
-</div>
 
-
-<div class="container">
     <div class="row">
     	<h2><a name="Payment">Payment Processing</a></h2>    
 		<button type="button" id="populate" class="btn btn-default" style="margin-bottom: 20px;">Populate Test Data</button>	
@@ -224,7 +214,7 @@
 		</div>
 
     </div><!-- /row -->
-</div><!-- /container -->
+
 
 
 
@@ -510,51 +500,6 @@ $(document).ready(function () {
 
 
 </script>
-
-Store:
-last 4 digits
-name on card ? 
-expires
-
-
-Data structure
-
-User
-	Payment Preference
-		Recurring
-			Frequency
-			Next Charge Date
-		Current source of funds (cc, ach, paypal, dogecoin)
-			Data identifying this user via that source
-	Funding Destination
-
-Funding Instrument
-	Type
-	Token
-
-
-Transaction
-	User
-	Timestamp
-	Campaign 
-	Type of Transaction (Recurring, One Time)
-	Fee Info & Source of funds
-		Transaction Type (cc, ach, paypal, dogecoin)
-		Processor (Balanced, Paypal)
-		Gross Amount
-		% processing fee
-		Flat processing fee
-		Our Portion via % Fee
-		Our Portion via "added donation to us" 
-		Net donatable
-	Destination
-		Group Pool
-		Specific Cause
-
-
-
-
-
 
 
 {% endblock %}

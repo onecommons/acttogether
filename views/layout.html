@@ -45,7 +45,7 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-                <li><a href="/about/start-here"><span class="glyphicon glyphicon-hand-right"></span> Endorse Projects</a></li>
+                <li><a href="{{routes.directory}}"><span class="glyphicon glyphicon-hand-right"></span>Directory</a></li>
                 <li><a href="/about/how-it-works"><span class="glyphicon glyphicon-cog"></span> How it works</a></li>
                 <li><a href="/about/raise-money"><span class="glyphicon glyphicon-cog"></span> Raise Money</a></li>
                 <!--<li class="dropdown"><a href="/about/community" class="dropdown-toggle disabled" data-toggle="dropdown" data-hover="dropdown" data-close-others="true"><span class="glyphicon glyphicon-cog"></span> Community Dropdown Menu</a>
@@ -56,7 +56,7 @@
                   </ul>
                 </li>-->
                 {% if req.isAuthenticated() == false %}
-                <li><a href="/login"><span class="glyphicon glyphicon-user"></span>Sign Up / Login</a></li>
+                <li><a href="{{routes.login}}"><span class="glyphicon glyphicon-user"></span>Sign Up / Login</a></li>
                 {% else %}
                 <li><a href="{{routes.profile}}"><span class="glyphicon glyphicon-user"></span>Profile</a></li>
                 {% endif %}
