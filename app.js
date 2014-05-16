@@ -10,9 +10,9 @@ require('./lib/swigextensions')(swig);
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash = require('connect-flash');
+var FileStore = require('connect-session-file');
 var util = require('util');
 var models = require('./models');
-
 
 // return a minimally configured app object
 function createApp() {
@@ -32,7 +32,9 @@ function createApp() {
   app.use(express.urlencoded());
   app.use(express.methodOverride());
   app.use(express.cookieParser('your secret here')); //XXX
-  app.use(express.session());
+  app.use(express.session({
+    store: new FileStore()
+  }));
 
   app.use(passport.initialize());
   app.use(passport.session()); // persistent login sessions

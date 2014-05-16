@@ -12,14 +12,12 @@
 
     <!-- Bootstrap core CSS -->
     <link href="/static/css/bootstrap.{% if !debug %}min.{% endif %}css" rel="stylesheet">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
-
 
     <!-- Custom styles for this template -->
     <link href="/static/css/app.css" rel="stylesheet">
     
     <!-- Style from Font-Awesome for icons -->
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.{% if !debug %}min.{% endif %}css" rel="stylesheet">
 
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -33,7 +31,7 @@
 
   <body>
 
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="navbar navbar-inverse" role="navigation">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -43,28 +41,36 @@
             <span class="icon-bar"></span>
           </button>
           <a href="/"><img height=75 src='/static/images/logo.png'></a>
-          <h4 class='tagline'>Harnessing the power of collective action</h4>
+          <!--<h4 class='tagline'>Harnessing the power of collective action</h4>-->
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-                <li><a href="/about/start-here"><span class="glyphicon glyphicon-hand-right"></span> Endorse Projects</a></li>
+                <li><a href="{{routes.directory}}"><span class="glyphicon glyphicon-hand-right"></span>Directory</a></li>
                 <li><a href="/about/how-it-works"><span class="glyphicon glyphicon-cog"></span> How it works</a></li>
                 <li><a href="/about/raise-money"><span class="glyphicon glyphicon-cog"></span> Raise Money</a></li>
-                <li class="dropdown"><a href="/about/community" class="dropdown-toggle disabled" data-toggle="dropdown" data-hover="dropdown" data-close-others="true"><span class="glyphicon glyphicon-cog"></span> Community Dropdown Menu</a>
+                <!--<li class="dropdown"><a href="/about/community" class="dropdown-toggle disabled" data-toggle="dropdown" data-hover="dropdown" data-close-others="true"><span class="glyphicon glyphicon-cog"></span> Community Dropdown Menu</a>
                   <ul class="dropdown-menu">
                           <li><a href="">Discuss projects and groups</a></li>
                           <li><a href="">OneCommons blog, etc</a></li>
                           <li><a href="">Something we havent thought of</a></li>
                   </ul>
-                </li>
-                <li><a href="/login"><span class="glyphicon glyphicon-user"></span>Sign Up / Login</a></li>
+                </li>-->
+                {% if req.isAuthenticated() == false %}
+                <li><a href="{{routes.login}}"><span class="glyphicon glyphicon-user"></span>Sign Up / Login</a></li>
+                {% else %}
+                <li><a href="{{routes.profile}}"><span class="glyphicon glyphicon-user"></span>Profile</a></li>
+                {% endif %}
           </ul>
         </div><!--/.navbar-collapse -->
       </div> <!-- container -->
 {% block navbar_extra %}{% endblock %}
     </div> <!-- navbar div in header -->
 
-{% block content %}{% endblock %}
+      <div class="container">
+        <div class="row">
+          {% block content %}{% endblock %}
+        <div class="row">
+      </div>
 
       <hr>
       <footer>
