@@ -31,7 +31,7 @@ module.exports = function(app, passport) {
     signup:  {get:login.signup,
               post: [sharedPageVars, login.signupPost(passport)]},
     setupPaymentPlan: {path: '/profile/setup-payment-plan',
-                       get: [sharedPageVars, utils.isLoggedIn, function(req,res){res.render('profile/setup-payment-plan');}],
+                       get: [sharedPageVars, utils.isLoggedIn, function(req,res){res.render('setup-payment-plan');}],
                        post:[utils.isLoggedIn, payments.setupPaymentPlanPost]},
     datarequest: {post: datarequest},
     profile: [utils.isLoggedIn, sharedPageVars, login.profile],
