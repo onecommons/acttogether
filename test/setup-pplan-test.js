@@ -19,7 +19,7 @@ describe('setup payment plan', function () {
 
 
     before(function(done) {
-      db = mongoose.connect('mongodb://localhost/test');
+      db = mongoose.connect('mongodb://localhost/ocdemo-unittest');
 
       // clear users and add test user record
       m.User.remove({}

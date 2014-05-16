@@ -7,7 +7,7 @@ describe('createModel', function(){
     var s;
     
     before(function(done) {
-        db = mongoose.connect('mongodb://localhost/test', done);
+        db = mongoose.connect('mongodb://localhost/ocdemo-unittest', done);
         s = new mongoose.Schema({
              //__t: String,
              // _id: String,

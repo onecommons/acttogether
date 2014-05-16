@@ -64,7 +64,7 @@ if (go) {
                 var db;
 
                 mongoose.disconnect(function() {
-                    db = mongoose.connect('mongodb://localhost/test');
+                    db = mongoose.connect('mongodb://localhost/ocdemo-unittest');
                 });
 
                 this.timeout(phantomTimeout);

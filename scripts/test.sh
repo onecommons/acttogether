@@ -4,5 +4,5 @@
 
 # run the app for endpoint tests
 
-NODE_ENV=test ./node_modules/.bin/mocha --reporter=list -t 6000
+NODE_ENV=test ./node_modules/.bin/mocha --reporter=list -t 10s
 

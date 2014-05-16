@@ -5,19 +5,10 @@ var Item = require('../models/item');
 
 // post detail
 module.exports = function(req, res) {
-  // get the post and comments.
-  var postItem = {}, commentItems = [],
-    theUser = {
-      _id: '@user@100'
-    }; // vile hack TRP fake current user info. 
 
-  //
-  // post detail
-  //
-  // get the post and comments.
-  var postItem = {}
-    , commentItems = []
-    , theUser = { _id: '@user@100'}; // vile hack TRP fake current user info. 
+  var theUser       = req.user;  // get the post and comments.
+  var postItem      = {};
+  var commentItems  = [];
 
   Item
     .find({ parent: '@post@'+req.params.id})

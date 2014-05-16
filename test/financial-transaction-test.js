@@ -19,7 +19,11 @@ describe('FT', function () {
 
 
     before(function(done) {
-      db = mongoose.connect('mongodb://localhost/test');
+      db = mongoose.connect('mongodb://localhost/ocdemo-unittest');
+      done();
+    });
+
+    beforeEach(function(done){
 
       // clear users and add test user record
       m.User.remove({} ,function(){
@@ -43,22 +47,19 @@ describe('FT', function () {
               theUser.paymentPlan.fi = theFI._id;
               theUser.save(function(err,uback){
                 theUser = uback;
-                m.FinancialTransaction.remove({}, done); 
-
-        }) }) }) }) })
-
-    }); // before()
-
-    beforeEach(function(done){
-      m.FinancialTransaction.remove({} ,function(){
-        theFT             = new m.FinancialTransaction();
-        theFT.user        = theUser._id;
-        theFT.fi          = theUser.paymentPlan.fi;
-        theFT.amount      = theUser.paymentPlan.amount;
-        theFT.save(done);
-      }) 
-    }); // beforeEach
-
+                m.FinancialTransaction.remove({}, function(){
+                    theFT             = new m.FinancialTransaction();
+                    theFT.user        = theUser._id;
+                    theFT.fi          = theFI; // theUser.paymentPlan.fi;
+                    theFT.amount      = theUser.paymentPlan.amount;
+                    theFT.save(done);
+                  }) 
+              });
+            });
+          });
+        });
+      });
+    }); // beforeEach()
 
     it('should do a proper debit with the given correct data', function(done){
       // confirm theFT is fully filled in.
@@ -95,30 +96,7 @@ describe('FT', function () {
         done();
       }) 
     });
-
-
-    // it('Q version should find user', function(){
-    //   theFT.doDebitQ()
-    //   .then(function(rv){console.log(rv); done()}, 
-    //         function(rv){console.log(rv); done()});
-    // });
-
-    // it('Q version shouldnt find user if FT ref to it is blown', function(done){
-    //   theFT.doDebitQ({user: null})
-    //   .then(function(rv){console.log(rv); done()}, 
-    //         function(rv){console.log(rv); done()});
-    // });
-
  
-    it('should give proper error if cant reach payment processor', function(done){
-      theFI.bp_token = "/xxxxx"; // completely whack url.
-      theFI.save(function(){
-        theFT.doDebit({}, function(err, ftback){
-          assert.isNotNull(err);
-          done();
-        }) 
-      })
-    });
 
     it('should give proper error if card refused', function(done){
       theFI.bp_token = "/cards/CC3h0aMqs0opvI0UAq7LS1O2"; // bad card.
@@ -129,5 +107,33 @@ describe('FT', function () {
         }) 
       })
     });
+
+    it('on a debit, should give proper error if cant reach payment processor', function(done){
+      theFI.bp_token = "/xxxxx"; // completely whack url.
+      theFI.save(function(){
+        theFT.doDebit({}, function(err, ftback){
+          assert.isNotNull(err);
+          done();
+        }) 
+      })
+    });
+
+    it('should refund a valid debit, but only once', function(done){
+      theFT.doDebit({}, function(err, ftback){
+        assert.isNull(err);
+        assert.equal(ftback.status, 'succeeded');
+        theFT = ftback;
+        theFT.refundDebit(function(err, refundFT){
+          assert.isNull(err);
+          assert.equal(refundFT.status, 'succeeded');
+          theFT.refundDebit(function(err, refundFT2){
+            assert.isNotNull(err);
+            assert.equal(refundFT2.status, 'failed');
+            done();
+          });
+        })
+      })
+    }) // it
+
 
 });

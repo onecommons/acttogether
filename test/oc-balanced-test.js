@@ -17,7 +17,7 @@ describe('oc-balanced api', function(){
       if(typeof mongoose !== 'undefined'){
         mongoose.connection.close();
       }
-      db = mongoose.connect('mongodb://localhost/test', done);
+      db = mongoose.connect('mongodb://localhost/ocdemo-unittest', done);
       s = new mongoose.Schema({
            //__t: String,
            // _id: String,

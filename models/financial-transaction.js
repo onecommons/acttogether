@@ -111,7 +111,7 @@ financialTransactionSchema.methods.doDebit = function(options, callback){
 
       bp.debitCard(theBPToken, 
         { amount: theFT.amount, 
-          appears_on_statements_as: 
+          appears_on_statement_as: 
           theFT.appearsOnStatementAs, 
           description: theFT.description}, 
             function(err, bp_reply){
@@ -151,18 +151,63 @@ financialTransactionSchema.methods.doDebit = function(options, callback){
 }
 
 
-// Refund an existing debit.
-financialTransactionSchema.methods.refundDebit = function(debitFT, callback){
-  var theFT = this;
+// Refund an existing debit. THIS is the existing debit transaction to be refunded.
+// Creates a new FT for the refund, and executes low level bp.refundDebit().
+// callback is passed err and the newly created FT representing the refund.
+// Expects payment processor to be BP.
+financialTransactionSchema.methods.refundDebit = function(callback){
+  var debitFT = this;
+  var refundFT = new FinancialTransaction();
 
-  theFT.transactionType = 'refund';
-  theFT.user = debitFT.user;
-  theFT.fi   = debitFT.fi;
-    // NIY
-}
+  function rdExit(newFT, cb, err){
+    newFT.save(function(rft){
+      cb(err, newFT);
+    })
+
+  }
+
+  refundFT.transactionType = 'refund';
+  refundFT.amount = debitFT.amount;
+  refundFT.currency = debitFT.currency;
+  refundFT.user = debitFT.user;
+  refundFT.fi   = debitFT.fi;
+
+  if(debitFT.paymentProcessor !== 'balancedPayments'){
+    refundFT.status = 'failed';
+    refundFT.description = 'paymentProcessor must be Balanced Payments: transaction aborted';
+    rdExit(refundFT, callback, new Error(refundFT.description));
+  } else {
+    bp.refundDebit(debitFT.processorTransactionId, debitFT.amount, "refund for " + debitFT.description,
+      function(err, bp_reply){
+        if(err){
+          // handle deep no-connect error
+          refundFT.status = 'failed';
+          refundFT.description = "couldn't reach payment processor to refund debit " + debitFT.processorTransactionId;
+          rdExit(refundFT, callback, new Error(refundFT.description));
+        } else {
+          if(bp_reply.errors){
+            // handle failed refund from BP
+            refundFT.status = 'failed';
+            refundFT.description = bp_reply.errors[0].description + ' attempt to refund debit ' + debitFT.processorTransactionId;
+            refundFT.processorTransactionId = bp_reply.errors[0].request_id;
+            rdExit(refundFT, callback, new Error(refundFT.description));
+          } else {
+            // success!
+            var rfr = bp_reply.refunds[0];
+            refundFT.status = 'succeeded';
+            refundFT.processorTransactionId = rfr.id;
+            refundFT.processorTransactionNumber = rfr.transaction_number;
+            refundFT.description = rfr.description;
+            rdExit(refundFT, callback, null);
+          }
+        }
+    });
+  } // else
+
+} // financialTransactionSchema.methods.refundDebit()
 
 
 
 // expose model and schema to our app.
 
-module.exports = createModel('FinancialTransaction', financialTransactionSchema);
+var FinancialTransaction = module.exports = createModel('FinancialTransaction', financialTransactionSchema);

@@ -6,18 +6,14 @@ var bp                      = require('../lib/oc-balanced');
 
 // setup users payment plan and do a payment transaction with balanced API.
 module.exports.setupPaymentPlanPost = function(req, res) {
-       // NIY
-
-       // console.log("in setupPaymentPlanPost user = ", req.user);
-
+  
        var data = req.body;
        // console.log("DATA RECEIVED", req.body);
 
        var resultStatus = 'error';
        var resultMessage = 'nothing happened';
 
-       // get user from session. for now, since this dont work, we use our generic test user 0.
-       var theUser =  { _id: "@User@0" };
+       var theUser =  req.user;
 
        // validate fields.
        if( data.fundingInstrument.match(/\/cards\//) === null) {
