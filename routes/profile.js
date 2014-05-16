@@ -19,9 +19,24 @@ for(var j =0; j < 5; j++){
 }
 
 module.exports.transactionHistory = function(req, res) {
-  res.render('profile/transaction-history.html', {
+  res.render('transaction-history.html', {
     user : req.user
     ,transactions : testTransactions
 
+  });
+}
+
+module.exports.setupPaymentPlan = function(req, res) {
+  res.render('setup-payment-plan.html', {
+    user : req.user
+  });
+}
+
+module.exports.editPaymentPlan = function(req, res) {
+  res.render('edit-payment-plan.html', {
+    user : req.user
+    ,currentDonationAmount : "50"
+    ,currentDonationFrequency : "yearly"
+    ,fundingInstrument : "4444"
   });
 }

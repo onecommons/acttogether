@@ -127,7 +127,7 @@ app.post('/datastoretest', function(req,res, next){
 
 mongoose.connect('mongodb://127.0.0.1:27017/testdataserver');  
 var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
+// db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   //note!: model Test1 => namespace test1
   console.log('opened connection')

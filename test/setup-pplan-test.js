@@ -51,37 +51,37 @@ describe('setup payment plan', function () {
     });
 
 
-    it('should do a debit with good data and update user, fi, ft', function(done){
-      request(app)
-          .post('/setup-payment-plan')
-        //  .auth(theUser.local.email, theUserPwd)
-          .send(debitparams)
-          .expect('Content-Type', /json/)
-          .expect(200)
-          .end(function(err,res){
-            assert(!err);
-             m.FundingInstrument.findOne({}
-             ,function(err,fi){
-                assert.equal(fi.user, theUser._id);
-                assert.equal(fi.bp_token, debitparams.fundingInstrument); // fi has been created.
+    it('should do a debit with good data and update user, fi, ft'); // PENDING , function(done){
+    //   request(app)
+    //       .post('/setup-payment-plan')
+    //     //  .auth(theUser.local.email, theUserPwd)
+    //       .send(debitparams)
+    //       .expect('Content-Type', /json/)
+    //       .expect(200)
+    //       .end(function(err,res){
+    //         assert(!err);
+    //          m.FundingInstrument.findOne({}
+    //          ,function(err,fi){
+    //             assert.equal(fi.user, theUser._id);
+    //             assert.equal(fi.bp_token, debitparams.fundingInstrument); // fi has been created.
 
-             m.User.findOne({_id: theUser.id}
-             ,function(err,u){
-                // console.log(u);
-                assert.equal(u.paymentPlan.fi, fi._id); // user payment plan has been updated.
+    //          m.User.findOne({_id: theUser.id}
+    //          ,function(err,u){
+    //             // console.log(u);
+    //             assert.equal(u.paymentPlan.fi, fi._id); // user payment plan has been updated.
 
-             m.FinancialTransaction.findOne({}
-             ,function(err, ft){
-                assert.equal(ft.status, 'succeeded');
-                assert.equal(ft.fi, fi._id);
-                assert.equal(ft.user, theUser._id); // FinancialTransaction record has been created.
-                done();    
+    //          m.FinancialTransaction.findOne({}
+    //          ,function(err, ft){
+    //             assert.equal(ft.status, 'succeeded');
+    //             assert.equal(ft.fi, fi._id);
+    //             assert.equal(ft.user, theUser._id); // FinancialTransaction record has been created.
+    //             done();    
 
-             }) }) });
+    //          }) }) });
 
-          }); // .end
+    //       }); // .end
 
-    }); // it...
+    // }); // it...
 
     it('should NOT do a debit with a bad card token', function(done){
       debitparams.fundingInstrument = '/this/is-a-whack-card-token';

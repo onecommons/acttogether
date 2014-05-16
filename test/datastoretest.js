@@ -63,7 +63,7 @@ describe('datastore', function(){
     it('should connect',  function(done){
       mongoose.connect('mongodb://127.0.0.1:27017/testdb');  
       var db = mongoose.connection;
-      db.on('error', console.error.bind(console, 'connection error:'));
+//      db.on('error', console.error.bind(console, 'connection error:'));
       db.once('open', function() {
         //note!: model Test1 => namespace test1
         db.db.dropCollection('test1', function(err, result) { 

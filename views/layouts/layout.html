@@ -31,7 +31,7 @@
 
   <body>
 
-    <div class="navbar navbar-inverse" role="navigation">
+    <div class="navbar" role="navigation">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -58,7 +58,13 @@
                 {% if req.isAuthenticated() == false %}
                 <li><a href="{{routes.login}}"><span class="glyphicon glyphicon-user"></span>Sign Up / Login</a></li>
                 {% else %}
-                <li><a href="{{routes.profile}}"><span class="glyphicon glyphicon-user"></span>Profile</a></li>
+                <li class="dropdown"><a href="{{routes.profile}}" class="dropdown-toggle disabled" data-toggle="dropdown" data-hover="dropdown" data-close-others="true"><span class="glyphicon glyphicon-user"></span>Profile</a>
+                <ul class="dropdown-menu">
+                  <li><a href="{{routes.userTransactions}}">Transaction History</a></li>
+                  <li><a href="{{routes.setupPaymentPlan}}">Payment Plan</a></li>
+                  <li><a href="{{routes.logout}}">Logout</a></li>
+                  </ul>
+                </li>
                 {% endif %}
           </ul>
         </div><!--/.navbar-collapse -->
@@ -105,6 +111,6 @@
     <script src="/static/js/bootstrap-hover-dropdown.min.js"></script>
 {% block jsfooter %}{% endblock %}
 {%clientrender%}
-{% include "partials/debug_footer.html" %}
+{% include "../partials/debug_footer.html" %}
   </body>
 </html>

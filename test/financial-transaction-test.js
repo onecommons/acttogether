@@ -19,6 +19,7 @@ describe('FT', function () {
 
 
     before(function(done) {
+      mongoose.connection.close();
       db = mongoose.connect('mongodb://localhost/ocdemo-unittest');
       done();
     });

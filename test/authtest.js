@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var request = require('supertest');
 var m = require('../models');
 
-var main = require('app');
+var main = require('../app');
 
 describe('Authentication', function() {
 
@@ -31,10 +31,10 @@ describe('Authentication', function() {
   // remove users after test
   after(function(done){
     m.User.remove({}, function(err) {
-      console.log("remove callback:");
-      console.log(err);
+      mongoose.connection.close(function(){
+        done();
+      })
     });
-    done();
   });
 
   describe('local login', function(){

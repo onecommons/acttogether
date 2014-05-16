@@ -22,7 +22,7 @@ describe('createModel', function(){
     
     after(function(done){
       db.connection.db.dropDatabase(function(){
-        db.connection.close(function(){
+        mongoose.connection.close(function(){
           done();
         });
       });
