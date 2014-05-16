@@ -25,3 +25,18 @@ module.exports.transactionHistory = function(req, res) {
 
   });
 }
+
+module.exports.setupPaymentPlan = function(req, res) {
+  res.render('profile/setup-payment-plan.html', {
+    user : req.user
+  });
+}
+
+module.exports.editPaymentPlan = function(req, res) {
+  res.render('profile/edit-payment-plan.html', {
+    user : req.user
+    ,currentDonationAmount : "50"
+    ,currentDonationFrequency : "yearly"
+    ,fundingInstrument : "4444"
+  });
+}

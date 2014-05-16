@@ -15,7 +15,7 @@ module.exports.setupPaymentPlanPost = function(req, res, testuser) {
 
        var resultStatus = 'error';
        var resultMessage = 'nothing happened';
-       var theUser = testuser ? testuser : req.user; //testuser only used by unit tests
+       var theUser = req.user; 
 
        // validate fields.
        if( data.fundingInstrument.match(/\/cards\//) === null) {

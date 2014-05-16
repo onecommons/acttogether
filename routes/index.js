@@ -19,6 +19,7 @@ var sharedPageVars = function(req, res, next) {
   next();
 }
 
+
 module.exports = function(app, passport) {
   //enables named routes, eg <a href='{{routes.profile}}'>my profile</a>
   var routes = {
@@ -32,6 +33,7 @@ module.exports = function(app, passport) {
                         ,get: [sharedPageVars, utils.isLoggedIn, function(req,res){res.render('profile/setup-payment-plan');}]
                         ,post: [utils.isLoggedIn, payments.setupPaymentPlanPost]
     }
+    ,editPaymentPlan: ['/profile/edit-payment-plan', utils.isLoggedIn, sharedPageVars, profile.editPaymentPlan]
     ,datarequest: {post: datarequest}
     ,profile: [utils.isLoggedIn, sharedPageVars, login.profile]
     ,userTransactions: ['/profile/transactions', utils.isLoggedIn, sharedPageVars, profile.transactionHistory]

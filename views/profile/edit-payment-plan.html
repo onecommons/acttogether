@@ -21,15 +21,24 @@
 
 
     <div class="row">
-    	<h2><a name="Payment">Setup Payment Plan</a></h2>    
+    	<h2><a name="Payment">Edit Payment Plan</a></h2>    
     	{% if debug %}
 		<button type="button" id="populate" class="btn btn-default" style="margin-bottom: 20px;">Populate Test Data</button>	
 		{% endif %}
 
+		You currently donate ${{currentDonationAmount}} {{currentDonationFrequency}}
+
 		{{ paymentMacros.donationFormHTML() }}
+		Current funding source:
+		{{fundingInstrument}}
 
-		{{ paymentMacros.addCreditCardHTML() }}
 
+		<div>
+			<button type="button" id="addCC" class="btn btn-default" style="margin-bottom: 20px;">Add new credit card</button>
+			<div class="addCCForm hide">
+				{{ paymentMacros.addCreditCardHTML() }}
+			</div>
+		</div>
 
 		<!-- Donate Button -->
 		<div class="form-group">
@@ -49,5 +58,11 @@
 {% block jsfooter %}
 
 {{ paymentMacros.donationFormJS() }}
+
+<script>
+    $('#addCC').click(function () {
+        $('.addCCForm').removeClass('hide');
+    });
+</script>
 
 {% endblock %}

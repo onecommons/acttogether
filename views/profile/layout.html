@@ -8,13 +8,15 @@
 	        <img src="/static/images/testimonials/testimonial2.jpg" alt="User Avatar" class="img-circle">
 		</div>
 		<div class="thumbnail text-center">
-			John Doe
+			{{user.displayName}}
 		</div>
 		
 		<div class="row">
 		    <ul>
 		        <li><a href="{{routes.userTransactions}}">Transaction History</a></li>
-		        <li><a href="{{routes.setupPaymentPlan}}">Payment Plan</a></li>
+		        <li><a href="{{routes.setupPaymentPlan}}">Setup Payment Plan</a></li>
+		        <li><a href="{{routes.editPaymentPlan}}">Edit Payment Plan</a></li>
+		        <li><a href="{{routes.logout}}">Logout</a></li>
 		    </ul>
 		</div>
     </div>
