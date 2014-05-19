@@ -7,11 +7,12 @@ var mongoose = require('mongoose');
 var bp           = require('../lib/oc-balanced');
 var httpRequest  = require('request');
 
-
 describe('oc-balanced api', function(){
   var aToken = "/cards/CC5O7VeGswfdoJ3xCL8r8BPD";
   var aBogusToken = "this-is-a-stinky-token";
   var api_key = 'ak-test-eyoGATiAg6YE5thvhSiWIi7NE0zg0l0U'; // for now test
+
+  this.timeout(10000); // 10 s
 
    before(function(done) {
       if(typeof mongoose !== 'undefined'){

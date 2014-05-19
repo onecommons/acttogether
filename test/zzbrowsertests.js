@@ -11,7 +11,7 @@ if (go) {
     var path = require('path');
     var assert = require('chai').assert;
     var express = require('express');
-    var main = require('app');
+    var main = require('../app');
 
     var phantomTimeout = 10000;
     var child = null;
@@ -40,6 +40,8 @@ if (go) {
                 prop1: []
                 },{strict: false}) //'throw'
             );
+
+            mongoose.connection.close() // if left open by some other bad citizen test!
             mongoose.connect(configDB.url); // connect to our database
 
             console.log("Browser-based test routes added");
