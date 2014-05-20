@@ -37,6 +37,10 @@ module.exports = function(app, passport) {
                         get:  [ sharedPageVars, utils.isLoggedIn, function(req,res){res.render('setup-payment-plan');}],
                         post: [ utils.isLoggedIn, payments.setupPaymentPlanPost]},
 
+    fundCampaign:     { path: '/profile/fundCampaign',
+                        get:  [ sharedPageVars, utils.isLoggedIn, function(req,res){res.render('fund-campaign');}],
+                        post: [ utils.isLoggedIn, payments.fundCampaign]},
+
     datarequest:      { post: datarequest},
 
     profile:          [ utils.isLoggedIn, sharedPageVars, login.profile],

@@ -1,14 +1,15 @@
 // app/models/fund.js
 
 // load the things we need
+var mongoose    = require('mongoose');
 var createModel = require('../lib/createmodel');
 
 // Recipient is an organization, or ultimate depository of funds.
 // HAS_MANY Campaigns.
 var fundSchema = mongoose.Schema({
 
-    recipient         : {type: String } 
-    name              : String
+    name         : String,
+    recipient    : String
     // account? eventually ?
 });
 

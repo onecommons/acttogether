@@ -5,7 +5,7 @@ var mongoose    = require('mongoose');
 var bp          = require('../lib/oc-balanced');
 var m           = require('../models');
 
-describe('setup payment plan', function () {
+describe('fund campaign', function () {
     var db, theUser, debitparams;
     var theUserPwd = 'testuser';
 

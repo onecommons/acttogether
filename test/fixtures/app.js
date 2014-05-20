@@ -1,6 +1,6 @@
-var main = require('../../app'), 
- express = require('express'),
- mongoose = require('mongoose')
+var main = require('../../app');
+var express = require('express');
+var mongoose = require('mongoose');
 
 app = main.createApp();
 app.use(express.static(main.dirname + '/test/public'));

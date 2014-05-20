@@ -21,6 +21,7 @@ var financialTransactionSchema = mongoose.Schema({
   currency                      : { type: String, default: 'USD' }, 
   appearsOnStatementAs          : { type: String, default: 'OneCommons' },
   description                   : { type: String, default: 'normal subscription debit' },
+  campaign                      : { type: String, ref: 'Campaign'}
   processorTransactionId        : String,  // in BP, e.g. debits.id
   processorTransactionNumber    : String   // in BP, e.g. debits.transaction_number
 });

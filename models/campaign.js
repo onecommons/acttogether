@@ -7,8 +7,8 @@ var createModel = require('../lib/createmodel');
 //  HAS MANY Subscriptions.
 var campaignSchema = mongoose.Schema({
 
-    fund              : {type: String, ref 'Fund'}
-    name              : String,
+   name              : String,
+   fund              : {type: String, ref: 'Fund'}
 });
 
 
