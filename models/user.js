@@ -9,6 +9,7 @@ var userSchema = mongoose.Schema({
 
     displayName       : String,
     avatarUrl         : String,
+    activeFI          : {type: String, ref: 'FundingInstrument'},
 
     paymentPlan           : {
                           frequency  : { type: String, enum: ['once','monthly','quarterly','yearly']},
