@@ -38,7 +38,6 @@ module.exports.signupPost = function(passport) {
 }
 
 module.exports.profile = function(req, res) {
-  console.log(req.user);
   res.render('profile.html', { 
     user : req.user
   });
