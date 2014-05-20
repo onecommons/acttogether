@@ -11,6 +11,7 @@ describe('FT', function () {
     var db, theUser, theFI, theFT;
     var theUserPwd = 'testuser';
 
+    this.timeout(10000); // 10 s
 
     var app = express();
     app.use(express.bodyParser());

@@ -5,21 +5,22 @@ var createModel             = require('../lib/createmodel');
 var bp                      = require('../lib/oc-balanced');
 var User                    = require('./user');
 var FundingInstrument       = require('./funding-instrument');
+var Subscription            = require('./subscription');
 
 // define the schema for our transaction model
 var financialTransactionSchema = mongoose.Schema({
   status                        : { type: String, enum: ['prepare', 'succeeded', 'failed'], default: 'prepare'},
-  user                          : { type: String, ref: 'User'},
+  subscription                  : { type: String, ref: 'Subscription'},
   fi                            : { type: String, ref: 'FundingInstrument'}, 
   transactionType               : { type: String, 
-                                     enum: ['oneTimeDebit', 'paymentPlanDebit', 'credit', 'refund'], 
-                                     default: 'paymentPlanDebit'},
+                                     enum: ['oneTimeDebit', 'subscriptionDebit', 'credit', 'refund', 'chargeBack'], 
+                                     default: 'subscriptionDebit'},
   paymentProcessor              : { type: String, enum: ['balancedPayments', 'stripe', 'payPal'], default: 'balancedPayments' },
   date                          : { type: Date, default: Date.now },
   amount                        : { type: Number, max: 1500000, min: 100},
   currency                      : { type: String, default: 'USD' }, 
-  appearsOnStatementAs          : { type: String, default: 'One Commons' },
-  description                   : { type: String, default: 'normal paymentPlan debit' },
+  appearsOnStatementAs          : { type: String, default: 'OneCommons' },
+  description                   : { type: String, default: 'normal subscription debit' },
   processorTransactionId        : String,  // in BP, e.g. debits.id
   processorTransactionNumber    : String   // in BP, e.g. debits.transaction_number
 });
@@ -73,7 +74,7 @@ financialTransactionSchema.methods.doDebit = function(options, callback){
     return;
   } 
 
-  if( theFT.transactionType !== 'paymentPlanDebit') {
+  if( theFT.transactionType !== 'subscriptionDebit') {
     theFT.status = 'failed';
     theFT.description = 'Transaction type ' + theFT.transactionType + ' not yet supported'; 
     errExit(theFT, null, callback, new Error(theFT.description));

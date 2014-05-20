@@ -4,6 +4,7 @@ var should = require('should')
   , datastore = require('../lib/datastore')
   , mongoose = require('mongoose');
 var DBRef = mongodb.DBRef, ObjectID = mongodb.ObjectID;
+var config = require('../lib/config')('app');
 
 describe('datastore', function(){
 
@@ -61,7 +62,7 @@ describe('datastore', function(){
     );
     
     it('should connect',  function(done){
-      mongoose.connect('mongodb://127.0.0.1:27017/testdb');  
+      mongoose.connect(config.dburl);  
       var db = mongoose.connection;
 //      db.on('error', console.error.bind(console, 'connection error:'));
       db.once('open', function() {
@@ -228,7 +229,7 @@ describe('datastore', function(){
     });
 
     it('should connect',  function(done){
-       mongodb.MongoClient.connect('mongodb://127.0.0.1:27017/testdb', function(err, db) {
+       mongodb.MongoClient.connect(config.dburl, function(err, db) {
        if(err) throw err;
        testdb = db;
        db.dropCollection('unittests', function(err, result) {

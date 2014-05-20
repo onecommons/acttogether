@@ -11,10 +11,64 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var flash = require('connect-flash');
 var FileStore = require('connect-session-file');
-var util = require('util');
 var models = require('./models');
+var _ = require('underscore');
+var loadConfig = require('./lib/config');
 
-// return a minimally configured app object
+/*
+@ready callback called after server is initialized, e.g. after it connects to database.
+@param listen
+if a boolean, specifies whether to listen or not
+if a function, used as callback by app.listen with the server as the first arguement
+default: true
+*/
+function startApp(readyCallback, listen) {
+  var app = this;
+  if (typeof listen == 'undefined') {
+    listen = true;
+  }
+  if (listen) {
+    if (typeof listen != 'function') {
+      listen = function(server) { //use a default listen callback
+          console.log('Express server listening on port %d', server.address().port);
+      };
+    }
+  }
+
+  var onready = function (err) {
+    if (listen) {
+      var server = app.listen(app.get('port'), 'localhost', function() { 
+        if (readyCallback)
+          readyCallback(err);
+        listen(server); 
+      });
+    } else if (readyCallback) {
+      readyCallback(err);
+    }
+  };
+
+  var dburl  = app.get("dburl");
+  mongoose.connect(dburl, function(err) {
+    if (err) //ignore error
+      console.log('WARNING: error while opening db at', dburl, err);
+    else
+      console.log("connecting to database", dburl);
+
+    // optionally apply data migrations in /updates folder before starting server.
+    if(app.set('autoUpdates')) {
+      console.log("checking for autoupdates to apply...");
+      require('keystone').connect(mongoose); // need to do this for updates to work.
+      var updates = require('keystone/lib/updates');
+
+      updates.apply(function(){
+        onready(err)
+      });
+    } else  {
+      onready(err);
+    }
+  });  
+}
+
 function createApp() {
   var app = express();
 
@@ -78,63 +132,23 @@ function createApp() {
   //   res.send(500);
   // });
 
-  return app;
-}
-
-function configureApp(app) {
-  var configDB = null;
-  try {
-    configDB = require('./config/database.js');
-  } catch (err) {
-    if (err.code == "MODULE_NOT_FOUND") {
-      var defaultDbUrl = "mongodb://127.0.0.1:27017/ocdemo";
-      console.log("WARNING: ./config/database.js not found, using", defaultDbUrl);
-      configDB = {url: defaultDbUrl}
-    } else {
-      throw err;
-    }
-  }
-  mongoose.connect(configDB.url); // connect to our database
-
-  app.set('port', process.env.PORT || 3000);
-
+  var config = loadConfig('app')
+  app.set('dburl', config.dburl);
+  if (process.env.PORT || config.port)
+    app.set('port', process.env.PORT || config.port);
   // using keystone's update.js, a data migration system: see
   //  http://keystonejs.com/docs/configuration/#updates
-  app.set('autoUpdates', true);
-}
-
-function startApp(app) {
-  var server = app.listen(app.get('port'), 'localhost', function() {
-    console.log('Express server listening on port %d', server.address().port);
-  });
-  return server;
+  app.set('autoUpdates', config.autoUpdates);
+  app.startApp = startApp;
+  return app;
 }
 
 module.exports = {
   dirname: __dirname,
   createApp: createApp,
-  configureApp: configureApp,
-  startApp: startApp
 }
 
 // check to see if we're the main module (i.e. run directly, not require()'d)
 if (require.main === module) {
-
-  var app = createApp();
-  configureApp(app);
-
-  // XXX exposed startApp should probably do this...
-  // optionally apply data migrations in /updates folder before starting server.
-  if(app.set('autoUpdates')) {
-    console.log("checking for autoupdates to apply...");
-
-    require('keystone').connect(mongoose); // need to do this for updates to work.
-    var updates = require('keystone/lib/updates');
-
-    updates.apply(function(){
-      startApp(app);
-    });
-  } else {
-    startApp(app);
-  }
+  createApp().startApp();
 }

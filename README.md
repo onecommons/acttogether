@@ -24,15 +24,6 @@ Run unit tests:
 NODE_ENV=test ./node_modules/.bin/mocha --reporter=list
 ```
 
-To run client side unit tests in phantomjs at same time, also set BROWSER_TEST:
-
-```
-BROWSER_TEST=1 NODE_ENV=test ./node_modules/.bin/mocha --reporter=list
-```
-
-(you need mocha-phantomjs to do the browser tests: 
-`npm install -g mocha-phantomjs phantomjs`)
-
 ## Debugging
 
 ```npm install -g node-inspector```
