@@ -88,10 +88,5 @@ module.exports = function(app, passport) {
       }
     }
   }
-  
-  if(process.env.BROWSER_TEST) {
-    var browsertest = require('./browsertest');
-    app.get('/browsertest/:testname', browsertest);
-  }
- 
+
 }
