@@ -4,9 +4,12 @@ var request = require('supertest');
 var m = require('../models');
 
 describe('Authentication', function() {
+
+  var app = require('./fixtures/app');
+
+
   // create a test user for login
   before(function(done) {
-    var app = require('./fixtures/app');
     app.startApp(function() {
       m.User.remove({}
       ,function(){
@@ -63,5 +66,40 @@ describe('Authentication', function() {
     });
 
   });
+
+  describe('sessions', function() {
+
+    // agent stores cookies for multiple requests
+    var agent1 = request.agent(app);
+
+    it('should create a new session', function(done) {
+      agent1
+      .get('/')
+      .expect('set-cookie', /.+/)
+      .expect(200, done)
+    });
+
+    it('should allow access to restricted pages after login', function(done) {
+      agent1
+      .post('/login')
+      .type('form')
+      .redirects(2)
+      .send({email:"test@onecommons.org", password:"test"})
+      .expect(200)
+      .end(function(err, res) {
+
+        if (err) {
+          return done(err);
+        }
+
+        agent1
+        .get('/profile')
+        .redirects(0)
+        .expect(200, done)
+
+      });
+    });
+
+  })
 
 })
