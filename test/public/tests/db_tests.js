@@ -1,12 +1,10 @@
 // db_tests.js
 // executed from browser.
 
-BrowserTestFrame.loadUnit('/static/js/data.js');
-
-
 describe('db_tests', function() {
 
 	var pjson1, pjson2, pjson3;
+
 
 	before(function(){
 		// $('body').append('<div class="db_tests"></div>');

@@ -1,4 +1,4 @@
-
+//XXX this is broken now!! needs to use fixtures/app.js like zombietest does
 // zzbrowsertests.js: this is a "test" that invokes one by one the full suite of browser-side tests in test/public/tests using phantomjs.
 // Why 'zz'?  To make it run last!
 

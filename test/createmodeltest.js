@@ -7,13 +7,13 @@ describe('createModel', function(){
     var s;
     
     before(function(done) {
-        db = mongoose.connect('mongodb://localhost/ocdemo-unittest', done);
         s = new mongoose.Schema({
              //__t: String,
              // _id: String,
              prop1: []
              },{strict: 'throw'});
-        
+        var config = require('../lib/config')('app');
+        db = mongoose.connect(config.dburl, done);
     });
     
     afterEach(function(done) {
