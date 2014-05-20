@@ -105,7 +105,7 @@ module.exports.setupPaymentPlanPost = function(req, res) {
             res.json({
               status: bp_reply.debits[0].status,
               message: 'transaction Number ' + bp_reply.debits[0].transaction_number + ' ' + bp_reply.debits[0].description,
-              bp_reply: bp_reply
+              bp_reply: '[omitted]' // bp_reply
             });
 
       }) }) }) }) }); // bp.debitCard(function(){ ... 
