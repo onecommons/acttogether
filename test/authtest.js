@@ -4,9 +4,12 @@ var request = require('supertest');
 var m = require('../models');
 
 describe('Authentication', function() {
+
+  var app = require('./fixtures/app');
+
+
   // create a test user for login
   before(function(done) {
-    var app = require('./fixtures/app');
     app.startApp(function() {
       m.User.remove({}
       ,function(){
