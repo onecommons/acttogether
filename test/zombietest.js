@@ -10,15 +10,19 @@ var phantomTimeout = 10000;
 var testserver = null;
 
 describe('zombietest', function() {
-
-  before(function(done) {
-    var app = require('./fixtures/app');
-    app.startApp(null, function(server) { 
-      console.log('test app started on', server.address()); 
-      testserver = server; 
-      done();
+  var app = require('./fixtures/app');
+  
+  before(function(done) {  
+    app.start(function(listen) {
+      listen(function(server) { 
+        console.log('test app started on', server.address()); 
+        testserver = server; 
+        done();
+      });
     });
   });
+
+  after(function(done){ app.stop(done);})
 
   fs.readdirSync('./test/public/tests').filter(function(file){
       // Only keep the .js files

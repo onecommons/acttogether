@@ -8,6 +8,7 @@ var u           = require('../lib/utils');
 
 
 describe('setup payment plan', function () {
+    
     var db, theUser, debitparams;
     var theUserPwd = 'testuser';
 
@@ -20,7 +21,6 @@ describe('setup payment plan', function () {
 
     before(function(done) {
       db = mongoose.connect('mongodb://localhost/test');
-
       // clear users and add test user record
       m.User.remove({}
       ,function(){
@@ -29,14 +29,20 @@ describe('setup payment plan', function () {
           theUser.local.email = "test@user.com"
           theUser.local.password = "$2a$08$/06iuOSo3ws1QzBpvRrQG.jgRwuEJB20LcHsWyEWHhOEm/ztwqPG."; // "testuser"
           theUser._id = "@User@0";
-          theUser.save();
-          m.FundingInstrument.remove({}
-      ,function(err){
-          m.FinancialTransaction.remove({}, done);
+          theUser.save(function() {
+            m.FundingInstrument.remove({}
+            ,function(err){
+                m.FinancialTransaction.remove({}, done);
+            });
+          });
+      });
+    });
 
-      });  });
-
-    }); // before()
+    after(function(done){
+      db.connection.db.dropDatabase(function(){
+        db.connection.close(done);
+      });
+    });
 
     beforeEach(function(){
       debitparams = {
@@ -53,7 +59,6 @@ describe('setup payment plan', function () {
         userId: '@User@0' // temp!!! will get from session eventually in endpoint handler.
       }
     });
-
 
     it('should do a debit with good data and update user, fi, ft', function(done){
       request(app)
@@ -83,7 +88,6 @@ describe('setup payment plan', function () {
                     done();    
 
           }) }) }) });
-
     }); // it...
 
     it('should NOT do a debit with a bad card token', function(done){
@@ -96,8 +100,6 @@ describe('setup payment plan', function () {
           .end(function(err,res){
             assert.equal(res.body.status, 'error');
             done();
-          });// .end()
-    });
-
-
+           });// .end()
+      });
 });
