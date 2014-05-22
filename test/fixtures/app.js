@@ -1,6 +1,6 @@
-var main = require('../../app');
-var express = require('express');
-var mongoose = require('mongoose');
+var main = require('../../app'), 
+ express = require('express'),
+ mongoose = require('mongoose')
 
 app = main.createApp();
 app.use(express.static(main.dirname + '/test/public'));
@@ -18,7 +18,17 @@ mongoose.model('DbTest1',
 
 module.exports = app;
 
+/* XXX
+function() {
+  var mocha = require('mocha');
+  mocha.before(function(done) {app.start(
+    function(listen){listen(); done();};
+  }); 
+  mocha.after(function(done) {app.stop(done)});
+}
+*/
+
 // check to see if we're the main module (i.e. run directly, not require()'d)
 if (require.main === module) {
-  app.startApp(); 
+  app.start(); 
 }

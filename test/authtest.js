@@ -10,7 +10,7 @@ describe('Authentication', function() {
 
   // create a test user for login
   before(function(done) {
-    app.startApp(function() {
+    app.start(function(listen) {
       m.User.remove({}
       ,function(){
           theUser = new m.User();
@@ -20,13 +20,14 @@ describe('Authentication', function() {
           theUser._id = "@User@123";
           theUser.save(done);
         });
-    }, false); //don't start listening because supertest will do that 
+      //ignore listen func because supertest will do that 
+    }); 
   });
 
   // remove users after test
   after(function(done){
     m.User.remove({}, function(err) {
-      mongoose.connection.close(done);
+      app.stop(done);
     });
   });
 
