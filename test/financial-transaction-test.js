@@ -43,10 +43,10 @@ describe('FT', function () {
           m.FundingInstrument.remove({} ,function(){
             theFI              = new m.FundingInstrument();
             theFI.user         = theUser._id;
-            theFI.bp_token     = '/cards/CC6EdoVFsRDJbOrHvNcmq6VR' // good test card
+            theFI.ccToken     = '/cards/CC6EdoVFsRDJbOrHvNcmq6VR' // good test card
             theFI.save( function(err, fiback){
               theFI = fiback;
-              theUser.paymentPlan.fi = theFI._id;
+              theUser.activeFI = theFI._id;
               theUser.save(function(err,uback){
                 theUser = uback;
                 m.FinancialTransaction.remove({}, function(){
@@ -101,7 +101,7 @@ describe('FT', function () {
  
 
     it('should give proper error if card refused', function(done){
-      theFI.bp_token = "/cards/CC3h0aMqs0opvI0UAq7LS1O2"; // bad card.
+      theFI.ccToken = "/cards/CC3h0aMqs0opvI0UAq7LS1O2"; // bad card.
       theFI.save(function(){
         theFT.doDebit({}, function(err, ftback){
           assert.isNotNull(err);
@@ -111,7 +111,7 @@ describe('FT', function () {
     });
 
     it('on a debit, should give proper error if cant reach payment processor', function(done){
-      theFI.bp_token = "/xxxxx"; // completely whack url.
+      theFI.ccToken = "/xxxxx"; // completely whack url.
       theFI.save(function(){
         theFT.doDebit({}, function(err, ftback){
           assert.isNotNull(err);

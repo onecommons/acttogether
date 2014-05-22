@@ -4,18 +4,22 @@ var assert      = require('chai').assert;
 var mongoose    = require('mongoose');
 var bp          = require('../lib/oc-balanced');
 var m           = require('../models');
+var u           = require('../lib/utils');
+
 
 describe('setup payment plan', function () {
     var db, theUser, debitparams;
     var theUserPwd = 'testuser';
 
+    this.timeout(10000); // 10 secs 
+
     var app = express();
     app.use(express.bodyParser());
     var spp = require('../routes/payments').setupPaymentPlanPost; 
-    app.post('/setup-payment-plan', function(req, res) {spp(req,res, theUser);});
+    app.post('/setup-payment-plan', function(req, res) {spp(req,res, theUser)});
 
     before(function(done) {
-      db = mongoose.connect('mongodb://localhost/ocdemo-unittest');
+      db = mongoose.connect('mongodb://localhost/test');
 
       // clear users and add test user record
       m.User.remove({}
@@ -62,7 +66,7 @@ describe('setup payment plan', function () {
              m.FundingInstrument.findOne({}
              ,function(err,fi){
                 assert.equal(fi.user, theUser._id);
-                assert.equal(fi.bp_token, debitparams.fundingInstrument); // fi has been created.
+                assert.equal(fi.ccToken, debitparams.fundingInstrument); // fi has been created.
 
                 m.User.findOne({_id: theUser.id}
                 ,function(err,u){
@@ -92,7 +96,7 @@ describe('setup payment plan', function () {
           .end(function(err,res){
             assert.equal(res.body.status, 'error');
             done();
-            });// .end()
+          });// .end()
     });
 
 

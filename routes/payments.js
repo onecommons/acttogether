@@ -2,11 +2,14 @@
 var User                    = require('../models/user');
 var FundingInstrument       = require('../models/funding-instrument');
 var FinancialTransaction    = require('../models/financial-transaction');
+var Subscription            = require('../models/subscription');
+var Campaign                = require('../models/campaign');
+var Fund                    = require('../models/fund');
 var bp                      = require('../lib/oc-balanced');
-var u                       = require('../lib/utils');
 var async                   = require('async');
+var u                       = require('../lib/utils');
 
-// DBG_ON = true;
+DBG_ON = false;
 
 /*
  * fundCampaign() – JSON POST handler. 
@@ -31,7 +34,7 @@ var async                   = require('async');
  *  comment:  – reason for failure, if any.
  *  
  */
-module.exports.fundCampaign = function(req,res, user){
+module.exports.fundCampaignPost = function(req,res, user){
   // check args: amount provided? if not  ret failed / 'amount unspecified'
   var data = req.body;
   var locals = {};
@@ -47,7 +50,7 @@ module.exports.fundCampaign = function(req,res, user){
   var setupFI = function(done){
     if(typeof(data.ccToken) === 'undefined') {
       // retrieve the user FI.
-      FundingInstrument.findOne({_id: locals.theUser.fi}, 
+      FundingInstrument.findOne({_id: locals.theUser.activeFI}, 
         function(err, fiback){
           if(err || !fiback) { res.json({status: 'noFI', comment: 'user has no funding instrument'}); done(); return }
           locals.fi = fiback;
@@ -67,8 +70,9 @@ module.exports.fundCampaign = function(req,res, user){
       locals.fi.ccExpirationDate       = data.ccExpirationDate;
       locals.fi.ccCVV                  = data.ccCVV;
       locals.fi.save(function(err, fiback){
-        if(err || !fiback) { res.json({status: 'failed', comment: 'funding instrument creation failed'}); done(); return }
         locals.fi = fiback;
+        u.dbg('fiback in payments', fiback);
+        if(err || !fiback) { res.json({status: 'failed', comment: 'funding instrument creation failed'}); done(); return }
         done();
       });
     }
@@ -97,10 +101,12 @@ module.exports.fundCampaign = function(req,res, user){
 
 
   var setupFT = function(done){
+    u.dbg("LOCALS on setupFT", locals);
     // setup FT to define transaction.
     locals.FT               = new FinancialTransaction();
+    locals.FT.user          = locals.theUser._id;
     locals.FT.subscription  = locals.sub;
-    locals.FT.fi            = locals.fi;
+    locals.FT.fi            = locals.fi._id;
     locals.FT.amount        = data.amount;
     locals.FT.currency      = (data.amount ? data.amount : locals.FT.currency);
     locals.FT.campaign      = data.campaignId;
@@ -108,18 +114,18 @@ module.exports.fundCampaign = function(req,res, user){
     done();
   }
 
-  async.series([ setupFI, setupSubscription, setupFT], 
-    function(done){
-    
-    // actually do transaction. NIY TODO TRP
+  var doDebit = function(err){
+    var resJSON = {};
+    // actually do the transaction. All necessary data is in locals.FT or locals.fi.
+    locals.FT.doDebit(null, function(err, ftback){
+      if(err) { throw err }
+      res.json({status: ftback.status, comment: ftback.description});
+    })
+  } // var doDebit()
 
-    // TODO TRP: make this real. For now, declare success at this point, and return success code.
-    res.json({status: 'succeeded', comment: 'fake result, no transaction actually happened!'})
+  async.series([ setupFI, setupSubscription, setupFT], doDebit);
 
-    });
-
-
-} // fundCampaign()
+} // fundCampaignPost()
 
 // setup users payment plan and do a payment transaction with balanced API.
 // optional 3rd 'user' arg is used in testing, set up when route is defined.
@@ -137,7 +143,7 @@ module.exports.setupPaymentPlanPost = function(req, res, user) {
        // validate fields.
        if( data.fundingInstrument.match(/\/cards\//) === null) {
         res.json({status: 'error', message: "bad funding instrument token, no transaction attempted."});
-        done(); return;
+        return;
        }
 
        // validate min/max amount of transaction? 
@@ -179,15 +185,15 @@ module.exports.setupPaymentPlanPost = function(req, res, user) {
             // If we got here, payment succeeded: 
             // Create FI, edit user payment plan, create a success FT record, and done(); return success.
 
-            var fi          = new FundingInstrument();
-            fi.user         = data.userId;
-            fi.cclastfour   = data.cclastfour;
-            fi.type         = 'cc';
-            fi.cctype       = data.cctype;
-            fi.name_on_card = data.ccname;
-            fi.cctype       = data.cctype;
-            fi.ccexp        = data.ccexp;
-            fi.bp_token     = data.fundingInstrument;
+            var fi                   = new FundingInstrument();
+            fi.user                  = data.userId;
+            fi.ccLastFour            = data.cclastfour;
+            fi.type                  = 'cc';
+            fi.ccType                = data.cctype;
+            fi.ccNameOnCard          = data.ccname;
+            fi.ccType                = data.cctype;
+            fi.ccExpirationDate      = data.ccexp;
+            fi.ccToken              = data.fundingInstrument;
 
             fi.save(
             function(err, fiback){

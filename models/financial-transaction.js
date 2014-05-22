@@ -6,6 +6,7 @@ var bp                      = require('../lib/oc-balanced');
 var User                    = require('./user');
 var FundingInstrument       = require('./funding-instrument');
 var Subscription            = require('./subscription');
+var x                       = require('../lib/utils');
 
 // define the schema for our transaction model
 var financialTransactionSchema = mongoose.Schema({
@@ -21,11 +22,12 @@ var financialTransactionSchema = mongoose.Schema({
   currency                      : { type: String, default: 'USD' }, 
   appearsOnStatementAs          : { type: String, default: 'OneCommons' },
   description                   : { type: String, default: 'normal subscription debit' },
-  campaign                      : { type: String, ref: 'Campaign'}
+  campaign                      : { type: String, ref: 'Campaign'},
   processorTransactionId        : String,  // in BP, e.g. debits.id
   processorTransactionNumber    : String   // in BP, e.g. debits.transaction_number
 });
 
+DBG_ON = true;
 
 // do an account debit using current settings of an FT. Callback is passed the 
 // state of the saved FT record after the transaction is attempted or completed.
@@ -109,45 +111,44 @@ financialTransactionSchema.methods.doDebit = function(options, callback){
       }
 
       theFI = fi;
-      theBPToken = theFI.bp_token;
-
+      theBPToken = theFI.ccToken;
+      x.dbg('token = ', theBPToken);
       bp.debitCard(theBPToken, 
-        { amount: theFT.amount, 
-          appears_on_statement_as: 
-          theFT.appearsOnStatementAs, 
-          description: theFT.description}, 
-            function(err, bp_reply){
+                  { amount:                  theFT.amount, 
+                    appears_on_statement_as: theFT.appearsOnStatementAs, 
+                    description:             theFT.description }, 
+        function(err, bp_reply){
+          x.dbg('token, bp_reply', [theBPToken, bp_reply]);
+          if(err){ 
+            theFT.status = 'failed'; theFT.description = "couldn't reach payment processor";
+            errExit(theFT, theUser, callback, new Error(theFT.description));  
+            return;
 
-              if(err){ 
-                theFT.status = 'failed'; theFT.description = "couldn't reach payment processor";
-                theFT.errExit(theFT, theUser, callback, new Error(theFT.description));  
-                return;
+          } 
 
-              } 
-
-              if (bp_reply.errors){ 
-                theFT.status = 'failed';
-                theFT.description = bp_reply.errors[0].description;
-                if(bp_reply.debits){
-                  theFT.processorTransactionId          = bp_reply.debits[0].id;
-                  theFT.processorTransactionNumber      = bp_reply.debits[0].transaction_number;
-                }
-                errExit(theFT, null, callback, new Error(theFT.description));
-                return;
-
-              } 
-
-              // else success!
-              theFT.status                          = 'succeeded';
-              theFT.description                     = bp_reply.debits[0].description;
+          if (bp_reply.errors){ 
+            theFT.status = 'failed';
+            theFT.description = bp_reply.errors[0].description;
+            if(bp_reply.debits){
               theFT.processorTransactionId          = bp_reply.debits[0].id;
               theFT.processorTransactionNumber      = bp_reply.debits[0].transaction_number;
+            }
+            errExit(theFT, null, callback, new Error(theFT.description));
+            return;
 
-              if(theFT.transactionType === 'paymentPlanDebit'){
-                theUser.paymentPlan.lastCharge = theFT._id;
-              }
-              successExit(theFT, theUser, callback);
-              return;
+          } 
+
+          // else success!
+          theFT.status                          = 'succeeded';
+          theFT.description                     = bp_reply.debits[0].description;
+          theFT.processorTransactionId          = bp_reply.debits[0].id;
+          theFT.processorTransactionNumber      = bp_reply.debits[0].transaction_number;
+
+          if(theFT.transactionType === 'paymentPlanDebit'){
+            theUser.paymentPlan.lastCharge = theFT._id;
+          }
+          successExit(theFT, theUser, callback);
+          return;
       }) }) })
 
 }
