@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "test": "mocha -R tap"
+    "test": "NODE_ENV=test mocha -R tap"
   },
   "dependencies": {
     "express": "3.4.8",
