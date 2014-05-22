@@ -14,7 +14,7 @@ DBG_ON = false;
 /*
  * fundCampaign() – JSON POST handler. 
  * ----------------------------------
- *  Expected data sent:
+ *  Expected data sent as json:
  *   amount           – REQUIRED - in USD cents, by default.
  *   currency         - OPTIONAL - if absent USD assumed. 
  *   campaignId       - OPTIONAL - recipient campaign id; if absent assume the default One Commons campaign.
