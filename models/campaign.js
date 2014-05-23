@@ -11,6 +11,7 @@ var campaignSchema = mongoose.Schema({
    fund              : {type: String, ref: 'Fund'}
 });
 
-
 // create the model for users and expose it to our app
-module.exports = createModel('Campaign', campaignSchema);
+module.exports              = createModel('Campaign', campaignSchema);
+module.exports.DEFAULT_ID   = '@Campaign@0';
+

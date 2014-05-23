@@ -6,6 +6,7 @@ var createModel = require('../lib/createmodel');
 // define the schema for our item model
 var fundingInstrumentSchema = mongoose.Schema({
   user             : { type: String, ref: 'User'},
+  status           : { type: String, enum: ['unverified', 'verified', 'invalid']},
   type             : { type: String, enum: ['cc', 'ach', 'paypal'], default: 'cc'},
   ccLastFour       : { type: String, trim: true, match: /^\d{4}/ },
   ccType           : { type: String, enum:

@@ -15,4 +15,5 @@ var fundSchema = mongoose.Schema({
 
 
 // create the model for users and expose it to our app
-module.exports = createModel('Fund', fundSchema);
+module.exports              = createModel('Fund', fundSchema);
+module.exports.DEFAULT_ID   = '@Fund@0';

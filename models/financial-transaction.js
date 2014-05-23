@@ -87,68 +87,68 @@ financialTransactionSchema.methods.doDebit = function(options, callback){
 
   // // OK, entering callback chain.
 
-  User.findById(theFT.user, function(err,u){
-    if(!u){ 
-      theFT.status = 'failed'; theFT.description = 'couldnt find user'; 
-      errExit(theFT, theUser, callback, new Error(theFT.description));
-      return;
-    }
-
-    theUser = u;
-
-    
-    if(theFT.transactionType === 'paymentPlanDebit'){
-      theFT.amount = theUser.paymentPlan.amount;
-      theFT.fi = theUser.paymentPlan.fi;
-    }
-    
-    
-    FundingInstrument.findById(theFT.fi, function(err,fi){
-      if(!fi || !theFT){ 
-        theFT.status = 'failed'; theFT.description = "couldn't find Funding Instrument"; 
-        errExit(theFT, theUser, callback, new Error(theFT.description) );
+  User.findById(theFT.user, 
+    function(err,u){
+      if(!u){ 
+        theFT.status = 'failed'; theFT.description = 'couldnt find user'; 
+        errExit(theFT, theUser, callback, new Error(theFT.description));
         return;
       }
 
-      theFI = fi;
-      theBPToken = theFI.ccToken;
-      x.dbg('token = ', theBPToken);
-      bp.debitCard(theBPToken, 
-                  { amount:                  theFT.amount, 
-                    appears_on_statement_as: theFT.appearsOnStatementAs, 
-                    description:             theFT.description }, 
-        function(err, bp_reply){
-          x.dbg('token, bp_reply', [theBPToken, bp_reply]);
-          if(err){ 
-            theFT.status = 'failed'; theFT.description = "couldn't reach payment processor";
-            errExit(theFT, theUser, callback, new Error(theFT.description));  
+      theUser = u;
+
+      
+      if(theFT.transactionType === 'paymentPlanDebit'){
+        theFT.amount = theUser.paymentPlan.amount;
+        theFT.fi = theUser.paymentPlan.fi;
+      }
+      
+      
+      FundingInstrument.findById(theFT.fi, 
+        function(err,fi){
+          if(!fi || !theFT){ 
+            theFT.status = 'failed'; theFT.description = "couldn't find Funding Instrument"; 
+            errExit(theFT, theUser, callback, new Error(theFT.description) );
             return;
+          }
 
-          } 
+          theFI = fi;
+          theBPToken = theFI.ccToken;
+          bp.debitCard(theBPToken, 
+                      { amount:                  theFT.amount, 
+                        appears_on_statement_as: theFT.appearsOnStatementAs, 
+                        description:             theFT.description }, 
+            function(err, bp_reply){
+              if(err){ 
+                theFT.status = 'failed'; theFT.description = "couldn't reach payment processor or bad card token";
+                errExit(theFT, theUser, callback); // , new Error(theFT.description));  
+                return;
 
-          if (bp_reply.errors){ 
-            theFT.status = 'failed';
-            theFT.description = bp_reply.errors[0].description;
-            if(bp_reply.debits){
+              } 
+
+              if (bp_reply.errors){ 
+                theFT.status = 'failed';
+                theFT.description = bp_reply.errors[0].description;
+                if(bp_reply.debits){
+                  theFT.processorTransactionId          = bp_reply.debits[0].id;
+                  theFT.processorTransactionNumber      = bp_reply.debits[0].transaction_number;
+                }
+                errExit(theFT, null, callback); // , new Error(theFT.description));
+                return;
+
+              } 
+
+              // else success!
+              theFT.status                          = 'succeeded';
+              theFT.description                     = bp_reply.debits[0].description;
               theFT.processorTransactionId          = bp_reply.debits[0].id;
               theFT.processorTransactionNumber      = bp_reply.debits[0].transaction_number;
-            }
-            errExit(theFT, null, callback, new Error(theFT.description));
-            return;
 
-          } 
-
-          // else success!
-          theFT.status                          = 'succeeded';
-          theFT.description                     = bp_reply.debits[0].description;
-          theFT.processorTransactionId          = bp_reply.debits[0].id;
-          theFT.processorTransactionNumber      = bp_reply.debits[0].transaction_number;
-
-          if(theFT.transactionType === 'paymentPlanDebit'){
-            theUser.paymentPlan.lastCharge = theFT._id;
-          }
-          successExit(theFT, theUser, callback);
-          return;
+              if(theFT.transactionType === 'paymentPlanDebit'){
+                theUser.paymentPlan.lastCharge = theFT._id;
+              }
+              successExit(theFT, theUser, callback);
+              return;
       }) }) })
 
 }

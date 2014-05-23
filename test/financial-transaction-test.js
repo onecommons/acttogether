@@ -68,6 +68,7 @@ describe('FT', function () {
       assert.isNotNull(theFT.fi);
       assert.isNotNull(theFT.user);
       assert.isNotNull(theFT.amount);
+//      console.log(theFI);
       theFT.doDebit({}, function(err, ftback){
         assert.isNull(err);
         assert.equal(ftback.status, 'succeeded');

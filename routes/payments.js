@@ -11,6 +11,23 @@ var u                       = require('../lib/utils');
 
 DBG_ON = false;
 
+module.exports.fundCampaignGet = function(req,res,user){
+  // get the provided campaign id if any; default to default campaign.
+  var theCampaign;
+  var theUser = (req.user ? req.user : user);
+  var campaign_id = req.param('id');
+  campaign_id = (campaign_id ? campaign_id : Campaign.DEFAULT_ID); 
+
+  Campaign.findOne({_id: campaign_id}
+   ,function(err,campaignBack){
+    if(err) throw err;
+    theCampaign = campaignBack;
+    res.render('fund-campaign.html', {
+        campaign:   { name: theCampaign.name, id: theCampaign._id},
+        showCCForm: (theUser.activeFI ? false : true) });
+  });
+
+}
 /*
  * fundCampaign() – JSON POST handler. 
  * ----------------------------------
@@ -47,9 +64,10 @@ module.exports.fundCampaignPost = function(req,res, user){
 
   locals.theCampaignId = (data.campaignId ? data.campaignId : '@Campaign@0');
 
+  // defining functions to call in async.series.
   var setupFI = function(done){
     if(typeof(data.ccToken) === 'undefined') {
-      // retrieve the user FI.
+      // retrieve the existing user FI.
       FundingInstrument.findOne({_id: locals.theUser.activeFI}, 
         function(err, fiback){
           if(err || !fiback) { res.json({status: 'noFI', comment: 'user has no funding instrument'}); done(); return }
@@ -60,7 +78,7 @@ module.exports.fundCampaignPost = function(req,res, user){
           } else { done()}
         });
     } else {
-      // no fi exists, and data has been submitted to create a FI and tie to user.
+      // data has been submitted to create a new FI and tie it to the user.
       locals.fi                        = new FundingInstrument();
       locals.fi.user                   = locals.theUser._id;
       locals.fi.ccLastFour             = data.ccLastFour;
@@ -94,7 +112,7 @@ module.exports.fundCampaignPost = function(req,res, user){
           })
         } else {
           locals.sub = subBack1;
-          done()
+          done();
         }
       })
   } // var setupSubscription()
@@ -123,7 +141,7 @@ module.exports.fundCampaignPost = function(req,res, user){
     })
   } // var doDebit()
 
-  async.series([ setupFI, setupSubscription, setupFT], doDebit);
+  async.series([setupFI, setupSubscription, setupFT], doDebit);
 
 } // fundCampaignPost()
 

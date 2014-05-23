@@ -37,11 +37,15 @@ module.exports = function(app, passport) {
 
     setupPaymentPlan: { path: '/profile/setup-payment-plan',
                         get:  [ sharedPageVars, utils.isLoggedIn, renderer('setup-payment-plan')],
-                        post: [ utils.isLoggedIn, payments.setupPaymentPlanPost]},
+                        post: [ utils.isLoggedIn, payments.setupPaymentPlanPost] },
 
-    fundCampaign:     { path: '/fund-campaign',
-                        get:  [ sharedPageVars, utils.isLoggedIn, renderer('fund-campaign')],
-                        post: [ utils.isLoggedIn, payments.fundCampaignPost]},
+    fundCampaign:     { path: '/fund-campaign/:id',
+                        get:  [ sharedPageVars, utils.isLoggedIn, payments.fundCampaignGet],
+                        post: [ utils.isLoggedIn, payments.fundCampaignPost] },
+
+    fundCampaignNoId: { path: '/fund-campaign',
+                        get:  [ sharedPageVars, utils.isLoggedIn, payments.fundCampaignGet] },
+
 
     datarequest:      { post: datarequest},
 
