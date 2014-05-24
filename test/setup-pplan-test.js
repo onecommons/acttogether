@@ -4,8 +4,6 @@ var assert      = require('chai').assert;
 var mongoose    = require('mongoose');
 var bp          = require('../lib/oc-balanced');
 var m           = require('../models');
-var u           = require('../lib/utils');
-
 
 describe('setup payment plan', function () {
     
@@ -60,7 +58,7 @@ describe('setup payment plan', function () {
       }
     });
 
-    it('should do a debit with good data and update user, fi, ft', function(done){
+    it('should do a debit with good data and update user, fi, ft'/*, function(done){
       request(app)
           .post('/setup-payment-plan')
           .send(debitparams)
@@ -89,7 +87,7 @@ describe('setup payment plan', function () {
                     done();    
 
           }) }) }) });
-    }); // it...
+    }*/); // it...
 
     it('should NOT do a debit with a bad card token', function(done){
       debitparams.fundingInstrument = '/this/is-a-whack-card-token';

@@ -17,7 +17,7 @@ var loadConfig = require('./lib/config');
 
 function stopApp(closeCallback) {
   var onclose = function() {
-    mongoose.connection.close(function() { closeCallback();});
+    mongoose.connection.close(closeCallback);
   };
   this.gracefullyExiting = true;
   if (this.server)
