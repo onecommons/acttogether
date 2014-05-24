@@ -17,7 +17,7 @@ describe('setup payment plan', function () {
     var app = express();
     app.use(express.bodyParser());
     var spp = require('../routes/payments').setupPaymentPlanPost; 
-    app.post('/setup-payment-plan', function(req, res) {spp(req,res, theUser)});
+    app.post('/setup-payment-plan', function(req, res) {assert(theUser); spp(req,res, theUser)});
 
     before(function(done) {
       db = mongoose.connect('mongodb://localhost/test');
@@ -76,6 +76,7 @@ describe('setup payment plan', function () {
                 m.User.findOne({_id: theUser.id}
                 ,function(err,u){
                   // console.log(u);
+                  assert(u);
                   assert.equal(u.paymentPlan.fi, fi._id); // user payment plan has been updated.
 
                   m.FinancialTransaction.findOne({}
