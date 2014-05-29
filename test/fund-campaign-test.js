@@ -96,7 +96,7 @@ describe('fund campaign', function () {
     });
 
     //XXX this fails because there is no fund-campaign.html 
-    it("get should show page WITH cc form if user doesn't have an active FI" /*, function(done){
+    it("get should show page WITH cc form if user doesn't have an active FI" , function(done){
       theUser.activeFI = null;
       request(app)
         .get('/fund-campaign')
@@ -107,7 +107,7 @@ describe('fund campaign', function () {
           if(err) return done(err);
           done();
         })
-    }*/);
+    });
 
     it('post should do a debit with default campaign and user with established FI and create sub', function(done){
       request(app)
