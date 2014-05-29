@@ -58,7 +58,7 @@ describe('setup payment plan', function () {
       }
     });
 
-    it('should do a debit with good data and update user, fi, ft'/*, function(done){
+    it('should do a debit with good data and update user, fi, ft', function(done){
       request(app)
           .post('/setup-payment-plan')
           .send(debitparams)
@@ -87,7 +87,7 @@ describe('setup payment plan', function () {
                     done();    
 
           }) }) }) });
-    }*/); // it...
+    }); // it...
 
     it('should NOT do a debit with a bad card token', function(done){
       debitparams.fundingInstrument = '/this/is-a-whack-card-token';
