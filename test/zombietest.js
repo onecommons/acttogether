@@ -7,16 +7,13 @@ var util = require('util');
 
 var Browser = require("zombie");
 var phantomTimeout = 10000;
-var testserver = null;
 
 describe('zombietest', function() {
-  var app = require('./fixtures/app');
+  var app = require('./fixtures/app')();
   
   before(function(done) {  
     app.start(function(listen) {
       listen(function(server) { 
-        console.log('test app started on', server.address()); 
-        testserver = server; 
         done();
       });
     });
@@ -31,14 +28,14 @@ describe('zombietest', function() {
   }).forEach(function(file){
       it(file, function(done) {
         
-        
         this.timeout(phantomTimeout);
+        var stats = null;
         var browser = new Browser({ debug: false, silent: true});
         browser.on("console", function(level, message) {
           //console.log('browser console', level, message);
           if (level == 'error') return;
           var data = JSON.parse(message);
-          var stats = data.stats;
+          stats = data.stats;
           //console.dir(stats);
           console.log(file + " tests: " + stats.tests + " passes: " + stats.passes +
                     " failures: " + stats.failures);
@@ -51,11 +48,14 @@ describe('zombietest', function() {
           msg += stats.failures + " browser test(s) in " + file + " failed";
           assert(stats.failures === 0, msg);
         });
-        var address = testserver.address();
-        var url = util.format("http://%s:%d/browsertest/%s", address.address, address.port, file);
-        browser.visit(url, function() {
-          if (browser.errors && browser.errors.length)
-            console.dir("Errors reported:", browser.errors);
+        var url = app.getUrl();
+        assert(url);
+        browser.visit(url+'/browsertest/'+file, function() {
+          if (browser.errors.length)
+            console.dir(browser.errors);
+          assert(browser.errors.length == 0, "there are browser errors, see console");
+          assert(stats);
+          assert(stats.passes > 0);
           done();
         });
       });

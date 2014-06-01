@@ -2,11 +2,6 @@ var main = require('../../app'),
  express = require('express'),
  mongoose = require('mongoose')
 
-app = main.createApp();
-app.use(express.static(main.dirname + '/test/public'));
-var browsertest = require('../../routes/browsertest');
-app.get('/browsertest/:testname', browsertest);
-
 // create some  models we will need for testing.
 mongoose.model('DbTest1',
   new mongoose.Schema({
@@ -16,7 +11,14 @@ mongoose.model('DbTest1',
     },{strict: false}) //'throw'
 );
 
-module.exports = app;
+function createApp() {
+  app = main.createApp();
+  app.use(express.static(main.dirname + '/test/public'));
+  var browsertest = require('../../routes/browsertest');
+  app.get('/browsertest/:testname', browsertest);
+  return app;
+}
+module.exports = createApp;  
 
 /* XXX
 function() {
@@ -30,5 +32,5 @@ function() {
 
 // check to see if we're the main module (i.e. run directly, not require()'d)
 if (require.main === module) {
-  app.start(); 
+  createApp().start(); 
 }

@@ -14,8 +14,10 @@ var FileStore = require('connect-session-file');
 var models = require('./models');
 var _ = require('underscore');
 var loadConfig = require('./lib/config');
+var util = require('util');
 
-function stopApp(closeCallback) {
+var STOP_APP_TIMEOUT = 30*1000;
+function stopApp(closeCallback, forcequit) {
   var onclose = function() {
     mongoose.connection.close(closeCallback);
   };
@@ -25,10 +27,13 @@ function stopApp(closeCallback) {
   else
     onclose();
 
-  setTimeout( function () {
-    console.error("Could not close connections in time, forcefully shutting down");
-    process.exit(1); 
-  }, 30*1000);
+  if (forcequit) {
+    var timeout = typeof forcequit == "number" ? forcequit : STOP_APP_TIMEOUT;
+    setTimeout( function () {
+      console.error("Could not close connections in time, forcefully shutting down");
+      process.exit(1); 
+    }, timeout);
+  }
 }
 
 /*
@@ -46,10 +51,11 @@ if ready is not defined, the server will start listening
 */
 function startApp(ready, closeCallback) {
   var app = this;
+  //app.startstack = new Error().stack;
   //set up clean shutdown on sigterm
   //see http://blog.argteam.com/coding/hardening-node-js-for-production-part-3-zero-downtime-deployments-with-nginx/
   //and https://github.com/visionmedia/express/issues/1366  
-  process.on( 'SIGTERM', function() {app.stop(closeCallback);});
+  process.on( 'SIGTERM', function() {app.stop(closeCallback,true);});
   //XXX what about SIGINT (ctrl-c)? closeCallback needs to call process.exit(1) in that case
   var onready = function() {
     if (ready) {
@@ -87,6 +93,14 @@ function startApp(ready, closeCallback) {
   });  
 }
 
+function getUrl() { 
+  if (!this.server)
+    return null;
+  var address = this.server.address();
+  //XXX support https
+  return util.format("http://%s:%d", address.address, address.port);
+}
+
 function createApp() {
   var app = express();
 
@@ -104,7 +118,7 @@ function createApp() {
     if (!app.gracefullyExiting)
       return next();
     res.setHeader ("Connection", "close")
-    res.send (502, "Server is in the process of restarting.")
+    res.send (502, "Server is in the process of restarting. [stopApp]")
   });
 
   app.use(express.favicon());
@@ -168,6 +182,7 @@ function createApp() {
   app.set('autoUpdates', config.autoUpdates);
   app.start = startApp;
   app.stop = stopApp;
+  app.getUrl = getUrl;
   return app;
 }
 

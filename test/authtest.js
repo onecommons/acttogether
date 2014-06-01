@@ -5,8 +5,8 @@ var m = require('../models');
 
 describe('Authentication', function() {
 
-  var app = require('./fixtures/app');
-
+  var app = require('./fixtures/app')();
+  var agent1 = null;
 
   // create a test user for login
   before(function(done) {
@@ -18,9 +18,13 @@ describe('Authentication', function() {
           theUser.local.email = "test@onecommons.org";
           theUser.local.password = "$2a$08$9VbBhF8kBcKIwLCk52O0Guqj60gb1G.hIoWznC806yhsAMb5wctg6"; // test
           theUser._id = "@User@123";
-          theUser.save(done);
+          theUser.save(function(){
+            listen(function(server){
+              agent1 = request.agent(app.getUrl());
+              done();
+            });
+          });
         });
-      //ignore listen func because supertest will do that 
     }); 
   });
 
@@ -32,9 +36,8 @@ describe('Authentication', function() {
   });
 
   describe('local login', function(){
-
     it('should fail a nonexistent username', function(done) {
-      request(app)
+      request(app.getUrl())
       .post('/login')
       .type('form')
       .redirects(0)
@@ -45,7 +48,7 @@ describe('Authentication', function() {
     });
 
     it('should fail an incorrect password', function(done) {
-      request(app)
+      request(app.getUrl())
       .post('/login')
       .type('form')
       .redirects(0)
@@ -56,7 +59,7 @@ describe('Authentication', function() {
     });
 
     it('should accept a correct username & password', function(done) {
-      request(app)
+      request(app.getUrl())
       .post('/login')
       .type('form')
       .redirects(0)
@@ -69,14 +72,13 @@ describe('Authentication', function() {
   });
 
   describe('sessions', function() {
-
     // agent stores cookies for multiple requests
-    var agent1 = request.agent(app);
-
+    
     it('should create a new session', function(done) {
       agent1
       .get('/')
       .expect('set-cookie', /.+/)
+      .expect(/html/)
       .expect(200, done)
     });
 
