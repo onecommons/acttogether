@@ -38,6 +38,7 @@
     "open": "0.0.5",
     "chai": "^1.9.1",
     "chai-as-promised": "^4.1.1",
-    "zombie": "~2.0.0-alpha31"
+    "zombie": "~2.0.0-alpha31",
+    "cheerio": "~0.16.0"
   }
 }
