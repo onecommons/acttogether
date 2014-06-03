@@ -44,24 +44,26 @@ describe('zombietest', function() {
 
       it(file, function(done) {
 
-        this.timeout(4000);
+        this.timeout(3000); //XXX why are these tests taking so long?
         var stats = null;
-        var browser = new Browser({ debug: false, silent: true});
+        var msg = '';
+        var testresults = null;
+        var browser = new Browser({ debug: false, silent: true, waitFor: 100});
         browser.on("console", function(level, message) {
           console.log('from zombie browser console:', level, message);
         });
         app.testresults.once('clienttestresults', function(data) {
+          testresults = data;
           stats = data.stats;
           console.log(file + " tests: " + stats.tests + " passes: " + stats.passes +
                     " failures: " + stats.failures);
-          var msg = '';
           if(stats.failures > 0){
              for(var i=0; i < data.failures.length; i++){
                  msg += "FAILURE: " + data.failures[i].fullTitle + '\n';
+                 msg += data.failures[i].error;
              }
           }
-          msg += stats.failures + " browser test(s) in " + file + " failed";
-          assert(stats.failures === 0, msg);
+          msg += stats.failures + " test(s) in " + file + " failed";
         });
 
         var url = app.getUrl();
@@ -70,8 +72,9 @@ describe('zombietest', function() {
           if (browser.errors.length)
             console.dir(browser.errors);
           assert(browser.errors.length == 0, "there are browser errors, see console");
-          assert(stats);
-          assert(stats.passes > 0);
+          assert(stats, "no stats!");
+          assert(stats.failures === 0, msg);
+          assert(stats.passes > 0, "no tests detected");
           done();
         });
       });

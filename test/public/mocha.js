@@ -3110,6 +3110,27 @@ exports = module.exports = XHRReporter;
  * @api public
  */
 
+
+function getErrorInfo(test) {
+  //copied from html reporter
+  var str = test.err.stack || test.err.toString();
+
+  // FF / Opera do not add the message
+  if (!~str.indexOf(test.err.message)) {
+    str = test.err.message + '\n' + str;
+  }
+
+  // <=IE7 stringifies to [Object Error]. Since it can be overloaded, we
+  // check for the result of the stringifying.
+  if ('[object Error]' == str) str = test.err.message;
+
+  // Safari doesn't give you a stack. Let's at least provide a source line.
+  if (!test.err.stack && test.err.sourceURL && test.err.line !== undefined) {
+    str += "\n(" + test.err.sourceURL + ":" + test.err.line + ")";
+  }
+  return str;
+}
+
 function XHRReporter(runner) {
   var self = this;
   Base.call(this, runner);
@@ -3163,11 +3184,15 @@ function XHRReporter(runner) {
  */
 
 function clean(test) {
-  return {
+  var obj = {
       title: test.title
     , fullTitle: test.fullTitle()
     , duration: test.duration
   }
+  if (test.err) {
+    obj.error = getErrorInfo(test);
+  }
+  return obj;
 }
 }); // module: reporters/xhr.js
 
