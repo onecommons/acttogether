@@ -3068,6 +3068,7 @@ function JSONReporter(runner) {
   });
 }
 
+
 /**
  * Return a plain-object representation of `test`
  * free of cyclic properties etc.
@@ -3085,6 +3086,91 @@ function clean(test) {
   }
 }
 }); // module: reporters/json.js
+
+require.register("reporters/xhr.js", function(module, exports, require){
+
+/**
+ * Module dependencies.
+ */
+
+var Base = require('./base')
+  , cursor = Base.cursor
+  , color = Base.color;
+
+/**
+ * Expose `JSON`.
+ */
+
+exports = module.exports = XHRReporter;
+
+/**
+ * Initialize a new `JSON` reporter.
+ *
+ * @param {Runner} runner
+ * @api public
+ */
+
+function XHRReporter(runner) {
+  var self = this;
+  Base.call(this, runner);
+
+  var tests = []
+    , failures = []
+    , passes = [];
+
+  runner.on('test end', function(test){
+    tests.push(test);
+  });
+
+  runner.on('pass', function(test){
+    passes.push(test);
+  });
+
+  runner.on('fail', function(test){
+    failures.push(test);
+  });
+
+  runner.on('end', function(){
+    var obj = {
+        stats: self.stats
+      , tests: tests.map(clean)
+      , failures: failures.map(clean)
+      , passes: passes.map(clean)
+    };
+    $.ajax({
+        type: 'POST',
+        url: '/testresult',
+        data: JSON.stringify(obj),
+        //processData: false, //seems to break things, so call stringify explicitly
+        contentType: 'application/json',
+        dataType: "json",
+        error: function(jqXHR, textStatus, err) { console.log("error", textStatus, err); },
+        //complete: function(jqXHR, textStatus) { console.log("complete",  textStatus); }
+    });
+
+
+  });
+}
+
+
+/**
+ * Return a plain-object representation of `test`
+ * free of cyclic properties etc.
+ *
+ * @param {Object} test
+ * @return {Object}
+ * @api private
+ */
+
+function clean(test) {
+  return {
+      title: test.title
+    , fullTitle: test.fullTitle()
+    , duration: test.duration
+  }
+}
+}); // module: reporters/xhr.js
+
 
 require.register("reporters/landing.js", function(module, exports, require){
 
@@ -4500,12 +4586,12 @@ Runner.prototype.fail = function(test, err){
  * - If bail, then exit
  * - Failed `before` hook skips all tests in a suite and subsuites,
  *   but jumps to corresponding `after` hook
- * - Failed `before each` hook skips remaining tests in a 
+ * - Failed `before each` hook skips remaining tests in a
  *   suite and jumps to corresponding `after each` hook,
  *   which is run only once
  * - Failed `after` hook does not alter
  *   execution order
- * - Failed `after each` hook skips remaining tests in a 
+ * - Failed `after each` hook skips remaining tests in a
  *   suite and subsuites, but executes other `after each`
  *   hooks
  *
@@ -4554,7 +4640,7 @@ Runner.prototype.hook = function(name, fn){
       var testError = hook.error();
       if (testError) self.fail(self.test, testError);
       if (err) {
-        self.failHook(hook, err); 
+        self.failHook(hook, err);
 
         // stop executing hooks, notify callee of hook err
         return fn(err);
@@ -4692,7 +4778,7 @@ Runner.prototype.runTests = function(suite, fn){
     // for failed 'after each' hook start from errSuite parent,
     // otherwise start from errSuite itself
     self.suite = after ? errSuite.parent : errSuite;
-    
+
     if (self.suite) {
       // call hookUp afterEach
       self.hookUp('afterEach', function(err2, errSuite2) {
@@ -4703,7 +4789,7 @@ Runner.prototype.runTests = function(suite, fn){
         fn(errSuite);
       });
     } else {
-      // there is no need calling other 'after each' hooks 
+      // there is no need calling other 'after each' hooks
       self.suite = orig;
       fn(errSuite);
     }

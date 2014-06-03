@@ -22,7 +22,7 @@ describe("when an empty string is passed in", function() {
     setTimeout(function() {
       assert(result === 0);
       done();
-    }, 1000);
+    }, 20);
   });
 });
 

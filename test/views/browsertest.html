@@ -46,8 +46,7 @@ function check( done, f ) {
       mochaPhantomJS.run();
     } else {
       // standard browser invocation.
-      //XXX use 'html' reporter if page is loaded manually
-      mocha.reporter('json').run();
+      mocha.reporter(location.search.slice(1)||'html').run();
     }
 
   });

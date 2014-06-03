@@ -1,4 +1,4 @@
-var main = require('../../app'), 
+var main = require('../../app'),
  express = require('express'),
  mongoose = require('mongoose')
 
@@ -18,19 +18,21 @@ function createApp() {
   app.get('/browsertest/:testname', browsertest);
   return app;
 }
-module.exports = createApp;  
+module.exports = createApp;
 
 /* XXX
 function() {
   var mocha = require('mocha');
   mocha.before(function(done) {app.start(
     function(listen){listen(); done();};
-  }); 
+  });
   mocha.after(function(done) {app.stop(done)});
 }
 */
 
 // check to see if we're the main module (i.e. run directly, not require()'d)
 if (require.main === module) {
-  createApp().start(); 
+  var app = createApp();
+  app.set('views', __dirname + '/../views');
+  app.start();
 }
