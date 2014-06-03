@@ -11,11 +11,20 @@ mongoose.model('DbTest1',
     },{strict: false}) //'throw'
 );
 
+
+function addBrowserTests() {
+  this.set('views', __dirname + '/../views');
+  this.get('/browsertest/:testname', function(req, res) {
+      res.render('browsertest.html', { 
+          testName: req.params.testname
+      })
+  });
+}
+
 function createApp() {
   app = main.createApp();
   app.use(express.static(main.dirname + '/test/public'));
-  var browsertest = require('../../routes/browsertest');
-  app.get('/browsertest/:testname', browsertest);
+  app.addBrowserTests = addBrowserTests;
   return app;
 }
 module.exports = createApp;
@@ -33,6 +42,6 @@ function() {
 // check to see if we're the main module (i.e. run directly, not require()'d)
 if (require.main === module) {
   var app = createApp();
-  app.set('views', __dirname + '/../views');
+  app.addBrowserTests();
   app.start();
 }

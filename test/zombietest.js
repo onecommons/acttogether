@@ -12,7 +12,7 @@ describe('zombietest', function() {
   app.testresults = new EventEmitter();
 
   before(function(done) {
-    app.set('views', __dirname + '/views');
+    app.addBrowserTests();
     app.post('/testresult', function (req, res) {
       app.testresults.emit('clienttestresults', req.body);
       res.send( '"OK"', 200 );
