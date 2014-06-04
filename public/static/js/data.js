@@ -67,7 +67,7 @@ Txn.prototype = {
             id : requestId
         });
 
-        if (callback) {
+        if (callback) { //bind callback to data event
             $(elem).one('dbdata.'+this.txnId, function(event, responses) {
                 if (responses.error) { //error object, not an array of responses
                   callback(responses);
@@ -309,15 +309,18 @@ txn.commit();
      },
      dbCommit : function(callback) {
         var txn = this.data('currentTxn');
-        if (txn)
+        if (txn) {
+            this.removeData('currentTxn'); //do this now so callbacks aren't in this txn
             txn.commit(callback, this);
-        this.removeData('currentTxn');
+        } else {
+            konsole.error('commit with no txn');
+        }
         return this;
      },
      dbRollback : function() {
         var txn = this.data('currentTxn');
         if (txn) {
-            konsole.log('rollback with', txn);
+            this.removeData('currentTxn'); //do this now so callbacks aren't in this txn
             var errorObj = {"jsonrpc": "2.0", "id": null,
               "error": {"code": -32001, 
                   "message": "client-side rollback",
@@ -327,9 +330,8 @@ txn.commit();
             this.trigger('dbdata.'+txn.txnId, [errorObj, txn.requests, txn.txnComment]);
             this.trigger('dbdata-*', [errorObj, txn.requests, txn.txnComment]);
         } else {
-            konsole.log('rollback with no txn');
+            konsole.log('warning: rollback with no txn');
         }
-        this.removeData('currentTxn');
         return this;        
      }
     ,dbRenderToString: function(model, templatename) {

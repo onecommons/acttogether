@@ -1,76 +1,76 @@
 // db_tests.js
 // executed from browser.
 
+function verifyQuery(query, expected, done) {
+  var errormsg = 'unexpected result for query: ' + JSON.stringify(query);
+  $(document).dbQuery(query,
+   function(data) {
+      //console.log("results for query", JSON.stringify(query), "got", JSON.stringify(data), " expected ", JSON.stringify(expected));
+      assert(data.error === undefined, 'unexpected error for query:' + JSON.stringify(data.error));
+      assert(Array.isArray(data), errormsg + " expected an array");
+      //javascript doesn't provide an easy way to do deep equality on objects,
+      //so instead we'll compare JSON strings of objects
+      assert.deepEqual(data, expected, errormsg + " got " + JSON.stringify(data) + ' expected ' + JSON.stringify(expected));
+      done();
+  });
+}
+
 describe('db_tests', function() {
 
-	var pjson1, pjson2, pjson3;
+  $.db.url = '/datarequest';
+  var pjson1 = {
+       _id : '@DbTest1@1',
+       __t: 'DbTest1',
+       prop1 : '1 prop1 val'
+  };
 
+  it('should do dbCreate', function(done) {
+      var expected = [{
+       _id : '@DbTest1@1',
+       __t: 'DbTest1',
+       __v: 0,
+       prop1 : ['1 prop1 val']
+      }];
 
-	before(function(){
-		// $('body').append('<div class="db_tests"></div>');
-		$.db.url = '/datarequest';
-		pjson1 = {
-     		 _id : '@DbTest1@1',
-     		 __t: 'DbTest1',
-     		 prop1 : '1 prop1 val'
-    	};
- 		pjson2 = {
-     		 _id : '@DbTest1@2',
-     		 __t: 'DbTest1',
-     		 prop1 : '2 prop1 val'
-    	};
- 		pjson3 = {
-     		 _id : '@DbTest1@3',
-     		 __t: 'DbTest1',
-     		 prop1 : '3 prop1 value'
-    	};
- 	});
+      $(document).dbCreate(pjson1, function(resp) {
+        // console.log("RESPONSE:", JSON.stringify(resp));
+        assert.equal(pjson1.prop1, resp.prop1, JSON.stringify(resp));
+        assert.equal(pjson1._id, resp._id);
+        verifyQuery({_id: pjson1._id}, expected, done);
+      });
+  });
 
-	beforeEach(function(done){
-		$(document).dbDestroy(['@DbTest1@1','@DbTest1@1','@DbTest1@1'], function() {done()});
-	});
+  var modifiedprop = ["modified property value"]
+  var expected = [{
+   _id : '@DbTest1@1',
+   __t: 'DbTest1',
+   __v: 1,
+   prop1 : modifiedprop
+  }];
 
-	afterEach(function(done) {
-			// $('div.db_tests').remove();
-		$(document).dbDestroy(['@DbTest1@1','@DbTest1@1','@DbTest1@1'],function(){done()});
-	});
+  it('should do one dbUpdate', function(done) {
+      var mod = pjson1;
+      mod.prop1 = modifiedprop;
+      $(document).dbUpdate(mod, function(resp) {
+          assert.deepEqual(mod.prop1, resp.prop1);
+          verifyQuery({_id: pjson1._id}, expected, done);
+      });
+  });
 
-	it('should do one dbCreate', function(done) {
-    	$(document).dbCreate(pjson1, function(resp) {
-    		// console.log("RESPONSE:", JSON.stringify(resp));
-            check(done, function(){
-                assert.equal(pjson1.prop1, resp.prop1);
-             //   assert.equal(pjson1._id, resp._id);
-            });
-    	});
+  it('should do client-side rollback', function(done) {
+      var mod = pjson1;
+      mod.prop1 = ['whatever'];
+      $(document).dbBegin().dbUpdate(mod, function(resp) {
+        //console.log('client-side rollback', JSON.stringify(resp));
+        verifyQuery({_id: pjson1._id}, expected, done);
+      }).dbRollback();
+  });
 
-	});
-
-	it('should do one dbUpdate', function(done) {
-	    $(document).dbCreate(pjson1, function(resp) {
-	    	var mod = pjson1;
-	    	var modpropval = ["modified property value"];
-	    	mod.prop1 = modpropval;
-	   		$(document).dbUpdate(mod, function(resp) {
-                check(done,function(){
-    			     assert.deepEqual(mod.prop1, resp.prop1);
-                });
-            });
-    	
-
-		});
-   });
-
-	it('should delete an object', function(done) {
-	   $(document).dbCreate(pjson1, function(resp) {
-	    	// console.log("resp",resp);
-	   		$(document).dbDestroy([resp._id], function(resp2) {
-	   			// console.log("resp2",resp2);
-	   			done();
-    		});
-
-		});
-   });
-
+  it('should delete an object', function(done) {
+      $(document).dbDestroy([pjson1._id], function(resp) {
+        assert.deepEqual(resp, {"_id":"@DbTest1@1","prop1":[]});
+        verifyQuery({_id: pjson1._id}, [], done);
+      });
+  });
 
 });
