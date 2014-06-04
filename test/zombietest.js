@@ -43,8 +43,7 @@ describe('zombietest', function() {
   }).forEach(function(file){
 
       it(file, function(done) {
-
-        this.timeout(3000); //XXX why are these tests taking so long?
+        this.timeout(1500); 
         var stats = null;
         var msg = '';
         var testresults = null;

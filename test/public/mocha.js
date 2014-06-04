@@ -3145,10 +3145,12 @@ function XHRReporter(runner) {
 
   runner.on('pass', function(test){
     passes.push(test);
+    console.log('pass:' + test.fullTitle());
   });
 
   runner.on('fail', function(test){
     failures.push(test);
+    console.log('fail:' + test.fullTitle());
   });
 
   runner.on('end', function(){
