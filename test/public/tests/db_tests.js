@@ -73,4 +73,34 @@ describe('db_tests', function() {
       });
   });
 
+it("should invoke callbacks and triggers in the correct order", function(done){
+  //test dbdata custom event, should only be called once per transaction
+  var dbCallbackCalled = 0; //should be called first
+  var commitCallbackCalled = 0; //second
+  var customTriggerCalled = 0;  //third
+
+  var customTriggerFunc = function(event, data) {
+    customTriggerCalled++;
+    assert(dbCallbackCalled === 1, "dbCallback should have been called");
+    assert(commitCallbackCalled === 1, "commitCallback should have been called");
+    assert(customTriggerCalled === 1, "custom trigger should have only been called once");
+    done();
+  }
+  $(document).bind('dbdata-*', customTriggerFunc);
+
+  //make sure commit worked and dbQuery callback was called after dbCreate callback
+  $(document).dbBegin().dbQuery({},
+     function(data) {
+        dbCallbackCalled++;
+        assert(commitCallbackCalled === 0, "commit callback should not have been called yet");
+        assert(customTriggerCalled === 0, "custom trigger should not have been called yet");
+        assert(dbCallbackCalled === 1, "db callback should have only been called once");
+    }).dbCommit(function(event, response) {
+      commitCallbackCalled++;
+      assert(dbCallbackCalled === 1, "dbCallback should have been called");
+      assert(customTriggerCalled === 0, "custom trigger should not have been called yet");
+      assert(commitCallbackCalled === 1, "commit callback should have only been called once");
+  });
+});
+
 });
