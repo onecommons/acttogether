@@ -12,32 +12,43 @@ describe('jsonrpc', function(){
 
       app.post('/', jsonrpc.router.bind({
         noparams: function(params, respond) {
-          respond({result: "hello"})
+          respond("hello")
         },
-        ping: function (params, respond) {
-          respond({ result: ["hello", params]});
+        ping: function (params) {
+          return ["hello", params];
+        },
+        ping_async: function (params, respond) {
+          respond(["hello", params]);
         },
         ping_number: function (params, respond) {
-          respond({ result:params});
+          respond(params);
         },
         error: function (params, respond) {
           respond( jsonrpc.INTERNAL_ERROR );
         },
         get_data: function (params, respond) {
-          respond({ result: ["hello", 5] });
+          respond(["hello", 5]);
         },
         dependant_method: function (params, respond, promises) {
           promises.forEach(function(p) {
             if (p.request.method == 'get_data') {
               p.then(function(result){
-                respond({result: result.result[1]+1});
+                respond(result.result[1]+1);
               });
             }
           });
         }
       }));
 
-    it('should route a jsonrpc method', function(done){
+    it('should route an async jsonrpc method', function(done){
+      request(app)
+      .post('/')
+      //.set('Content-Type', 'application/json') //unnecessary since its the default
+      .send({"jsonrpc":"2.0","method":"ping_async","id":8})
+      .expect('{"jsonrpc":"2.0","id":8,"result":["hello",null]}', done);
+    });
+
+    it('should route a sync jsonrpc method', function(done){
       request(app)
       .post('/')
       //.set('Content-Type', 'application/json') //unnecessary since its the default
@@ -110,7 +121,6 @@ describe('jsonrpc', function(){
       .send({"jsonrpc":"2.0","method":"dependant_method","id":11})
       .expect('should never get a response', done);
     });
-
 
   });
 
