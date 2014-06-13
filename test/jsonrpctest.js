@@ -10,34 +10,32 @@ describe('jsonrpc', function(){
       var app = express();
       app.use(express.bodyParser());
 
-      app.post('/', function (req, res, next) {
-        jsonrpc.router(req, res, next, {
-          noparams: function(params, respond) {
-            respond({result: "hello"})
-          },
-          ping: function (params, respond) {
-            respond({ result: ["hello", params]});
-          },
-          ping_number: function (params, respond) {
-            respond({ result:params});
-          },
-          error: function (params, respond) {
-            respond( jsonrpc.INTERNAL_ERROR );
-          },
-          get_data: function (params, respond) {
-            respond({ result: ["hello", 5] });
-          },
-          dependant_method: function (params, respond, promises) {
-            promises.forEach(function(p) {
-              if (p.request.method == 'get_data') {
-                p.then(function(result){
-                  respond({result: result.result[1]+1});
-                });
-              }
-            });
-          }
-        });
-     });
+      app.post('/', jsonrpc.router.bind({
+        noparams: function(params, respond) {
+          respond({result: "hello"})
+        },
+        ping: function (params, respond) {
+          respond({ result: ["hello", params]});
+        },
+        ping_number: function (params, respond) {
+          respond({ result:params});
+        },
+        error: function (params, respond) {
+          respond( jsonrpc.INTERNAL_ERROR );
+        },
+        get_data: function (params, respond) {
+          respond({ result: ["hello", 5] });
+        },
+        dependant_method: function (params, respond, promises) {
+          promises.forEach(function(p) {
+            if (p.request.method == 'get_data') {
+              p.then(function(result){
+                respond({result: result.result[1]+1});
+              });
+            }
+          });
+        }
+      }));
 
     it('should route a jsonrpc method', function(done){
       request(app)
