@@ -1,5 +1,6 @@
 var express = require('express')
   , request = require('supertest')
+  , Promise = require('promise')
   , jsonrpc = require('../lib/jsonrpc');
 
 describe('jsonrpc', function(){
@@ -19,6 +20,9 @@ describe('jsonrpc', function(){
         },
         ping_async: function (params, respond) {
           respond(["hello", params]);
+        },
+        ping_promise: function (params) {
+          return Promise.resolve(["hello", params]);
         },
         ping_number: function (params, respond) {
           respond(params);
@@ -53,6 +57,14 @@ describe('jsonrpc', function(){
       .post('/')
       //.set('Content-Type', 'application/json') //unnecessary since its the default
       .send({"jsonrpc":"2.0","method":"ping","id":8})
+      .expect('{"jsonrpc":"2.0","id":8,"result":["hello",null]}', done);
+    });
+
+    it('should route a promise returning jsonrpc method', function(done){
+      request(app)
+      .post('/')
+      //.set('Content-Type', 'application/json') //unnecessary since its the default
+      .send({"jsonrpc":"2.0","method":"ping_promise","id":8})
       .expect('{"jsonrpc":"2.0","id":8,"result":["hello",null]}', done);
     });
 
