@@ -5,9 +5,9 @@
 //
 
 var testProjects = [];
-for(var j =0; j < 25; j++){
+for(var j =0; j < 6; j++){
 	testProjects[j] = {
-		"id": j 
+		"id": j
     	,"name":"Namey Name Name"
 	    ,"description": "Etsy iPhone jean shorts, master cleanse try-hard Neutra asymmetrical crucifix. Letterpress banh mi meggings VHS cornhole, 3 wolf moon Williamsburg Truffaut small batch art party Helvetica dreamcatcher tofu locavore narwhal. Craft beer Neutra banjo."
 	}
@@ -23,7 +23,7 @@ for(var i =0; i < 5; i++){
 
 
 module.exports.fullDirectory = function(req, res) {
-  res.render('directory.html', {
+  res.render('index.html', {
     directoryItems : testProjects
     ,categories : testCategories
 
@@ -36,7 +36,7 @@ module.exports.fullDirectory = function(req, res) {
 //
 
 var	testProject = {
-		"id": 1 
+		"id": 1
     	,"name":"Namey Name Name"
     	,"url":"test-project"
     	,"description":"Letterpress banh mi meggings VHS cornhole, Letterpress banh mi meggings VHS cornhole, Letterpress banh mi meggings VHS cornhole, Letterpress banh mi meggings VHS cornhole, Letterpress banh mi meggings VHS cornhole, Letterpress banh mi meggings VHS cornhole, Letterpress banh mi meggings VHS cornhole."

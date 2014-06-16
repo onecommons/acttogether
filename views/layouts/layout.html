@@ -15,7 +15,7 @@
 
     <!-- Custom styles for this template -->
     <link href="/static/css/app.css" rel="stylesheet">
-    
+
     <!-- Style from Font-Awesome for icons -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.{% if !debug %}min.{% endif %}css" rel="stylesheet">
 
@@ -45,18 +45,9 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-                <li><a href="{{routes.directory}}"><span class="glyphicon glyphicon-hand-right"></span>Directory</a></li>
-                <li><a href="/about/how-it-works"><span class="glyphicon glyphicon-cog"></span> How it works</a></li>
-                <li><a href="/about/raise-money"><span class="glyphicon glyphicon-cog"></span> Raise Money</a></li>
-                <!--<li class="dropdown"><a href="/about/community" class="dropdown-toggle disabled" data-toggle="dropdown" data-hover="dropdown" data-close-others="true"><span class="glyphicon glyphicon-cog"></span> Community Dropdown Menu</a>
-                  <ul class="dropdown-menu">
-                          <li><a href="">Discuss projects and groups</a></li>
-                          <li><a href="">OneCommons blog, etc</a></li>
-                          <li><a href="">Something we havent thought of</a></li>
-                  </ul>
-                </li>-->
                 {% if req.isAuthenticated() == false %}
-                <li><a href="{{routes.login}}"><span class="glyphicon glyphicon-user"></span>Sign Up / Login</a></li>
+                <li><a href="{{routes.signup}}"><span class="glyphicon glyphicon-user"></span>Sign Up</a></li>
+                <li><a href="{{routes.login}}"><span class="glyphicon glyphicon-user"></span>Login</a></li>
                 {% else %}
                 <li class="dropdown"><a href="{{routes.profile}}" class="dropdown-toggle disabled" data-toggle="dropdown" data-hover="dropdown" data-close-others="true"><span class="glyphicon glyphicon-user"></span>Profile</a>
                 <ul class="dropdown-menu">
@@ -85,8 +76,8 @@
             <div class="col-md-4">
             Mission statement blurb
             </div>
-            <div class="col-md-4">  
-              <ul> 
+            <div class="col-md-4">
+              <ul>
                 <header>Some Footer Links</header>
                 <li><a href="#" class="">About</a></li>
                 <li><a href="#" class=""></a></li>

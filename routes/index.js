@@ -69,7 +69,7 @@ module.exports = function(app, passport) {
   //enables named routes, eg <a href='{{routes.profile}}'>my profile</a>
   var routes = {
 
-    index:            ['', sharedPageVars, renderer('index')],
+    index:            ['', sharedPageVars, directory.fullDirectory],
 
     login:            { get:  [ sharedPageVars, login.login],
                         post: [ login.loginPost(passport)]},
