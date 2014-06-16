@@ -89,6 +89,7 @@ it("should invoke callbacks and triggers in the correct order", function(done){
   $(document).bind('dbdata-*', customTriggerFunc);
 
   //make sure commit worked and dbQuery callback was called after dbCreate callback
+  //note: query will respond with an error because no _id or __t is in the query condition
   $(document).dbBegin().dbQuery({},
      function(data) {
         dbCallbackCalled++;

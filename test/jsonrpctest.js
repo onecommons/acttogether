@@ -25,10 +25,13 @@ describe('jsonrpc', function(){
           return Promise.resolve(["hello", params]);
         },
         ping_number: function (params, respond) {
-          respond(params);
+          respond(params[0]);
         },
         error: function (params, respond) {
-          respond( jsonrpc.INTERNAL_ERROR );
+          if (params)
+            return new jsonrpc.JsonRpcError(-32001, "User Error");
+          else
+            respond( jsonrpc.INTERNAL_ERROR );
         },
         get_data: function (params, respond) {
           respond(["hello", 5]);
@@ -72,7 +75,7 @@ describe('jsonrpc', function(){
       request(app)
       .post('/')
       //.set('Content-Type', 'application/json') //unnecessary since its the default
-      .send({"jsonrpc":"2.0","method":"ping_number", "params":0, "id":8})
+      .send({"jsonrpc":"2.0","method":"ping_number", "params":[0], "id":8})
       .expect('{"jsonrpc":"2.0","id":8,"result":0}', done);
     });
 
@@ -90,6 +93,14 @@ describe('jsonrpc', function(){
       //.set('Content-Type', 'application/json') //unnecessary since its the default
       .send({"jsonrpc":"2.0","method":"doesntexist","id":8})
       .expect( '{"jsonrpc":"2.0","id":8,"error":{"code":-32601,"message":"Method not found"}}', done);
+    });
+
+    it('should handle custom errors correctly', function(done){
+      request(app)
+      .post('/')
+      //.set('Content-Type', 'application/json') //unnecessary since its the default
+      .send({"jsonrpc":"2.0","method":"error",  "params":["hi"], "id":8})
+      .expect( '{"jsonrpc":"2.0","id":8,"error":{"code":-32001,"message":"User Error"}}', done);
     });
 
     it('should handle batch requests', function(done){
