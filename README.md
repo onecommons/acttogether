@@ -4,7 +4,6 @@ App skeleton original built using `express --sessions --css less --ejs ocdemo`
 
 1. run `npm install` after cloning repo (use `npm ls` to verify dependencies)
 2. install mongodb: e.g. sudo brew install mongodb; sudo mkdir -p /data/db; sudo chown `id -u` /data/db
-3. `sudo gem install sass`
 
 ## To Run
 

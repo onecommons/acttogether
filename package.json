@@ -22,7 +22,6 @@
     "connect-flash": "~0.1.1",
     "bcrypt-nodejs": "latest",
     "underscore": "~1.6.0",
-    "sass-middleware": "0.0.3",
     "consolidate": "^0.10.0",
     "moment": "^2.6.0",
     "keystone": "^0.2.14",
