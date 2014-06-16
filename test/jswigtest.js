@@ -4,9 +4,10 @@ var express			= require('express');
 var request 		= require('supertest');
 var assert			= require('chai').assert;
 var path				= require('path');
+//var bodyParser = require('body-parser');
 // var request 		= request('http://localhost:3000');
 var app = express();
-app.use(express.bodyParser());
+//app.use(express.bodyParser());
 require('../routes/jswig'); // add jswig routes to app.
 app.get('/jswig/*', require('../routes/jswig')(app)); // add jswig routes to app.
 app.set('views', __dirname + '/views');
@@ -25,7 +26,7 @@ describe('clientinclude', function() {
       { user: {_id: '3'} }
       , {_id:'1', nested: {_id: '2'}}
     ],
-    bar: { user: {_id :'3', prop: 'a'}, 
+    bar: { user: {_id :'3', prop: 'a'},
           comments: [ {_id: '4', prop: 'b'}, {_id: '5'}]
       }
     });

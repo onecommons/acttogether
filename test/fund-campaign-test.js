@@ -9,6 +9,7 @@ var m           = require('../models');
 var consolidate = require('consolidate');
 var swig        = require('swig');
 require('../lib/swigextensions')(swig);
+var bodyParser = require('body-parser');
 
 DEBUG_ON = true;
 
@@ -19,10 +20,11 @@ describe('fund campaign', function () {
     this.timeout(10000); // 10s – going out to balanced payments.
 
     var app = express();
-    app.use(express.bodyParser());
-    var fcg = require('../routes/payments').fundCampaignGet; 
+    app.use(bodyParser.urlencoded());
+    app.use(bodyParser.json());
+    var fcg = require('../routes/payments').fundCampaignGet;
     app.get('/fund-campaign', function(req, res) {fcg(req,res, theUser);});
-    var fcp = require('../routes/payments').fundCampaignPost; 
+    var fcp = require('../routes/payments').fundCampaignPost;
     app.post('/fund-campaign', function(req, res) {fcp(req,res, theUser);});
 
     // all environments
@@ -56,13 +58,13 @@ describe('fund campaign', function () {
                 theUser.activeFI = theFI._id;
                 theUser.save(function(err,uback){
                   theUser = uback;
-                  m.FinancialTransaction.remove({} 
+                  m.FinancialTransaction.remove({}
                   ,function(){
                     theCampaign = new m.Campaign();
                     theCampaign.name = "Default OneCommons Campaign";
                     theCampaign._id = "@Campaign@0";
                     theCampaign.save(done);
-                  
+
      }) }) }) }) }) })
 
     }); // before
@@ -95,7 +97,7 @@ describe('fund campaign', function () {
         })
     });
 
-    //XXX this fails because there is no fund-campaign.html 
+    //XXX this fails because there is no fund-campaign.html
     it("get should show page WITH cc form if user doesn't have an active FI" /*, function(done){
       theUser.activeFI = null;
       request(app)
@@ -103,7 +105,7 @@ describe('fund campaign', function () {
         .expect(200)
         .expect(/Name on Card/)
         .end(function(err,res){
-          theUser.activeFI = theFI._id; // restore 
+          theUser.activeFI = theFI._id; // restore
           if(err) return done(err);
           done();
         })
@@ -133,7 +135,7 @@ describe('fund campaign', function () {
                       assert.isNotNull(subback);
                       assert.equal(subback.user, theUser._id);
                       done();
-            
+
          }) }) }) }) });
 
     }); // it...
@@ -163,7 +165,7 @@ describe('fund campaign', function () {
                       assert.isNotNull(subback);
                       assert.equal(subback.user, theUser._id);
                       done();
-            
+
          }) }) }) }) });
 
     }); // it...

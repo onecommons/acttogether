@@ -2,15 +2,13 @@ var express = require('express')
   , request = require('supertest')
   , Promise = require('promise')
   , jsonrpc = require('../lib/jsonrpc');
+var bodyParser = require('body-parser');
 
 describe('jsonrpc', function(){
   var app = express();
-  app.use(express.bodyParser());
+  app.use(bodyParser.json());
 
   describe('.router', function(){
-      var app = express();
-      app.use(express.bodyParser());
-
       app.post('/', jsonrpc.router.bind({
         noparams: function(params, respond) {
           respond("hello")

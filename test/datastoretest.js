@@ -196,11 +196,12 @@ describe('datastore', function(){
       var express = require('express')
        , request = require('supertest')
        , jsonrpc = require('../lib/jsonrpc');
+      var bodyParser = require('body-parser');
 
       var app = null;
       before(function(done) {
         app = express();
-        app.use(express.bodyParser({reviver: datastore.pJSON.reviver}));
+        app.use(bodyParser.json({reviver: datastore.pJSON.reviver}));
         assert(ds);
         app.post('/', jsonrpc.router.bind(new datastore.RequestHandler(ds)));
         done();
@@ -305,11 +306,11 @@ describe('datastore', function(){
       var express = require('express')
        , request = require('supertest')
        , jsonrpc = require('../lib/jsonrpc');
-
+      var bodyParser = require('body-parser');
       var app = null;
       before(function(done) {
         app = express();
-        app.use(express.bodyParser({reviver: datastore.pJSON.reviver}));
+        app.use(bodyParser.json({reviver: datastore.pJSON.reviver}));
         assert(ds);
         app.post('/', jsonrpc.router.bind(new datastore.RequestHandler(ds)));
         done();

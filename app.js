@@ -10,12 +10,16 @@ require('./lib/swigextensions')(swig);
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash = require('connect-flash');
-var FileStore = require('connect-session-file');
 var models = require('./models');
 var _ = require('underscore');
 var loadConfig = require('./lib/config');
 var util = require('util');
 var crypto = require('crypto');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var session      = require('express-session');
+var morgan = require('morgan'); //formerly known as express.logger()
+var errorhandler = require('errorhandler');
 
 var STOP_APP_TIMEOUT = 30*1000;
 function stopApp(closeCallback, forcequit) {
@@ -122,23 +126,23 @@ function createApp() {
     res.send (502, "Server is in the process of restarting. [stopApp]")
   });
 
-  app.use(express.favicon());
-  app.use(express.logger('dev'));
-  app.use(express.json());
-  app.use(express.urlencoded());
-  app.use(express.methodOverride());
+  if (typeof config.request_logger == 'undefined') {
+    //use it twice in order to log both initial request and response
+    app.use(morgan({format: 'dev', immediate: true }));
+    app.use(morgan({format: 'dev'}));
+  } else if (typeof config.request_logger == 'function') {
+    config.request_logger(app);
+  } //else no request logging
+
+  app.use(bodyParser.urlencoded());
+  app.use(bodyParser.json());
   var cookiesecret = config.cookie_secret;
   if (!cookiesecret) {
     cookiesecret = crypto.randomBytes(64).toString('base64');
     console.log('no cookie_secret set in config/app.js, randomly choosing', cookiesecret);
   }
-  app.use(express.cookieParser(cookiesecret));
-  app.use(express.session(
-    config.sessionfactory ?
-      config.sessionfactory() : {
-        store: new FileStore()
-      }
-  ));
+  app.use(cookieParser(cookiesecret));
+  app.use(session(config.sessionfactory ? config.sessionfactory() : {}));
   app.use(passport.initialize());
   app.use(passport.session()); // persistent login sessions
   app.use(flash()); // use connect-flash for flash messages stored in session
@@ -153,7 +157,7 @@ function createApp() {
     });
   }
 
-  app.use(app.router);
+  routes(app, passport);
 
   app.use(require('less-middleware')({
     src: path.join(__dirname, 'public')
@@ -163,15 +167,9 @@ function createApp() {
   }));
   app.use(express.static(path.join(__dirname, 'public')));
 
-  // development only
   if ('development' == app.get('env')) {
-    app.use(express.errorHandler());
+    app.use(errorhandler()); //development only, should appear as last use()?
   }
-
-  //
-  // routes
-  //
-  routes(app, passport);
 
   // app.use(require('express-domain-middleware')); // to better handle errors without crashing node
   // error handler

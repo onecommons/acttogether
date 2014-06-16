@@ -4,17 +4,19 @@ var assert      = require('chai').assert;
 var mongoose    = require('mongoose');
 var bp          = require('../lib/oc-balanced');
 var m           = require('../models');
+var bodyParser = require('body-parser');
 
 describe('setup payment plan', function () {
-    
+
     var db, theUser, debitparams;
     var theUserPwd = 'testuser';
 
-    this.timeout(10000); // 10 secs 
+    this.timeout(10000); // 10 secs
 
     var app = express();
-    app.use(express.bodyParser());
-    var spp = require('../routes/payments').setupPaymentPlanPost; 
+    app.use(bodyParser.urlencoded());
+    app.use(bodyParser.json());
+    var spp = require('../routes/payments').setupPaymentPlanPost;
     app.post('/setup-payment-plan', function(req, res) {assert(theUser); spp(req,res, theUser)});
 
     before(function(done) {
@@ -84,7 +86,7 @@ describe('setup payment plan', function () {
                     // assert.equal(ft.status, 'succeeded');
                     // assert.equal(ft.fi, fi._id);
                     // assert.equal(ft.user, theUser._id); // FinancialTransaction record has been created.
-                    done();    
+                    done();
 
           }) }) }) });
     }); // it...

@@ -14,7 +14,7 @@ var namedRoutes = {};
 // vars set here are available on all pages with sharedPageVars in the route
 var sharedPageVars = function(req, res, next) {
   // merge our old utils.getVars() into res.locals
-  res.locals(utils.getVars());
+  utils.merge(res.locals, utils.getVars());
   res.locals.routes = namedRoutes;
   res.locals.df = require("../lib/dataForm").dataform();
   next();

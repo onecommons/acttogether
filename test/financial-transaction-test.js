@@ -4,18 +4,19 @@ var assert      = require('chai').assert;
 var mongoose    = require('mongoose');
 var bp          = require('../lib/oc-balanced');
 var m           = require('../models');
-
+var bodyParser = require('body-parser');
 
 describe('FT', function () {
-    
+
     var db, theUser, theFI, theFT;
     var theUserPwd = 'testuser';
 
     this.timeout(10000); // 10 s
 
     var app = express();
-    app.use(express.bodyParser());
-    var spp = require('../routes/payments').setupPaymentPlanPost; 
+    app.use(bodyParser.urlencoded());
+    app.use(bodyParser.json());
+    var spp = require('../routes/payments').setupPaymentPlanPost;
     app.post('/setup-payment-plan', spp); // add jswig routes to app.
 
 
@@ -34,7 +35,7 @@ describe('FT', function () {
         theUser.local.email       = "test@user.com"
         theUser.local.password    = "$2a$08$/06iuOSo3ws1QzBpvRrQG.jgRwuEJB20LcHsWyEWHhOEm/ztwqPG."; // "testuser"
         theUser._id               = "@User@0";
-        theUser.paymentPlan.amount    = "2000"; 
+        theUser.paymentPlan.amount    = "2000";
         theUser.paymentPlan.frequency = 'monthly';
         //     .paymentPlan.lastCharge = null   (by default)
 
@@ -55,7 +56,7 @@ describe('FT', function () {
                     theFT.fi          = theFI; // theUser.paymentPlan.fi;
                     theFT.amount      = theUser.paymentPlan.amount;
                     theFT.save(done);
-                  }) 
+                  })
               });
             });
           });
@@ -73,7 +74,7 @@ describe('FT', function () {
         assert.isNull(err);
         assert.equal(ftback.status, 'succeeded');
         done();
-      }) 
+      })
     });
 
     it('shouldnt do a credit yet', function(done){
@@ -81,7 +82,7 @@ describe('FT', function () {
         assert.isNotNull(err);
         //console.log(err);
         done();
-      }) 
+      })
     });
 
     it('shouldnt do a proper debit with an unsupported payment processor', function(done){
@@ -89,7 +90,7 @@ describe('FT', function () {
         assert.isNotNull(err);
         //console.log(err);
         done();
-      }) 
+      })
     });
 
 
@@ -97,9 +98,9 @@ describe('FT', function () {
       theFT.doDebit({ user: undefined }, function(err, ftback){
         assert.isNotNull(err);
         done();
-      }) 
+      })
     });
- 
+
 
     it('should give proper error if card refused', function(done){
       theFI.ccToken = "/cards/CC3h0aMqs0opvI0UAq7LS1O2"; // bad card.
@@ -107,7 +108,7 @@ describe('FT', function () {
         theFT.doDebit({}, function(err, ftback){
           assert.isNotNull(err);
           done();
-        }) 
+        })
       })
     });
 
@@ -117,7 +118,7 @@ describe('FT', function () {
         theFT.doDebit({}, function(err, ftback){
           assert.isNotNull(err);
           done();
-        }) 
+        })
       })
     });
 
