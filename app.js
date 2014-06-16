@@ -165,7 +165,7 @@ function createApp() {
   app.use(require('sass-middleware')({
     src: path.join(__dirname, 'public')
   }));
-  app.use(express.static(path.join(__dirname, 'public')));
+  app.use('/static', express.static(path.join(__dirname, 'public')));
 
   if ('development' == app.get('env')) {
     app.use(errorhandler()); //development only, should appear as last use()?
