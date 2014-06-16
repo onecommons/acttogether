@@ -159,8 +159,8 @@ function createApp() {
 
   routes(app, passport);
 
-  app.use(require('less-middleware')({
-    src: path.join(__dirname, 'public')
+  app.use(require('less-middleware')(path.join(__dirname, 'public'),{
+    //debug: true,
   }));
   app.use('/static', express.static(path.join(__dirname, 'public')));
 
