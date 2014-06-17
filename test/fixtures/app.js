@@ -1,4 +1,4 @@
-var main = require('../../app'),
+var main = require('../../index'),
  express = require('express'),
  mongoose = require('mongoose')
 
@@ -15,7 +15,7 @@ mongoose.model('DbTest1',
 function addBrowserTests() {
   this.set('views', __dirname + '/../views');
   this.get('/browsertest/:testname', function(req, res) {
-      res.render('browsertest.html', { 
+      res.render('browsertest.html', {
           testName: req.params.testname
       })
   });
@@ -23,6 +23,7 @@ function addBrowserTests() {
 
 function createApp() {
   app = main.createApp();
+  //console.log('test public dir', main.dirname + '/test/public');
   app.use(express.static(main.dirname + '/test/public'));
   app.addBrowserTests = addBrowserTests;
   return app;
