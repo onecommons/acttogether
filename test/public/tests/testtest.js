@@ -1,9 +1,7 @@
 // load the unit we are testing, or more js as needed.
-// BrowserTestFrame.loadUnit('/static/js/foo.js');
-
 var foof = function(){ return 12; }
 
-// the tests. 
+// the tests.
 describe('foo', function() {
     it('should return 12', function(){
         assert.equal(foof(), 12);
@@ -25,6 +23,3 @@ describe("when an empty string is passed in", function() {
     }, 20);
   });
 });
-
-
-
