@@ -4,7 +4,7 @@
 {% block head %}
 
 <!-- CSS for credit card processing -->
-<link href="/static/css/creditcardjs-v0.10.9.min.css" rel="stylesheet">
+<link href="/css/creditcardjs-v0.10.9.min.css" rel="stylesheet">
 
 <style>
 
@@ -21,9 +21,9 @@
 
 
     <div class="row">
-    	<h2><a name="Payment">Edit Payment Plan</a></h2>    
+    	<h2><a name="Payment">Edit Payment Plan</a></h2>
     	{% if debug %}
-		<button type="button" id="populate" class="btn btn-default" style="margin-bottom: 20px;">Populate Test Data</button>	
+		<button type="button" id="populate" class="btn btn-default" style="margin-bottom: 20px;">Populate Test Data</button>
 		{% endif %}
 
 		You currently donate ${{currentDonationAmount}} {{currentDonationFrequency}}

@@ -97,7 +97,7 @@
 			<div class="hide alert alert-danger alert-dismissable fade in" id="alert-cc-decline">
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 			 	<strong>Uh oh!</strong> Something went wrong. Please check the following errors:<ul id="list-of-errors"></ul>
-			</div>				
+			</div>
 			</div>
 		</div>
 
@@ -105,14 +105,14 @@
 
 {% macro donationFormJS %}
 
-<script type="text/javascript" src="/static/js/data.js"></script>
+<script type="text/javascript" src="/js/data.js"></script>
 
 <!-- payment processing -->
 <script type="text/javascript" src="https://js.balancedpayments.com/1.1/balanced.js"></script>
 
 <!-- front end validation, etc -->
-<script type="text/javascript" src="/static/js/creditcardjs-v0.10.9.min.js"></script>
-<script type="text/javascript" src="/static/js/autoNumeric.js"></script>
+<script type="text/javascript" src="/js/creditcardjs-v0.10.9.min.js"></script>
+<script type="text/javascript" src="/js/autoNumeric.js"></script>
 
 <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore.js"></script>
 
@@ -136,13 +136,13 @@ $(document).ready(function () {
 
 	The user clicks the donate button. This triggers validation of the donation form (dollar amount and frequency) and the credit card via CCJS library's Luhn check. Errors are displayed if something is wrong.
 
-	If the form data appears valid, the credit card data is sent to Balanced Payments for tokenization (which also initiates a Luhn check). 
-	
+	If the form data appears valid, the credit card data is sent to Balanced Payments for tokenization (which also initiates a Luhn check).
+
 	If tokenization succeeds, we send the tokenized funding instrument to our server, along with the donation amount and frequency.
 
-	If tokenization fais, errors are displayed. 
+	If tokenization fais, errors are displayed.
 
-	XXX We then attempt to charge the credit card via our backend. If it succeeds, we display success. If it fails, errors are displayed. 
+	XXX We then attempt to charge the credit card via our backend. If it succeeds, we display success. If it fails, errors are displayed.
 
 	*/
 
@@ -157,40 +157,40 @@ $(document).ready(function () {
 		}
 		,{
 			 "balancedError":"expiration_month"
-			,"ccjsError":"" 
+			,"ccjsError":""
 			,"fieldClass":"ccjs-expiration"
 			,"message":"Your expiration month is incorrect."
 		}
 		,{
 			 "balancedError":"expiration_year"
-			,"ccjsError":"" 
+			,"ccjsError":""
 			,"fieldClass":"ccjs-expiration"
 			,"message":"Your expiration year is incorrect."
-		}					
-		,{ 
+		}
+		,{
 			 "balancedError":"name"
-			,"ccjsError":"NAME" 
+			,"ccjsError":"NAME"
 			,"fieldClass":"ccjs-name"
 			,"message":"Please enter the name on your credit card."
-		}	
-		,{ 
+		}
+		,{
 			 "balancedError":""
-			,"ccjsError":"EXPIRATION" 
+			,"ccjsError":"EXPIRATION"
 			,"fieldClass":"ccjs-expiration"
 			,"message":"The expiration date is invalid."
-		}			
-		,{ 
+		}
+		,{
 			 "balancedError":"csc"
-			,"ccjsError":"SECURITY_CODE" 
+			,"ccjsError":"SECURITY_CODE"
 			,"fieldClass":"ccjs-csc"
 			,"message":"Your security code is invalid."
-		}	
+		}
 	]
 
 	function addError(message, errorclass, inputfield) {
 		var inputfield = (typeof inputfield === "undefined") ? null : inputfield;
 		var errorclass = (typeof errorclass === "undefined") ? "error" : errorclass;
-		
+
 		if(_.isUndefined(window.errorThingIsThere)) {
 			$('#alert-cc-decline').removeClass('hide');
 			window.errorThingIsThere = true;
@@ -198,21 +198,21 @@ $(document).ready(function () {
 
 		$('#list-of-errors').append("<li class=" + errorclass + ">" + message + "</li>");
 		$('.' + inputfield).addClass('ccjs-error');
-		
+
 	}
 	// remove error highlighting on re-attempt for elements not handled by ccjs
 	// XXX function removeError(){} could also remove the error text from the list
 
 	$('.ccjs-name, .ccjs-csc').on("focus", function (e) {
 	    $(this).removeClass('ccjs-error');
-	});	
+	});
 
 
 	// returns true if it looks like the form has been filled out correctly
     function donationFormValid(){
 
 		var isError = 0;
-        //Handle custom donation min and max. 
+        //Handle custom donation min and max.
     	customDonationNormalized = $('#custom-donation-amount').val().replace(/\D/g,'');
 	    if ($('#custom-donation-amount').hasClass('btn-success')) {
 	    	if (customDonationNormalized < 500) {
@@ -267,9 +267,9 @@ $(document).ready(function () {
 					if (invalid == error.ccjsError) {
 						addError(error.message, "", error.fieldClass);
 					}
-				});			
+				});
 			});
-		}        
+		}
     });
 
     // Callback for handling responses from Balanced
@@ -283,7 +283,7 @@ $(document).ready(function () {
 
             // collect up and normalize donation amount info
             // XXX need to identify which donation option was selected by default
-            
+
         	var donationFormData = $('#donation-form').dbData().get(0);
           donationFormData['custom-donation-amount'] = customDonationNormalized;
 
@@ -297,7 +297,7 @@ $(document).ready(function () {
           donationFormData.fundingInstrument = fundingInstrument.href;
 
 
-            
+
           // Call backend, add in other data we want to save.
           donationFormData.cclastfour = $("[name='cc-card-number']").val().slice(-4);
           donationFormData.ccname = $("#cc-name").val();
@@ -319,7 +319,7 @@ $(document).ready(function () {
           $('#list-of-errors').empty();
 
             /*
-			
+
 			XXX need to display success
 
             */
@@ -332,25 +332,25 @@ $(document).ready(function () {
 
 			// check if the error(s) returned by Balanced match an error we expect, then display the appropriate message
 			var seenError = {};  //to prevent repeats
-			
+
 			var errorsLength = response['errors'].length, i = 0;
-			for (i = 0; i < errorsLength; i++) { 	
+			for (i = 0; i < errorsLength; i++) {
 
 				var error = response['errors'][i];
-				
+
 				var messagesLength = errorMessages.length, j = 0;
-				for (j=0; j < messagesLength; j++) 
+				for (j=0; j < messagesLength; j++)
 				{
-					var thisErrorInfo = errorMessages[j];					
+					var thisErrorInfo = errorMessages[j];
 					if (error.extras[thisErrorInfo.balancedError] && !seenError[thisErrorInfo.balancedError]) {
 
 						seenError[thisErrorInfo.balancedError] = true;
 
-						//if the error returned by balanced matches one of the errors we know about, add them to the list of things the user needs to fix				
+						//if the error returned by balanced matches one of the errors we know about, add them to the list of things the user needs to fix
 						addError(thisErrorInfo.message, "cc-error", thisErrorInfo.fieldClass);
-					} 
+					}
 				}
-				
+
 				var errorsName = Object.keys(error.extras);
 
 				if (_.pluck(errorMessages, "balancedError").indexOf(errorsName[0]) < 0) {
@@ -359,9 +359,9 @@ $(document).ready(function () {
 						addError(error.description);
 					}
 			}
-            
+
         }
-        
+
     }
 
 

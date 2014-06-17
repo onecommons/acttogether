@@ -6,15 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="shortcut icon" href="/static/ico/favicon.ico">
+    <link rel="shortcut icon" href="/ico/favicon.ico">
 
     <title>OneCommons: Harnessing the power of collective action</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="/static/css/bootstrap.{% if !debug %}min.{% endif %}css" rel="stylesheet">
+    <link href="/css/bootstrap.{% if !debug %}min.{% endif %}css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="/static/css/app.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
 
     <!-- Style from Font-Awesome for icons -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.{% if !debug %}min.{% endif %}css" rel="stylesheet">
@@ -40,7 +40,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a href="/"><img height=75 src='/static/images/logo.png'></a>
+          <a href="/"><img height=75 src='/images/logo.png'></a>
           <!--<h4 class='tagline'>Harnessing the power of collective action</h4>-->
         </div>
         <div class="navbar-collapse collapse">
@@ -98,8 +98,8 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://code.jquery.com/jquery-1.10.2.{% if !debug %}min.{% endif %}js"></script>
-    <script src="/static/js/bootstrap.{% if !debug %}min.{% endif %}js"></script>
-    <script src="/static/js/bootstrap-hover-dropdown.min.js"></script>
+    <script src="/js/bootstrap.{% if !debug %}min.{% endif %}js"></script>
+    <script src="/js/bootstrap-hover-dropdown.min.js"></script>
 {% block jsfooter %}{% endblock %}
 {%clientrender%}
 {% include "../partials/debug_footer.html" %}
