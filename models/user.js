@@ -9,18 +9,15 @@ var userSchema = mongoose.Schema({
 
     displayName       : String,
     avatarUrl         : String,
-    activeFI          : {type: String, ref: 'FundingInstrument'},
 
-    paymentPlan           : {
-                          frequency  : { type: String, enum: ['once','monthly','quarterly','yearly']},
-                          lastCharge : { type: String, ref: 'FinancialTransaction'},
-                          fi         : { type: String, ref: 'FundingInstrument'},
-                          amount     : { type: Number, max: 1500000, min: 100}
-                         },
-
+    // linked accounts
     local            : {
         email        : String,
         password     : String,
+
+        accountLocked: {type: Boolean, default:false},
+        accountLockedUntil: Date,
+        failedLoginAttempts: {type:Number, default:0}
      },
     facebook         : {
         id           : String,
@@ -39,8 +36,17 @@ var userSchema = mongoose.Schema({
         token        : String,
         email        : String,
         name         : String
-    }
+    },
 
+    // payment information
+    activeFI          : {type: String, ref: 'FundingInstrument'},
+
+    paymentPlan           : {
+                          frequency  : { type: String, enum: ['once','monthly','quarterly','yearly']},
+                          lastCharge : { type: String, ref: 'FinancialTransaction'},
+                          fi         : { type: String, ref: 'FundingInstrument'},
+                          amount     : { type: Number, max: 1500000, min: 100}
+                         }
 });
 
 // methods ======================
