@@ -123,6 +123,12 @@ module.exports = function(passport) {
             if (!user)
                 return done(null, false, req.flash('loginMessage', 'Oops! Wrong email or password')); // req.flash is the way to set flashdata using connect-flash
 
+            if (!user.local.verified) {
+                // XXX should offer a link to re-send verification email!
+                recordLogin(user, 'unverified', req.ip);
+                return done(null, false, req.flash('loginMessage', 'This account has not been verified. Please check your email'));
+            }
+
             // check for too many failed login attempts
             if (user.local.accountLocked && new Date(user.local.accountLockedUntil) > new Date()) {
                 recordLogin(user, 'reject', req.ip);
@@ -201,7 +207,6 @@ module.exports = function(passport) {
         clientID        : config.facebookAuth.clientID,
         clientSecret    : config.facebookAuth.clientSecret,
         callbackURL     : config.facebookAuth.callbackURL
-
       },
       // facebook will send back the token and profile
       function(token, refreshToken, profile, done) {

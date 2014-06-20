@@ -31,10 +31,14 @@ module.exports.signup = function(req, res) {
 
 module.exports.signupPost = function(passport) {
   return passport.authenticate('local-signup', {
-    successRedirect: '/profile', // secure profile section
+    successRedirect: '/verification', // verification notification page
     failureRedirect: '/signup',  // back to signup on error
     failureFlash: true
   });
+}
+
+module.exports.verification = function(req, res) {
+  res.render('verification.html');
 }
 
 module.exports.profile = function(req, res) {
