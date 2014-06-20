@@ -7,8 +7,23 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 
 // load up the user model & auth vars
 var User            = require('../models/user');
+var LoginHistory    = require('../models/loginhistory');
 
 var config = require('../lib/config')('auth'); // XXX this file should live elsewhere
+
+function recordLogin(user, status, ipAddress) {
+    var hist = new LoginHistory();
+    hist.user = user;
+    hist.ip = ipAddress;
+    hist.status = status;
+
+    hist.save(function(err) {
+        if (err) {
+            console.log("Error saving login history!");
+            console.log(err);
+        }
+    });
+}
 
 // expose this function to our app using module.exports
 module.exports = function(passport) {
@@ -109,8 +124,10 @@ module.exports = function(passport) {
                 return done(null, false, req.flash('loginMessage', 'Oops! Wrong email or password')); // req.flash is the way to set flashdata using connect-flash
 
             // check for too many failed login attempts
-            if (user.local.accountLocked && new Date(user.local.accountLockedUntil) > new Date())
+            if (user.local.accountLocked && new Date(user.local.accountLockedUntil) > new Date()) {
+                recordLogin(user, 'reject', req.ip);
                 return done(null, false, req.flash('loginMessage', 'That account is temporarily locked'));
+            }
 
             // the user is found but the password is wrong
             if (!user.validPassword(password)) {
@@ -144,6 +161,8 @@ module.exports = function(passport) {
                     }
 
                     // console.log("updating user with failed login counts");
+                    var failType = user.local.accountLocked ? 'lock' : 'fail';
+                    recordLogin(user, failType, req.ip);
                     return done(null, false, req.flash('loginMessage', errorMessage));
                 });
             } else {
@@ -153,9 +172,7 @@ module.exports = function(passport) {
                 user.local.failedLoginAttempts = 0;
                 user.local.accountLockedUntil = null;
 
-                // update last login time & ip
-                // XXX write an entry in the login history
-                // console.dir("recording login from:" + req.ip);
+                recordLogin(user, 'ok', req.ip);
 
                 user.save(function(err) {
                     if (err) {
