@@ -15,6 +15,7 @@ var models = require('./models');
 var _ = require('underscore');
 var loadConfig = require('./lib/config');
 var util = require('util');
+var crypto = require('crypto');
 
 var STOP_APP_TIMEOUT = 30*1000;
 function stopApp(closeCallback, forcequit) {
@@ -31,7 +32,7 @@ function stopApp(closeCallback, forcequit) {
     var timeout = typeof forcequit == "number" ? forcequit : STOP_APP_TIMEOUT;
     setTimeout( function () {
       console.error("Could not close connections in time, forcefully shutting down");
-      process.exit(1); 
+      process.exit(1);
     }, timeout);
   }
 }
@@ -54,7 +55,7 @@ function startApp(ready, closeCallback) {
   //app.startstack = new Error().stack;
   //set up clean shutdown on sigterm
   //see http://blog.argteam.com/coding/hardening-node-js-for-production-part-3-zero-downtime-deployments-with-nginx/
-  //and https://github.com/visionmedia/express/issues/1366  
+  //and https://github.com/visionmedia/express/issues/1366
   process.on( 'SIGTERM', function() {app.stop(closeCallback,true);});
   //XXX what about SIGINT (ctrl-c)? closeCallback needs to call process.exit(1) in that case
   var onready = function() {
@@ -66,7 +67,7 @@ function startApp(ready, closeCallback) {
          });
        });
     } else {
-      app.server = app.listen(app.get('port'), 'localhost', function() { 
+      app.server = app.listen(app.get('port'), 'localhost', function() {
         console.log('Express server listening on port %d', app.server.address().port);
       });
     }
@@ -74,8 +75,8 @@ function startApp(ready, closeCallback) {
 
   var dburl  = app.get("dburl");
   mongoose.connect(dburl, function(err) {
-    if (err) //ignore error //XXX dont do this!
-      console.log('WARNING: error while opening db at', dburl, err);
+    if (err)
+      throw err;
     else
       console.log("connecting to database", dburl);
 
@@ -90,10 +91,10 @@ function startApp(ready, closeCallback) {
     } else  {
       onready();
     }
-  });  
+  });
 }
 
-function getUrl() { 
+function getUrl() {
   if (!this.server)
     return null;
   var address = this.server.address();
@@ -103,7 +104,7 @@ function getUrl() {
 
 function createApp() {
   var app = express();
-
+  var config = loadConfig('app')
   require('./config/passport')(passport); // pass passport for configuration
 
   // all environments
@@ -126,11 +127,18 @@ function createApp() {
   app.use(express.json());
   app.use(express.urlencoded());
   app.use(express.methodOverride());
-  app.use(express.cookieParser('your secret here')); //XXX
-  app.use(express.session({
-    store: new FileStore()
-  }));
-
+  var cookiesecret = config.cookie_secret;
+  if (!cookiesecret) {
+    cookiesecret = crypto.randomBytes(64).toString('base64');
+    console.log('no cookie_secret set in config/app.js, randomly choosing', cookiesecret);
+  }
+  app.use(express.cookieParser(cookiesecret));
+  app.use(express.session(
+    config.sessionfactory ?
+      config.sessionfactory() : {
+        store: new FileStore()
+      }
+  ));
   app.use(passport.initialize());
   app.use(passport.session()); // persistent login sessions
   app.use(flash()); // use connect-flash for flash messages stored in session
@@ -173,7 +181,6 @@ function createApp() {
   //   res.send(500);
   // });
 
-  var config = loadConfig('app')
   app.set('dburl', config.dburl);
   if (process.env.PORT || config.port)
     app.set('port', process.env.PORT || config.port);

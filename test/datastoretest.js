@@ -10,7 +10,7 @@ describe('datastore', function(){
 
   after(function(done){
     var db = mongoose.connection;
-     db.db.dropCollection('test1', function(err, result) { 
+     db.db.dropCollection('test1', function(err, result) {
         //may or may not exits, if it doesn't err will be set
         //console.log("dropCollection", err, result);
         done();
@@ -19,13 +19,13 @@ describe('datastore', function(){
   });
 
   describe('.pJSON', function(){
-    
+
   it('should escape strings that look like objectids',  function(){
     var obj1  = {k:ObjectID("530936daf48be9095b414c52"), l:'@@escaped'};
     var json1 = datastore.pJSON.stringify(obj1);
     //console.log(obj1.k.constructor, obj1.k);
     json1.should.equal('{"k":"@@530936daf48be9095b414c52","l":"::@@escaped"}');
-    assert.deepEqual(obj1.k, ObjectID("530936daf48be9095b414c52"), 'obj1 shouldnt have been mutated'); 
+    assert.deepEqual(obj1.k, ObjectID("530936daf48be9095b414c52"), 'obj1 shouldnt have been mutated');
     var result1 = datastore.pJSON.parse(json1);
     assert.deepEqual(result1, obj1);
 
@@ -37,46 +37,46 @@ describe('datastore', function(){
     var result2 = datastore.pJSON.parse(json2);
     assert.deepEqual(result2, obj2);
   });
-    
+
   it('should handle user-defined strings as _ids',  function(){
     var json3 = '{"_id":"@1","prop":"test"}'; //user-defined id
     var obj3 = datastore.pJSON.parse(json3);
     var result3 = datastore.pJSON.stringify(obj3);
     assert.deepEqual(result3, json3);
 
-    var json4 = '{"_id":"@Test1@533cddd1ef93f6001ecf70fb"}'; //user-defined id 
+    var json4 = '{"_id":"@Test1@533cddd1ef93f6001ecf70fb"}'; //user-defined id
     var obj4 = datastore.pJSON.parse(json4);
     var result4 = datastore.pJSON.stringify(obj4);
     assert.deepEqual(result4, json4);
   });
- 
+
  });
 
  describe('.mongoose', function(){
-    var Test1 = mongoose.model('Test1', 
+    var Test1 = mongoose.model('Test1',
       new mongoose.Schema({
         __t: String,
          _id: String,
         prop1: []
         },{strict: false}) //'throw'
     );
-    
+
     it('should connect',  function(done){
-      mongoose.connect(config.dburl);  
+      mongoose.connect(config.dburl);
       var db = mongoose.connection;
 //      db.on('error', console.error.bind(console, 'connection error:'));
       db.once('open', function() {
         //note!: model Test1 => namespace test1
-        db.db.dropCollection('test1', function(err, result) { 
+        db.db.dropCollection('test1', function(err, result) {
           //may or may not exits, if it doesn't err will be set
           //console.log("dropCollection", err, result);
           done();
         });
       });
     });
-    
+
     var ds = null;
-    var lastid = null;    
+    var lastid = null;
     it('should create a new doc',  function(done){
       ds = new datastore.MongooseDatastore();
       ds.create({
@@ -90,7 +90,7 @@ describe('datastore', function(){
         done();
       });
     });
-    
+
     it('should not create a doc with existing id',  function(done){
       //console.log('lastid', lastid);
       assert(ds);
@@ -103,7 +103,7 @@ describe('datastore', function(){
         done();
       });
     });
- 
+
      it('create with user-defined ids',  function(done){
       assert(ds);
       ds.create('{"_id": "@Test1@1","prop": "test"}', function(err, doc) {
@@ -117,7 +117,7 @@ describe('datastore', function(){
       assert(ds);
       //console.log('lastid', lastid);
       var obj = {"_id": lastid,
-        "prop-new": "another value", 
+        "prop-new": "another value",
         "prop1": ["added1", "added2"]
       };
       //console.log(obj); //{"_id": "@@5334d39164dd7bdb9e03cc7c","prop-new": "another value"}
@@ -137,7 +137,7 @@ describe('datastore', function(){
       assert(ds);
       //console.log('lastid', lastid);
       var obj = {"_id": lastid,
-        "prop-new": null, 
+        "prop-new": null,
         "prop1": "added1"
       };
       //console.log(obj); //{"_id": "@@5334d39164dd7bdb9e03cc7c","prop-new": "another value"}
@@ -159,7 +159,7 @@ describe('datastore', function(){
       assert(ds);
       //console.log('lastid', lastid);
       var obj = {"_id": lastid,
-        "prop-new2": "a new property", 
+        "prop-new2": "a new property",
         "prop1": 1 //replaced value
       };
       //console.log(obj); //{"_id": "@@5334d39164dd7bdb9e03cc7c","prop-new": "another value"}
@@ -197,16 +197,17 @@ describe('datastore', function(){
        , request = require('supertest')
        , jsonrpc = require('../lib/jsonrpc');
 
-      var app = express();
-      app.use(express.bodyParser({reviver: datastore.pJSON.reviver}));
-
-      app.post('/', function (req, res, next) {
-          assert(ds);
-          jsonrpc.router(req, res, next, new datastore.RequestHandler(ds),
-            datastore.pJSON.stringify);
+      var app = null;
+      before(function(done) {
+        app = express();
+        app.use(express.bodyParser({reviver: datastore.pJSON.reviver}));
+        assert(ds);
+        app.post('/', jsonrpc.router.bind(new datastore.RequestHandler(ds)));
+        done();
       });
 
       it('should create objects', function(done){
+        assert(app);
         request(app)
         .post('/')
         //.set('Content-Type', 'application/json') //unnecessary since its the default
@@ -217,9 +218,9 @@ describe('datastore', function(){
       });
 
     });
-    
+
  });
- 
+
  describe('.mongodb', function(){
     var testdb = null;
 
@@ -247,7 +248,7 @@ describe('datastore', function(){
         done();
       });
     });
-    
+
     var ds = null;
     var lastid = null;
     it('should create a new doc',  function(done){
@@ -305,16 +306,17 @@ describe('datastore', function(){
        , request = require('supertest')
        , jsonrpc = require('../lib/jsonrpc');
 
-      var app = express();
-      app.use(express.bodyParser({reviver: datastore.pJSON.reviver}));
-
-      app.post('/', function (req, res, next) {
+      var app = null;
+      before(function(done) {
+        app = express();
+        app.use(express.bodyParser({reviver: datastore.pJSON.reviver}));
         assert(ds);
-        jsonrpc.router(req, res, next, new datastore.RequestHandler(ds),
-            datastore.pJSON.stringify);
+        app.post('/', jsonrpc.router.bind(new datastore.RequestHandler(ds)));
+        done();
       });
 
       it('should create objects', function(done){
+        assert(app);
         request(app)
         .post('/')
         //.set('Content-Type', 'application/json') //unnecessary since its the default
@@ -325,7 +327,7 @@ describe('datastore', function(){
       });
 
     });
-    
+
   });
 
 });
