@@ -38,7 +38,9 @@ module.exports.signupPost = function(passport) {
 }
 
 module.exports.verification = function(req, res) {
-  res.render('verification.html');
+  res.render('verification.html', {
+    email: req.user.local.email
+  });
 }
 
 module.exports.profile = function(req, res) {
