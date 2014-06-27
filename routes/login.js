@@ -43,6 +43,14 @@ module.exports.verification = function(req, res) {
   });
 }
 
+module.exports.verificationPost = function(req, res) {
+  // XXX should this live in the passport module?
+  var token = req.params.token;
+  passport.verifyUser(token);
+
+  throw "not yet implemented";
+}
+
 module.exports.profile = function(req, res) {
   res.render('profile.html', { 
     user : req.user

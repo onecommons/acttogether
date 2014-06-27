@@ -1,5 +1,6 @@
 // config/passport.js
 var moment = require('moment');
+var uuid = require('node-uuid');
 
 // load all the things we need
 var LocalStrategy   = require('passport-local').Strategy;
@@ -87,6 +88,10 @@ module.exports = function(passport) {
                     // set the user's local credentials
                     newUser.local.email    = email;
                     newUser.local.password = newUser.generateHash(password);
+
+                    // generate a signup token & expiration
+                    newUser.local.signupToken = uuid.v4();
+                    newUser.local.signupTokenExpires = moment().add(config.confirmationTokenValidFor, 'hours');
 
                     // save the user
                     newUser.save(function(err) {
