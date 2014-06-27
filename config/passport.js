@@ -9,6 +9,8 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var User            = require('../models/user');
 var LoginHistory    = require('../models/loginhistory');
 
+var sendmail = require('../lib/sendmail');
+
 var config = require('../lib/config')('auth'); // XXX this file should live elsewhere
 
 function recordLogin(user, status, ipAddress) {
@@ -76,6 +78,8 @@ module.exports = function(passport) {
                     return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
                 } else {
 
+                    // XXX validate the address
+
                     // if there is no user with that email
                     // create the user
                     var newUser            = new User();
@@ -88,6 +92,10 @@ module.exports = function(passport) {
                     newUser.save(function(err) {
                         if (err)
                             throw err;
+
+                        // send the email notification
+                        sendmail.sendWelcome(newUser);
+
                         return done(null, newUser);
                     });
                 }
