@@ -10,7 +10,7 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var User            = require('../models/user');
 var LoginHistory    = require('../models/loginhistory');
 
-var sendmail = require('../lib/sendmail');
+var sendmail = require('../lib/email');
 
 var config = require('../lib/config')('auth'); // XXX this file should live elsewhere
 
