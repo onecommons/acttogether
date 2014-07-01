@@ -83,6 +83,10 @@ module.exports = function(app, passport) {
 
     verificationPost: [ 'verification/:token', login.verificationPost ],
 
+    verificationResend: { path: 'verification-resend',
+                          get: login.resendVerification,
+                          post: login.resendVerificationPost },
+
     setupPaymentPlan: { path: 'profile/setup-payment-plan',
                         get:  [ sharedPageVars, utils.isLoggedIn, renderer('setup-payment-plan')],
                         post: [ utils.isLoggedIn, payments.setupPaymentPlanPost] },
