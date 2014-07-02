@@ -1,15 +1,15 @@
 // config/email.js
 
 module.exports = {
-    "mailer": { // nodemailer config vars
-        "transportType":"SMTP",
+    // nodemailer config vars
+    // see http://www.nodemailer.com/docs/transports
+    "mailer": {
+        "transport":"SMTP",
         "config": {
-            "host": "mail.server.com", // hostname
-            "secureConnection": true, // use SSL
-            "port": 578, // port for secure SMTP
-            "auth": {
-                "user": "foo@bar.com",
-                "pass": "12345"
+            service: "SendGrid",
+            auth: {
+                user: "username",
+                pass: "password"
             }
         }
     },
