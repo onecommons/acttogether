@@ -79,6 +79,14 @@ module.exports = function(app, passport) {
     signup:           { get:  login.signup,
                         post: [ sharedPageVars, login.signupPost(passport)]},
 
+    verification:     login.verification,
+
+    verificationPost: [ 'verification/:token', login.verificationPost ],
+
+    verificationResend: { path: 'verification-resend',
+                          get: login.resendVerification,
+                          post: login.resendVerificationPost },
+
     setupPaymentPlan: { path: 'profile/setup-payment-plan',
                         get:  [ sharedPageVars, utils.isLoggedIn, renderer('setup-payment-plan')],
                         post: [ utils.isLoggedIn, payments.setupPaymentPlanPost] },
@@ -89,7 +97,6 @@ module.exports = function(app, passport) {
 
     fundCampaignNoId: { path: 'fund-campaign',
                         get:  [ sharedPageVars, utils.isLoggedIn, payments.fundCampaignGet] },
-
 
     datarequest:      { post: datarequest},
 
